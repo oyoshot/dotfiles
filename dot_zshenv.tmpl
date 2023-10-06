@@ -1,0 +1,71 @@
+{{ if (eq .chezmoi.os "darwin") -}}
+# path_helperが悪さをするらしいので対策
+# https://github.com/mizdra/dotfiles/blob/2fadd667a059abae3d7c2c5e05a792569c687865/dot_zshenv#L1-L14
+setopt no_global_rcs
+if [ -x /usr/libexec/path_helper ]; then
+    eval `/usr/libexec/path_helper -s`
+fi
+
+{{ end -}}
+
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=${HOME}/.config}
+export ZDOTDIR=${HOME}/.config/zsh
+
+## Common Environment variable configuration
+case ${UID} in
+0)
+    LANG=C
+    ;;
+esac
+
+## Environment variable configuration
+{{ if lookPath "code" -}}
+export EDITOR="code --wait"
+{{ else -}}
+if type code >/dev/null 2>&1; then
+  export EDITOR="code --wait"
+elif type vim >/dev/null 2>&1; then
+  export EDITOR=vim
+fi
+
+{{ end -}}
+
+path=(
+  $path
+  ${HOME}/bin(N-/)
+  ${HOME}/.local/bin(N-/)
+)
+
+
+{{ if lookPath "brew" -}}
+  {{ output "brew" "shellenv" }}
+{{ else -}}
+  {{ if (eq .chezmoi.os "darwin") -}}
+if [[ -x /opt/homebrew/bin/brew ]] then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+
+fi
+  {{ end -}}
+
+  {{ if (eq .chezmoi.os "linux") -}}
+if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+  {{ end -}}
+{{ end -}}
+
+{{ if eq .chezmoi.hostname "deflisnohatenaMBP" -}}
+
+export path=(~/.plenv/bin $path);
+eval "$(plenv init -)"
+{{ end -}}
+
+
+{{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+
+{{ end -}}
+
+{{ if stat "~/.1password/agent.sock" -}}
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+{{ end -}}

@@ -1,0 +1,45 @@
+README.md
+theme.png
+
+.vscode
+.github
+.editorconfig
+*.md
+
+Brewfile
+Brewfile.lock.json
+scoop.json
+bootstrap.sh
+script_*
+
+# 環境ごとの差異が大きいので、備忘録として入れている。なので実体ではない。
+.config/windows_terminal
+
+# arch linuxのインストールパッケージリスト
+arch.txt
+arch_aur.txt
+
+{{ if ne .chezmoi.os "windows" }}
+Documents
+AppData
+
+.config/powershell/*.d
+{{ end }}
+
+{{ if ne .chezmoi.os "darwin" }}
+Library
+{{ end }}
+
+{{ if eq .chezmoi.os "windows" }}
+.asdf*
+
+# .bashrc
+.zshrc
+.tmux
+.tmux.conf
+.tmux.conf.local
+.config/kitty
+.config/zsh
+.config/sheldon
+.config/zellij
+{{ end }}
