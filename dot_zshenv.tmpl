@@ -19,11 +19,11 @@ case ${UID} in
 esac
 
 ## Environment variable configuration
-{{ if lookPath "code" -}}
-export EDITOR="code --wait"
+{{ if lookPath "nvim" -}}
+export EDITOR="nvim"
 {{ else -}}
-if type code >/dev/null 2>&1; then
-  export EDITOR="code --wait"
+if type nvim >/dev/null 2>&1; then
+  export EDITOR="nvim"
 elif type vim >/dev/null 2>&1; then
   export EDITOR=vim
 fi

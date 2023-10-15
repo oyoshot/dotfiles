@@ -49,12 +49,6 @@ vim.o.winblend = 0
 -- vim.o.pumblend = 20
 vim.o.pumblend = 0
 vim.o.termguicolors = true
---vim.cmd [[
---  augroup LspHoverDetails
---    autocmd! * <buffer>
---    autocmd CursorHold * lua vim.lsp.buf.hover()
---  augroup END
---]]
 
 -- vim doc ja
 vim.o.helplang = 'ja,en'

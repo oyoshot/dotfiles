@@ -50,7 +50,7 @@ set -g window-status-activity-style default
 
 
 # Set inactive pane border color to grey
-set -g pane-border-style fg=grey
+#set -g pane-border-style fg=grey
 
 # Set active pane border color to cyan
 set -g pane-active-border-style fg=cyan

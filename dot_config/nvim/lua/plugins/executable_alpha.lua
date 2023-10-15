@@ -132,7 +132,7 @@ return {
     -- local greeting = getGreeting()
     local greetHeading = {
       type = "text",
-      val = { "今日も1日がんばるぞい！", "涼風青葉" },
+      val = { "今日も1日がんばるぞい！", --[["涼風青葉"]] },
       opts = {
         position = "center",
         hl = "String",

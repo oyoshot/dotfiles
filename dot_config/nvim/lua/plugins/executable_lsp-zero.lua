@@ -68,6 +68,13 @@ return {
           fields = { 'abbr', 'kind', 'menu' },
         },
       })
+
+      -- If you want insert `(` after select function or method item
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      cmp.event:on(
+        'confirm_done',
+        cmp_autopairs.on_confirm_done()
+      )
     end
   },
 
@@ -154,25 +161,6 @@ return {
       })
 
       require("lspconfig").pyright.setup({})
-      -- require 'lspconfig'.rust_analyzer.setup {
-      --   on_attach = on_attach, -- assuming you have an on_attach function
-      --   settings = {
-      --     ["rust-analyzer"] = {
-      --       assist = {
-      --         importMergeBehavior = "last",
-      --         importPrefix = "by_self",
-
-      --       },
-      --       cargo = {
-      --         loadOutDirsFromCheck = true
-      --       },
-      --       procMacro = {
-      --         enable = true
-      --       },
-      --     },
-      --     ["rust-analyzer.checkOnSave.command"] = "clippy"
-      --   }
-      -- }
 
       lsp.setup()
 

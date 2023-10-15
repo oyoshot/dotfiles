@@ -177,13 +177,18 @@ eval "$(pyenv init --path)"
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 
-eval "$(starship init zsh)"
+# Rust
+source "$HOME/.cargo/env"
 
+# Shell
+eval "$(starship init zsh)"
 
 # zoxide
 eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# User command
+export PATH="$HOME/.local/bin:$PATH"
 
 # Start tmux if it's not running
 if [ -z "$TMUX" ]; then
