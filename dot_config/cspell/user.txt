@@ -41,3 +41,5 @@ momiji
 folke
 goquery
 nums
+deepl
+repr
