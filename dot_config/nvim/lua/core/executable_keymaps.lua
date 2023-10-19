@@ -20,11 +20,11 @@ local opts = { noremap = true }
 --vim.keymap.set('n', ';', ':', opts)
 --vim.keymap.set('n', ':', ';', opts)
 
--- Move to the end of the line
-vim.keymap.set({ 'n', 'v' }, '<Leader>h', '^', opts)
-vim.keymap.set({ 'n', 'v' }, '<Leader>l', '$', opts)
-
 vim.keymap.set({ 'n', 'v' }, '<Leader>v', '<C-v>', opts)
+
+-- Move to the end of the line
+vim.keymap.set('n', '<Leader>h', '^', opts)
+vim.keymap.set('n', '<Leader>l', '$', opts)
 
 -- Split buffer
 vim.keymap.set('n', 'ss', ':split<Return><C-w>w', opts)
@@ -57,7 +57,8 @@ vim.keymap.set('i', '<C-k>', '<Up>', opts)
 vim.keymap.set('i', '<C-l>', '<Right>', opts)
 
 -- Visual Mode
-vim.keymap.set({'v', 'x'}, '<Leader>jj', '<ESC>', opts)
-vim.keymap.set('v', 'v', '$h', opts)
+vim.keymap.set({ 'v', 'x' }, 'v', '<ESC>', opts)
+vim.keymap.set({ 'v', 'x' }, '<Leader>h', '^', opts)
+vim.keymap.set({ 'v', 'x' }, '<Leader>l', '$h', opts)
 vim.keymap.set('v', '>', '>gv', opts)
 vim.keymap.set('v', '<', '<gv', opts)
