@@ -109,8 +109,6 @@ return {
           "dagger",
           "pyright",
           "rust_analyzer",
-          "html",
-          "tailwindcss",
         },
         handlers = {
           lsp.default_setup,
@@ -144,10 +142,8 @@ return {
           ['gopls'] = { 'go' },
           ['lua_ls'] = { 'lua' },
           ['cuelsp'] = { 'cue' },
-          ['null-ls'] = { 'python' },
           ['rust_analyzer'] = { 'rust' },
-          ['html'] = { 'html' },
-          ['tailwindcss'] = { 'css' },
+          ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
 
@@ -187,7 +183,7 @@ return {
           null_ls.builtins.diagnostics.flake8,
           null_ls.builtins.formatting.isort,
           null_ls.builtins.diagnostics.pylint,
-          null_ls.builtins.formatting.rustfmt,
+          null_ls.builtins.formatting.prettierd,
         }
       })
       -- See mason-null-ls.nvim's documentation for more details:
@@ -203,6 +199,7 @@ return {
           "black",
           "flake8",
           "pylint",
+          "prettierd",
         },
         automatic_installation = true,
       })
