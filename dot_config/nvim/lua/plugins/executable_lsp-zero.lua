@@ -109,6 +109,8 @@ return {
           "dagger",
           "pyright",
           "rust_analyzer",
+          "html",
+          "tailwindcss",
         },
         handlers = {
           lsp.default_setup,
@@ -143,7 +145,7 @@ return {
           ['lua_ls'] = { 'lua' },
           ['cuelsp'] = { 'cue' },
           ['rust_analyzer'] = { 'rust' },
-          ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
+          ['null'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
 
