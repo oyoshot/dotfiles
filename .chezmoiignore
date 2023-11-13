@@ -32,7 +32,8 @@ Library
 
 {{ if eq .chezmoi.os "windows" }}
 .asdf*
-
+.yabairc
+.skhdrc
 # .bashrc
 .zshrc
 .tmux
