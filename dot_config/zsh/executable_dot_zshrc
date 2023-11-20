@@ -136,6 +136,9 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   alias II='explorer.exe'
 fi
 
+# Homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
 # fpath
 fpath=(
   $ZDOTDIR/fpath(N-/)
@@ -145,6 +148,11 @@ fpath=(
 
   $fpath
 )
+
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
 
 # zsh-defer
 source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
@@ -158,6 +166,7 @@ zsh-defer source $ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh
 zsh-defer source $ZDOTDIR/plugins/syntax-highlighting/zsh-syntax-highlighting.zsh
 zsh-defer source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
+
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
@@ -167,10 +176,7 @@ if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
-autoload -Uz compinit && zsh-defer compinit
-
-# Homebrew
-export PATH="/opt/homebrew/bin:$PATH"
+autoload -Uz compinit && compinit
 
 # Python
 export PATH="$HOME/.pyenv/bin:$PATH"
