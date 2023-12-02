@@ -109,6 +109,7 @@ return {
           "dagger",
           "pyright",
           "rust_analyzer",
+          "jdtls"
         },
         handlers = {
           lsp.default_setup,
@@ -143,6 +144,7 @@ return {
           ['lua_ls'] = { 'lua' },
           ['cuelsp'] = { 'cue' },
           ['rust_analyzer'] = { 'rust' },
+          ['jdtls'] = { 'java' },
           ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
