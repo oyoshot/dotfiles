@@ -152,6 +152,8 @@ fpath=(
 if type brew &>/dev/null
 then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+  # Java
+  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 fi
 
 # zsh-defer
@@ -171,7 +173,6 @@ zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 autoload -Uz anyframe-init && anyframe-init
 
 ## load user .zshrc configuration file
-#
 if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi

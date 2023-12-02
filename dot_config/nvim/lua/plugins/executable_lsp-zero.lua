@@ -109,6 +109,7 @@ return {
           "dagger",
           "pyright",
           "rust_analyzer",
+          "jdtls",
           "html",
           "tailwindcss",
         },
@@ -145,7 +146,8 @@ return {
           ['lua_ls'] = { 'lua' },
           ['cuelsp'] = { 'cue' },
           ['rust_analyzer'] = { 'rust' },
-          ['null'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
+          ['jdtls'] = { 'java' },
+          ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
 
