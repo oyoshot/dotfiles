@@ -109,7 +109,9 @@ return {
           "dagger",
           "pyright",
           "rust_analyzer",
-          "jdtls"
+          "jdtls",
+          "html",
+          "tailwindcss",
         },
         handlers = {
           lsp.default_setup,
