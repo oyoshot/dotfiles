@@ -44,3 +44,8 @@ Library
 .config/sheldon
 .config/zellij
 {{ end }}
+
+{{ if eq .chezmoi.os "linux" }}
+.yabairc
+.skhdrc
+{{ end }}
