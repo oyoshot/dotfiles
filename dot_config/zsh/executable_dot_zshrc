@@ -154,6 +154,9 @@ then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   # Java
   export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+  # rip
+  export GRAVEYARD="~/.Trash"
 fi
 
 # zsh-defer
