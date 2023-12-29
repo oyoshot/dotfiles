@@ -110,8 +110,7 @@ return {
           "pyright",
           "rust_analyzer",
           "jdtls",
-          "html",
-          "tailwindcss",
+          "clangd",
         },
         handlers = {
           lsp.default_setup,
@@ -147,6 +146,7 @@ return {
           ['cuelsp'] = { 'cue' },
           ['rust_analyzer'] = { 'rust' },
           ['jdtls'] = { 'java' },
+          ['clangd'] = { 'c', 'c++' },
           ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
