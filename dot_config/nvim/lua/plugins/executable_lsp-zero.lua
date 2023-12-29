@@ -111,6 +111,7 @@ return {
           "rust_analyzer",
           "jdtls",
           "clangd",
+          "solargraph",
         },
         handlers = {
           lsp.default_setup,
@@ -147,6 +148,7 @@ return {
           ['rust_analyzer'] = { 'rust' },
           ['jdtls'] = { 'java' },
           ['clangd'] = { 'c', 'c++' },
+          ['solargraph'] = { 'ruby' },
           ['null-ls'] = { 'python', 'javascript', 'typescript', 'html', 'css' },
         }
       })
