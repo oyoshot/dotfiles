@@ -186,6 +186,9 @@ autoload -Uz compinit && compinit
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init --path)"
 
+# Ruby
+eval "$(rbenv init - zsh)"
+
 # Node
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
