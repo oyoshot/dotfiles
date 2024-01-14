@@ -63,21 +63,6 @@ function _ghq-fzf() {
 
 zle -N _ghq-fzf
 
-# AWS クレデンシャル
-awsc () {
-  read x y <<< $( awk -F',' 'END{print $1, $2}' $1 )
-
-  export AWS_ACCESS_KEY_ID=$x
-  export AWS_SECRET_ACCESS_KEY=$y
-
-  echo "$ aws s3 ls"
-  aws s3 ls
-  echo ""
-
-  echo "$ aws sts get-caller-identity"
-  aws sts get-caller-identity
-}
-
 ########################################
 # エイリアス
 
@@ -143,6 +128,7 @@ export PATH="/opt/homebrew/bin:$PATH"
 fpath=(
   $ZDOTDIR/fpath(N-/)
   $ZDOTDIR/plugins/zsh-completions/src(N-/)
+  $ZDOTDIR/zfunc(N-/)
   $ZDOTDIR/plugins/anyframe(N-/)
   ~/.asdf/completions(N-/)
 
@@ -152,7 +138,6 @@ fpath=(
 if type brew &>/dev/null
 then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
   # Java
   export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 

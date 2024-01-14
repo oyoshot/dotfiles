@@ -5,19 +5,18 @@ setopt no_global_rcs
 if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
-
 {{ end -}}
 
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=${HOME}/.config}
 export ZDOTDIR=${HOME}/.config/zsh
 
 ## Common Environment variable configuration
+export LANG=en_US.UTF-8
 case ${UID} in
 0)
     LANG=C
     ;;
 esac
-
 ## Environment variable configuration
 {{ if lookPath "nvim" -}}
 export EDITOR="nvim"
@@ -27,7 +26,6 @@ if type nvim >/dev/null 2>&1; then
 elif type vim >/dev/null 2>&1; then
   export EDITOR=vim
 fi
-
 {{ end -}}
 
 path=(
@@ -36,17 +34,14 @@ path=(
   ${HOME}/.local/bin(N-/)
 )
 
-
 {{ if lookPath "brew" -}}
   {{ output "brew" "shellenv" }}
 {{ else -}}
   {{ if (eq .chezmoi.os "darwin") -}}
 if [[ -x /opt/homebrew/bin/brew ]] then
   eval "$(/opt/homebrew/bin/brew shellenv)"
-
 fi
   {{ end -}}
-
   {{ if (eq .chezmoi.os "linux") -}}
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -54,16 +49,8 @@ fi
   {{ end -}}
 {{ end -}}
 
-{{ if eq .chezmoi.hostname "deflisnohatenaMBP" -}}
-
-export path=(~/.plenv/bin $path);
-eval "$(plenv init -)"
-{{ end -}}
-
-
 {{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
-
 {{ end -}}
 
 {{ if stat "~/.1password/agent.sock" -}}
