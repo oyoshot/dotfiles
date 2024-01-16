@@ -49,7 +49,6 @@ SAVEHIST=1000000
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
 bindkey '^R' history-incremental-pattern-search-backward
 
-# peco
 bindkey '^[' _ghq-fzf
 function _ghq-fzf() {
   local src=$(ghq list --full-path --vcs git | fzf)
@@ -60,8 +59,14 @@ function _ghq-fzf() {
 
   zle -R -c
 }
-
 zle -N _ghq-fzf
+
+function awsc() {
+  local src=$(aws-vault list --profiles | fzf)
+  if [ -n "$src" ]; then
+    aws-vault exec -n $src
+  fi
+}
 
 ########################################
 # エイリアス
@@ -169,17 +174,6 @@ fi
 
 autoload -Uz compinit && compinit
 
-# Python
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init --path)"
-
-# Ruby
-eval "$(rbenv init - zsh)"
-
-# Node
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
-
 # Rust
 source "$HOME/.cargo/env"
 
@@ -190,8 +184,8 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# User command
-export PATH="$HOME/.local/bin:$PATH"
+# mise
+eval "$(mise activate zsh)"
 
 # Start tmux if it's not running
 if [ -z "$TMUX" ]; then
