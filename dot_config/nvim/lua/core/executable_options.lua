@@ -12,12 +12,12 @@ vim.o.hlsearch = true
 vim.wo.number = true
 
 -- Enable mouse mode
-vim.o.mouse = 'a'
+vim.o.mouse = "a"
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
+vim.o.clipboard = "unnamedplus"
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -33,7 +33,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
+vim.wo.signcolumn = "yes"
 
 -- https://vim-jp.org/vimdoc-ja/options.html#'ambiwidth
 vim.o.ambiwidth = "single"
@@ -51,12 +51,12 @@ vim.o.pumblend = 0
 vim.o.termguicolors = true
 
 -- vim doc ja
-vim.o.helplang = 'ja,en'
+vim.o.helplang = "ja,en"
 
 -- tab
 vim.o.expandtab = true
-vim.o.tabstop = 2
-vim.o.shiftwidth = 2
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
 
 -- other
 vim.o.autoread = true
