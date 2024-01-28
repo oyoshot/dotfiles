@@ -51,7 +51,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 bindkey '^[' _ghq-fzf
 function _ghq-fzf() {
-  local src=$(ghq list --full-path --vcs git | fzf)
+  local src=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90% )
   if [ -n "$src" ]; then
     BUFFER="cd \"$src\""
     zle accept-line
@@ -62,9 +62,57 @@ function _ghq-fzf() {
 zle -N _ghq-fzf
 
 function awsc() {
-  local src=$(aws-vault list --profiles | fzf)
+  local src=$(aws-vault list --profiles | fzf-tmux -p 90%,90%)
   if [ -n "$src" ]; then
     aws-vault exec -n $src
+  fi
+}
+
+function cdd() {
+  local directory=$(
+    fd -t d \
+    | fzf-tmux -p 90%,90%
+  )
+  if [ -n "$directory" ]; then
+      cd $directory
+  fi
+}
+
+function gitc() {
+  local branch=$(
+    git branch -a \
+    | fzf-tmux \
+      -p 90%,90% \
+      --ansi \
+      --exit-0 \
+      --layout=reverse \
+      --info=hidden \
+      --no-multi \
+      --preview-window="right,65%" \
+      --preview="echo {} | tr -d ' *' | xargs git lg --color=always" \
+    | head -n 1 \
+    | perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
+  )
+  if [ -n "$branch" ]; then
+    git switch $branch
+  fi
+}
+
+function gitl() {
+  local commit_id=$(
+    git lg --color=always \
+    | fzf-tmux \
+      -p 90%,90% \
+      --ansi \
+      --no-sort \
+      --reverse \
+      --tiebreak=index \
+      --preview-window="right,70%" \
+      --preview="echo {} | grep -o '[a-f0-9]\{7\}' | xargs git show --color=always" \
+    | grep -o '[a-f0-9]\{7\}'
+  )
+  if [ -n "$commit_id" ]; then
+      git show $commit_id
   fi
 }
 
