@@ -41,13 +41,11 @@ set -ga window-status-current-format "#I: #{?#{m:#W,zsh},#(basename #{pane_curre
 set -ga window-status-current-format " #[fg=#3261ab,bg=#d6deeb]"
 set -g window-status-separator ""
 
-
 set -g window-status-style fg=#142744,bg=#d6deeb
 set -g window-status-current-style fg=#d6deeb,bg=#3261ab
 set -g window-status-bell-style default
 
 set -g window-status-activity-style default
-
 
 # Set inactive pane border color to grey
 #set -g pane-border-style fg=grey
