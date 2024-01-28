@@ -1,0 +1,115 @@
+[colors.bright]
+black = "0x676767"
+blue = "0x6871FF"
+cyan = "0x5FFDFF"
+green = "0x5FF967"
+magenta = "0xFF76FF"
+red = "0xFF6D67"
+white = "0xFEFFFF"
+yellow = "0xFEFB67"
+
+[colors.cursor]
+cursor = "0xc7c7c7"
+text = "0xFEFFFF"
+
+[colors.normal]
+black = "0x000000"
+blue = "0x9BB8DC"
+cyan = "0x00C5C7"
+green = "0x83AC8E"
+magenta = "0xBAACE2"
+red = "0xE68E8E"
+white = "0xC7C7C7"
+yellow = "0xF5B78A"
+
+[colors.primary]
+background = "0x16171E"
+foreground = "0xD1D2D3"
+
+[cursor]
+thickness = 0.18
+
+[font]
+size = 17
+
+[font.bold]
+family = "UDEV Gothic NF"
+style = "Bold"
+
+[font.bold_italic]
+family = "Hack Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "Hack Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+family = "Hack Nerd Font Mono"
+style = "Regular"
+
+[[keyboard.bindings]]
+key = "Comma"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["-c", "open ~/.config/alacritty/alacritty.yml"]
+program = "sh"
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "N"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = " "
+key = "Space"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u0015"
+key = "Back"
+mods = "Super"
+
+[[keyboard.bindings]]
+chars = "\u001Bb"
+key = "Left"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bf"
+key = "Right"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001BOH"
+key = "Left"
+mode = "AppCursor"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001BOF"
+key = "Right"
+mode = "AppCursor"
+mods = "Command"
+
+[mouse]
+hide_when_typing = true
+
+[scrolling]
+history = 10000
+
+[selection]
+save_to_clipboard = true
+
+[shell]
+args = ["-l", "-c", "/opt/homebrew/bin/tmux a -t 0 || /opt/homebrew/bin/tmux -u"]
+program = "/bin/zsh"
+
+[window]
+dynamic_padding = true
+opacity = 0.85
+
+[window.padding]
+x = 8
+y = 4
