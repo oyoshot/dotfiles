@@ -17,6 +17,7 @@ case ${UID} in
     LANG=C
     ;;
 esac
+
 ## Environment variable configuration
 {{ if lookPath "nvim" -}}
 export EDITOR="nvim"
@@ -36,17 +37,10 @@ path=(
 
 {{ if lookPath "brew" -}}
   {{ output "brew" "shellenv" }}
-{{ else -}}
-  {{ if (eq .chezmoi.os "darwin") -}}
-if [[ -x /opt/homebrew/bin/brew ]] then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-  {{ end -}}
-  {{ if (eq .chezmoi.os "linux") -}}
-if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-  {{ end -}}
+{{ end -}}
+
+{{ if (eq .chezmoi.os "linux") -}}
+export GPG_TTY=$TTY
 {{ end -}}
 
 {{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
