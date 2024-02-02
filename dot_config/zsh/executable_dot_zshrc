@@ -235,6 +235,9 @@ eval "$(zoxide init zsh)"
 # mise
 eval "$(mise activate zsh)"
 
+# GPG
+export GPG_TTY=$TTY
+
 # Start tmux if it's not running
 if [ -z "$TMUX" ]; then
   cd
