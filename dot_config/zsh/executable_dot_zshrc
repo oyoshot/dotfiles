@@ -1,55 +1,48 @@
 # in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
 [ -r /etc/zshrc ] && . /etc/zshrc
 
-########################################
-# オプション
-# 日本語ファイル名を表示可能にする
-setopt print_eight_bit
+path=(
+    $HOME/.local/bin(N-/)
+    $CARGO_HOME/bin(N-/)
+    $GOPATH/bin(N-/)
+    $DENO_INSTALL/bin(N-/)
+    $GEM_HOME/bin(N-/)
+    $GHRED_DATA_HOME/bin(N-/)
+    $path
+)
 
-# beep を無効にする
-setopt no_beep
-
-# フローコントロールを無効にする
-setopt no_flow_control
-
-# Ctrl+Dでzshを終了しない
-setopt ignore_eof
-
-# '#' 以降をコメントとして扱う
-setopt interactive_comments
-
-# ディレクトリ名だけでcdする
-setopt auto_cd
-
-# cd したら自動的にpushdする
-setopt auto_pushd
-
-# 重複したディレクトリを追加しない
-setopt pushd_ignore_dups
-
-# 同時に起動したzshの間でヒストリを共有する
-setopt share_history
-
-# 同じコマンドをヒストリに残さない
-setopt hist_ignore_all_dups
-
-# スペースから始まるコマンド行はヒストリに残さない
-setopt hist_ignore_space
-
-# ヒストリに保存するときに余分なスペースを削除する
-setopt hist_reduce_blanks
-
-# 高機能なワイルドカード展開を使用する
-setopt extended_glob
+fpath=(
+  $ZDOTDIR/fpath(N-/)
+  $ZDOTDIR/plugins/zsh-completions/src(N-/)
+  $ZDOTDIR/plugins/anyframe(N-/)
+  $ZDOTDIR/zfunc(N-/)
+  ~/.asdf/completions(N-/)
+  $GHRED_DATA_HOME/completions(N-/)
+  $XDG_DATA_HOME/zsh/completions(N-/)
+  $fpath
+)
 
 # ヒストリの設定
-HISTFILE=~/.zsh_history
+export HISTFILE="$XDG_STATE_HOME/zsh_history"
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-########################################
-# キーバインド
+# オプション
+setopt print_eight_bit # 日本語ファイル名を表示可能にする
+setopt no_beep # beep を無効にする
+setopt no_flow_control # フローコントロールを無効にする
+setopt ignore_eof # Ctrl+Dでzshを終了しない
+setopt interactive_comments # '#' 以降をコメントとして扱う
+setopt auto_cd # ディレクトリ名だけでcdする
+setopt auto_pushd # cd したら自動的にpushdする
+setopt pushd_ignore_dups # 重複したディレクトリを追加しない
+setopt share_history # 同時に起動したzshの間でヒストリを共有する
+setopt hist_ignore_all_dups # 同じコマンドをヒストリに残さない
+setopt hist_ignore_space # スペースから始まるコマンド行はヒストリに残さない
+setopt hist_reduce_blanks # ヒストリに保存するときに余分なスペースを削除する
+setopt extended_glob # 高機能なワイルドカード展開を使用する
 
+# キーバインド
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
 bindkey '^R' history-incremental-pattern-search-backward
 
@@ -67,9 +60,7 @@ zle -N _ghq-fzf
 
 function awsc() {
   local src=$(aws-vault list --profiles | fzf-tmux -p 90%,90%)
-  if [ -n "$src" ]; then
-    aws-vault exec -n $src
-  fi
+  [ -n "$src" ] && aws-vault exec -n $src
 }
 
 function cdd() {
@@ -77,9 +68,7 @@ function cdd() {
     fd -t d \
     | fzf-tmux -p 90%,90%
   )
-  if [ -n "$directory" ]; then
-      cd $directory
-  fi
+  [ -n "$directory" ] && cd $directory
 }
 
 function gitc() {
@@ -97,9 +86,7 @@ function gitc() {
     | head -n 1 \
     | perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
   )
-  if [ -n "$branch" ]; then
-    git switch $branch
-  fi
+  [ -n "$branch" ] && git switch $branch
 }
 
 function gitl() {
@@ -115,30 +102,22 @@ function gitl() {
       --preview="echo {} | grep -o '[a-f0-9]\{7\}' | xargs git show --color=always" \
     | grep -o '[a-f0-9]\{7\}'
   )
-  if [ -n "$commit_id" ]; then
-      git show $commit_id
-  fi
+  [ -n "$commit_id" ] && git show $commit_id
 }
 
-########################################
-# エイリアス
+## エイリアス
 
-# nvim
-alias v='nvim'
-alias n='nvim'
-alias vi='n'
+(( ${+commands[nvim]} )) && alias v='nvim'
 
-alias ls='eza --icons --group-directories-first'
-alias l='ls -l --header --git --group'
-alias la='ls -a'
-alias lt='ls --tree'
-alias lla='ls -la --header --git --group'
+if (( ${+commands[eza]} )); then
+    alias ls='eza --icons --group-directories-first'
+    alias l='ls -l --header --git --group'
+    alias la='ls -a'
+    alias lt='ls --tree'
+    alias lla='ls -la --header --git --group'
+fi
 
-alias cat='bat --theme ansi'
-
-#alias rm='rm -i'
-#alias cp='cp -i'
-#alias mv='mv -i'
+(( ${+commands[bat]} )) && alias cat='bat --theme ansi'
 
 alias mkdir='mkdir -p'
 
@@ -178,22 +157,57 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   alias II='explorer.exe'
 fi
 
-fpath=(
-  $ZDOTDIR/fpath(N-/)
-  $ZDOTDIR/plugins/zsh-completions/src(N-/)
-  $ZDOTDIR/plugins/anyframe(N-/)
-  $ZDOTDIR/zfunc(N-/)
-  ~/.asdf/completions(N-/)
+# less
+export LESSHISTFILE='-'
 
-  $fpath
-)
+# Node.js
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
 
-if type brew &>/dev/null
-then
+# npm
+export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
+export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
+export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
+
+# irb
+export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
+
+# Python
+export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/startup.py"
+
+# pylint
+export PYLINTHOME="$XDG_CACHE_HOME/pylint"
+
+# SQLite3
+export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite_history"
+
+# MySQL
+export MYSQL_HISTFILE="$XDG_STATE_HOME/mysql_history"
+
+# PostgreSQL
+export PSQL_HISTORY="$XDG_STATE_HOME/psql_history"
+
+# ripgrep
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
+
+# tealdeer
+export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
+
+# GPG
+export GPG_TTY=$TTY
+
+# Starship
+eval "$(starship init zsh)"
+
+# Zoxide
+eval "$(zoxide init zsh)"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Mise
+eval "$(mise activate zsh)"
+
+if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-  # Java
-  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-
   # rip
   export GRAVEYARD="~/.Trash"
 fi
@@ -215,31 +229,14 @@ zsh-defer source $XDG_CONFIG_HOME/op/plugins.sh
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
-## load user .zshrc configuration file
+autoload -Uz compinit && compinit
+
+# load user .zshrc configuration file
 if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
-autoload -Uz compinit && compinit
-
-# Rust
-source "$CARGO_HOME/env"
-
-# Shell
-eval "$(starship init zsh)"
-
-# zoxide
-eval "$(zoxide init zsh)"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# mise
-eval "$(mise activate zsh)"
-
-# GPG
-export GPG_TTY=$TTY
-
 # Start tmux if it's not running
 if [ -z "$TMUX" ]; then
-  cd
-  exec tmux
+    tmux new-session -s $(whoami) -d
 fi
