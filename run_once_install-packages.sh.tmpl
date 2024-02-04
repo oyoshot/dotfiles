@@ -4,8 +4,9 @@
 if ! type rustup > /dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
+rustup component add rust-analyzer
 
-# Install cargo related tools
+# Install cargo
 if ! type cargo-expand > /dev/null 2>&1; then
   cargo install cargo-expand
 fi
@@ -31,12 +32,13 @@ if ! type cargo-compete > /dev/null 2>&1; then
   cargo install cargo-compete
 fi
 
-# Install tools managed by homebrew
+# Install Homebrew formula
 {{ if eq .chezmoi.os "darwin" }}
 if ! type xcode-select > /dev/null 2>&1; then
   xcode-select --install
 fi
-brew bundle --global
+brew bundle --file .config/homebrew/Brewfile
+brew autoremove
 {{ end }}
 
 # Install mise dependencies

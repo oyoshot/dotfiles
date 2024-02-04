@@ -6,7 +6,6 @@ case ${UID} in
     ;;
 esac
 
-{{ if (eq .chezmoi.os "darwin") -}}
 export PATH
 export MANPATH
 # -U: keep only the first occurrence of each duplicated value
@@ -24,7 +23,6 @@ unsetopt GLOBAL_RCS
 if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
-{{ end -}}
 
 path=(
   ${HOME}/.local/bin(N-/)
@@ -42,27 +40,39 @@ manpath=(
     ${manpath}
 )
 
-{{ if lookPath "brew" -}}
-  {{ output "brew" "shellenv" }}
-{{ end -}}
-
-
 # XDG
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.cache"
 
+{{ if (eq .chezmoi.os "darwin") -}}
+# Homebrew
+{{ output "brew" "shellenv" }}
+export HOMEBREW_BUNDLE_FILE_GLOBAL="$XDG_CONFIG_HOME/homebrew/Brewfile"
+export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/homebrew/Brewfile"
+
+{{ end -}}
+
 # zsh
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
-# Environment variable configuration
 {{ if lookPath "nvim" -}}
 export EDITOR="nvim"
+
 {{ else -}}
 export EDITOR=vim
+
 {{ end -}}
 
+{{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+
+{{ end -}}
+{{ if stat "~/.1password/agent.sock" -}}
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+
+{{ end -}}
 
 # Rust
 export RUST_BACKTRACE=1
@@ -91,12 +101,3 @@ export SHELDON_CONFIG_DIR="$ZDOTDIR"
 # gh-red
 export GHRED_CONFIG_HOME="$XDG_CONFIG_HOME/gh-red"
 export GHRED_DATA_HOME="$XDG_DATA_HOME/gh-red"
-
-{{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
-export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
-{{ end -}}
-
-
-{{ if stat "~/.1password/agent.sock" -}}
-export SSH_AUTH_SOCK=~/.1password/agent.sock
-{{ end -}}
