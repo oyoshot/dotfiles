@@ -1,3 +1,6 @@
+# in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
+[ -r /etc/zshrc ] && . /etc/zshrc
+
 ########################################
 # オプション
 # 日本語ファイル名を表示可能にする
@@ -20,6 +23,7 @@ setopt auto_cd
 
 # cd したら自動的にpushdする
 setopt auto_pushd
+
 # 重複したディレクトリを追加しない
 setopt pushd_ignore_dups
 
@@ -124,7 +128,7 @@ alias v='nvim'
 alias n='nvim'
 alias vi='n'
 
-alias ls='eza --icons'
+alias ls='eza --icons --group-directories-first'
 alias l='ls -l --header --git --group'
 alias la='ls -a'
 alias lt='ls --tree'
@@ -174,15 +178,11 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   alias II='explorer.exe'
 fi
 
-# Homebrew
-export PATH="/opt/homebrew/bin:$PATH"
-
-# fpath
 fpath=(
   $ZDOTDIR/fpath(N-/)
   $ZDOTDIR/plugins/zsh-completions/src(N-/)
-  $ZDOTDIR/zfunc(N-/)
   $ZDOTDIR/plugins/anyframe(N-/)
+  $ZDOTDIR/zfunc(N-/)
   ~/.asdf/completions(N-/)
 
   $fpath
@@ -223,7 +223,7 @@ fi
 autoload -Uz compinit && compinit
 
 # Rust
-source "$HOME/.cargo/env"
+source "$CARGO_HOME/env"
 
 # Shell
 eval "$(starship init zsh)"
