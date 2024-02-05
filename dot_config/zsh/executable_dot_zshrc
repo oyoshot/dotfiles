@@ -236,7 +236,7 @@ if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
-# Start tmux if it's not running
-if [ -z "$TMUX" ]; then
-    tmux new-session -s $(whoami) -d
+if [[ ! -n $TMUX ]]; then
+    cd
+    tmux new-session && exit
 fi
