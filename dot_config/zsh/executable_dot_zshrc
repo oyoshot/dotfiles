@@ -236,7 +236,7 @@ if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
-if [[ ! -n $TMUX ]]; then
+if [[ ! -n $TMUX  ]]; then
     cd
-    tmux new-session && exit
+    exec tmux new -s $(whoami) -t -d
 fi
