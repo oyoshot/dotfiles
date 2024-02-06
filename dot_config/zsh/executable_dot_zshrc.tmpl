@@ -195,6 +195,7 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 
 # GPG
 export GPG_TTY=$TTY
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 # Starship
 eval "$(starship init zsh)"
@@ -236,7 +237,12 @@ if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
+{{ if eq .chezmoi.os "linux" }}
+{{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
 # Start tmux if it's not running
 if [ -z "$TMUX" ]; then
-    tmux new-session -s $(whoami) -d
+  cd
+  exec tmux
 fi
+{{   end }}
+{{ end }}
