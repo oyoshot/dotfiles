@@ -6,8 +6,6 @@ theme.png
 .editorconfig
 *.md
 
-Brewfile
-Brewfile.lock.json
 scoop.json
 bootstrap.sh
 script_*
@@ -15,25 +13,26 @@ script_*
 # 環境ごとの差異が大きいので、備忘録として入れている。なので実体ではない。
 .config/windows_terminal
 
-# arch linuxのインストールパッケージリスト
-arch.txt
-arch_aur.txt
-
 {{ if ne .chezmoi.os "windows" }}
 Documents
 AppData
-
 .config/powershell/*.d
 {{ end }}
 
 {{ if ne .chezmoi.os "darwin" }}
 Library
+.config/homebrew
+.config/yabai
+.config/skhd
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+arch.txt
+arch_aur.txt
 {{ end }}
 
 {{ if eq .chezmoi.os "windows" }}
 .asdf*
-.yabairc
-.skhdrc
 # .bashrc
 .zshrc
 .tmux
@@ -46,6 +45,4 @@ Library
 {{ end }}
 
 {{ if eq .chezmoi.os "linux" }}
-.yabairc
-.skhdrc
 {{ end }}
