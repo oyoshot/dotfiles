@@ -44,3 +44,6 @@ nums
 deepl
 repr
 actix
+cicd
+toset
+deno
