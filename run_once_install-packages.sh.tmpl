@@ -31,6 +31,9 @@ fi
 if ! type cargo-compete > /dev/null 2>&1; then
   cargo install cargo-compete
 fi
+if ! type cargo-install-update > /dev/null 2>&1; then
+  cargo install cargo-update
+fi
 
 # Install Homebrew formula
 {{ if eq .chezmoi.os "darwin" }}
