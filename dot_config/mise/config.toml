@@ -1,7 +1,7 @@
 [tools]
 python = "latest"
 ruby = "latest"
-terraform = "latest"
+terraform = ["1.0.11", "latest"]
 java = "latest"
 node = "latest"
 deno = "latest"
@@ -14,3 +14,6 @@ erlang = "latest"
 bun = "latest"
 rye = "latest"
 go = "latest"
+
+[settings]
+legacy_version_file_disable_tools = ["terraform"]
