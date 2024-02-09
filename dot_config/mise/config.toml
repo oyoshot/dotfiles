@@ -1,7 +1,7 @@
 [tools]
 python = "latest"
 ruby = "latest"
-terraform = "latest"
+terraform = ["1.0.11", "latest"]
 java = "latest"
 node = "latest"
 deno = "latest"
