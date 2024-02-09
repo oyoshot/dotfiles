@@ -1,5 +1,6 @@
 README.md
 theme.png
+images
 
 .vscode
 .github
@@ -10,7 +11,6 @@ scoop.json
 bootstrap.sh
 script_*
 
-# 環境ごとの差異が大きいので、備忘録として入れている。なので実体ではない。
 .config/windows_terminal
 
 {{ if ne .chezmoi.os "windows" }}
@@ -26,9 +26,8 @@ Library
 .config/skhd
 {{ end }}
 
-{{ if ne .chezmoi.os "linux" }}
-arch.txt
-arch_aur.txt
+{{ if ne .chezmoi.osRelease.id "arch" }}
+.config/yay
 {{ end }}
 
 {{ if eq .chezmoi.os "windows" }}

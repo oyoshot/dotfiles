@@ -1,10 +1,12 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Install Rust
 if ! type rustup > /dev/null 2>&1; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
 rustup component add rust-analyzer
+
+source ~/.zshenv
 
 # Install cargo
 if ! type cargo-expand > /dev/null 2>&1; then
@@ -31,19 +33,3 @@ fi
 if ! type cargo-compete > /dev/null 2>&1; then
   cargo install cargo-compete
 fi
-
-# Install Homebrew formula
-{{ if eq .chezmoi.os "darwin" }}
-if ! type xcode-select > /dev/null 2>&1; then
-  xcode-select --install
-fi
-brew bundle --file .config/homebrew/Brewfile
-brew autoremove
-{{ end }}
-
-# Install mise dependencies
-if type mise > /dev/null 2>&1; then
-  mise install
-fi
-
-exit 0
