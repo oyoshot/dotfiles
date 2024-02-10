@@ -15,8 +15,10 @@ ghq
 git
 git-delta
 gnupg
+go
 hyperfine
 nvim
+luarocks
 mise
 pinentry
 podman
