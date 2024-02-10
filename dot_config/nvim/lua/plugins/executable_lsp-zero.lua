@@ -190,6 +190,7 @@ return {
 					"jdtls",
 					"clangd",
 					"solargraph",
+					"bashls",
 				},
 				handlers = {
 					lsp_zero.default_setup,
@@ -242,6 +243,17 @@ return {
 			})
 
 			require("lspconfig").pyright.setup({})
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "sh", "zsh" },
+				callback = function()
+					vim.lsp.start({
+						name = "bash-language-server",
+						cmd = { "bash-language-server", "start" },
+					})
+					-- 頑張って shfmt するかもしれない
+				end,
+			})
 
 			lsp_zero.setup()
 
