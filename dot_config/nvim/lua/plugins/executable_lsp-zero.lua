@@ -245,7 +245,7 @@ return {
 			require("lspconfig").pyright.setup({})
 
 			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "sh", "zsh" },
+				pattern = { "sh", "zsh", "template" },
 				callback = function()
 					vim.lsp.start({
 						name = "bash-language-server",
