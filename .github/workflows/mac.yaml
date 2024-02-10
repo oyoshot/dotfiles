@@ -5,9 +5,9 @@ on:
     branches:
       - device/mac
 
-  pull_request_target:
-    branches:
-      - main
+  pull_request:
+    branches-ignore:
+      - device/mac
 
 jobs:
   dotfiles:

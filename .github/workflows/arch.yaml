@@ -5,9 +5,9 @@ on:
     branches:
       - device/windows
 
-  pull_request_target:
-    branches:
-      - main
+  pull_request:
+    branches-ignore:
+      - device/windows
 
 jobs:
   build:
