@@ -1,8 +1,13 @@
-name: build
+name: Build the Mac
 
 on:
   push:
-    branches: [device/mac]
+    branches:
+      - device/mac
+
+  pull_request_target:
+    branches:
+      - main
 
 jobs:
   dotfiles:
@@ -16,7 +21,4 @@ jobs:
       - name: Install dotfiles
         run: |
           brew upgrade
-
-          sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
-
-          brew uninstall --force $(brew list)
+          /bin/zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .

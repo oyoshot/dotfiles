@@ -26,7 +26,7 @@ Library
 .config/skhd
 {{ end }}
 
-{{ if ne .chezmoi.osRelease.id "arch" }}
+{{ if (or (ne .chezmoi.os "linux") (ne .chezmoi.osRelease.id "arch")) }}
 .config/yay
 {{ end }}
 
@@ -41,7 +41,4 @@ Library
 .config/zsh
 .config/sheldon
 .config/zellij
-{{ end }}
-
-{{ if eq .chezmoi.os "linux" }}
 {{ end }}

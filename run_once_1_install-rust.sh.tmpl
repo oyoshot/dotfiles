@@ -4,9 +4,9 @@
 if ! type rustup > /dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
-rustup component add rust-analyzer
+rustup default stable && rustup component add rust-analyzer
 
-source ~/.zshenv
+source ~/.zshenv && source ~/.zshrc
 
 # Install cargo
 if ! type cargo-expand > /dev/null 2>&1; then
