@@ -4,7 +4,9 @@
 if ! type rustup > /dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
-rustup default stable && rustup component add rust-analyzer
+rustup default stable \
+&& rustup component add rust-analyzer \
+&& rustup component add llvm-tools-preview
 
 source ~/.zshenv && source ~/.zshrc
 
@@ -35,4 +37,7 @@ if ! type cargo-compete > /dev/null 2>&1; then
 fi
 if ! type cargo-install-update > /dev/null 2>&1; then
   cargo install cargo-update
+fi
+if ! type cargo-llvm-cov > /dev/null 2>&1; then
+  cargo +stable install cargo-llvm-cov --locked
 fi
