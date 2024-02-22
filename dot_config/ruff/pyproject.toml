@@ -1,0 +1,9 @@
+[tool.ruff]
+ignore = []
+
+select = [
+    "ALL"
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"
