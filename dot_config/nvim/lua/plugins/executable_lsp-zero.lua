@@ -185,12 +185,13 @@ return {
 					"tsserver",
 					"yamlls",
 					"dagger",
-					"pyright",
 					-- "rust_analyzer",
 					"jdtls",
 					"clangd",
 					"solargraph",
 					"bashls",
+					--"ruff_lsp",
+					"pyright",
 				},
 				handlers = {
 					lsp_zero.default_setup,
@@ -242,7 +243,34 @@ return {
 				end,
 			})
 
-			require("lspconfig").pyright.setup({})
+			require("lspconfig").pyright.setup({
+				-- on_attach = on_attach,
+				-- settings = {
+				-- 	pyright = {
+				-- 		-- Using Ruff's import organizer
+				-- 		disableOrganizeImports = true,
+				-- 	},
+				-- },
+			})
+
+			-- require("lspconfig").ruff_lsp.setup({
+			-- 	init_options = {
+			-- 		settings = {
+			-- 			format = {
+			-- 				args = {},
+			-- 			},
+			-- 			lint = {
+			-- 				args = {},
+			-- 			},
+			-- 		},
+			-- 	},
+			-- 	on_attach = function(client, bufnr)
+			-- 		if client.name == "ruff_lsp" then
+			-- 			-- Disable hover in favor of Pyright
+			-- 			client.server_capabilities.hoverProvider = false
+			-- 		end
+			-- 	end,
+			-- })
 
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = { "sh", "zsh", "template" },
@@ -272,6 +300,12 @@ return {
 						-- 起動時に設定ファイル読み込み
 						extra_args = { "--config", "~/.config/cspell/cspell.json" },
 					}),
+					null_ls.builtins.diagnostics.ruff.with({
+						extra_args = { "--config", vim.fn.expand("~/.config/ruff/pyproject.toml") },
+					}),
+					null_ls.builtins.formatting.ruff.with({
+						extra_args = { "--config", vim.fn.expand("~/.config/ruff/pyproject.toml") },
+					}),
 				},
 			})
 
@@ -285,9 +319,6 @@ return {
 					"stylua",
 					"gofumpt",
 					"golangci_lint",
-					"black",
-					"flake8",
-					"pylint",
 					"prettierd",
 				},
 				automatic_installation = true,
