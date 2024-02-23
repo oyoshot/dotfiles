@@ -63,3 +63,6 @@ vim.o.autoread = true
 vim.o.incsearch = true
 vim.o.autoindent = true
 vim.o.laststatus = 2
+
+-- Prepend mise shims to PATH
+vim.env.PATH = vim.env.HOME .. "/.local/share/mise/shims:" .. vim.env.PATH

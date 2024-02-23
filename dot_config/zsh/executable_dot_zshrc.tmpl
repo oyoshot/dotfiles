@@ -199,14 +199,14 @@ export GPG_TTY=$TTY
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 # Starship
-eval "$(starship init zsh)"
+(( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
 # Zoxide
-eval "$(zoxide init zsh)"
+(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Mise
-eval "$(mise activate zsh)"
+(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
 
 if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
