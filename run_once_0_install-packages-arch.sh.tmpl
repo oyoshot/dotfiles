@@ -1,7 +1,8 @@
 #!/bin/zsh
 
 # Install packages on Arch
-{{ if eq .chezmoi.osRelease.idLike "arch" }}
+{{ if eq .chezmoi.os "linux" }}
+{{ if eq .chezmoi.osRelease.id "arch" }}
 sudo pacman -Syu --noconfirm git binutils fakeroot make gcc base base-devel
 if ! type yay > /dev/null 2>&1; then
     git clone https://aur.archlinux.org/yay.git
@@ -12,4 +13,5 @@ if ! type yay > /dev/null 2>&1; then
 fi
 yay -S --needed --noconfirm - < .config/yay/extra-packeges
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
+{{ end }}
 {{ end }}

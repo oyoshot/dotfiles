@@ -26,7 +26,7 @@ Library
 .config/skhd
 {{ end }}
 
-{{ if ne .chezmoi.osRelease.idLike "arch" }}
+{{ if (or (ne .chezmoi.os "linux") (ne .chezmoi.osRelease.id "arch")) }}
 .config/yay
 {{ end }}
 
