@@ -12,7 +12,6 @@ gowork
 lspconfig
 guibg
 tpope
-yuucu
 cmdline
 GOARCH
 luasnip
