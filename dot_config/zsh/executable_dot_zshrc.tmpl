@@ -72,40 +72,6 @@ function cdd() {
   [ -n "$directory" ] && cd $directory
 }
 
-function gitc() {
-  local branch=$(
-    git branch -a \
-    | fzf-tmux \
-      -p 90%,90% \
-      --ansi \
-      --exit-0 \
-      --layout=reverse \
-      --info=hidden \
-      --no-multi \
-      --preview-window="right,65%" \
-      --preview="echo {} | tr -d ' *' | xargs git lg --color=always" \
-    | head -n 1 \
-    | perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
-  )
-  [ -n "$branch" ] && git switch $branch
-}
-
-function gitl() {
-  local commit_id=$(
-    git lg --color=always \
-    | fzf-tmux \
-      -p 90%,90% \
-      --ansi \
-      --no-sort \
-      --reverse \
-      --tiebreak=index \
-      --preview-window="right,70%" \
-      --preview="echo {} | grep -o '[a-f0-9]\{7\}' | xargs git show --color=always" \
-    | grep -o '[a-f0-9]\{7\}'
-  )
-  [ -n "$commit_id" ] && git show $commit_id
-}
-
 ## エイリアス
 
 (( ${+commands[nvim]} )) && alias v='nvim'

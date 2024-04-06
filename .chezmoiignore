@@ -12,6 +12,7 @@ bootstrap.sh
 script_*
 
 .config/windows_terminal
+.config/nvim/executable_lazy-lock.json
 
 {{ if ne .chezmoi.os "windows" }}
 Documents
