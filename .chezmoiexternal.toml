@@ -1,8 +1,3 @@
-[".config/kitty/kitty.d/onehalfdark.conf"]
-  type = "file"
-  url = "https://raw.githubusercontent.com/sonph/onehalf/master/kitty/onehalf-dark.conf"
-  refreshPeriod = "168h"
-
 [".config/tmux/plugins/tpm"]
   type = "archive"
   url = "https://github.com/tmux-plugins/tpm/archive/master.tar.gz"
@@ -23,7 +18,6 @@
   exact = true
   stripComponents = 1
   refreshPeriod = "168h"
-
 
 [".config/zsh/plugins/zsh-better-npm-completion"]
   type = "archive"
