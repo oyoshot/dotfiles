@@ -7,6 +7,9 @@
 # Mise
 (( ${+commands[mise]} )) && eval "$(mise activate zsh)"
 
+# fzf
+(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
+
 if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   # rip
