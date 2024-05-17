@@ -61,9 +61,6 @@ function cdd() {
 
 ## キーバインド
 
-# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-bindkey '^R' history-incremental-pattern-search-backward
-
 bindkey '^[' _ghq-fzf
 function _ghq-fzf() {
   local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90%)
