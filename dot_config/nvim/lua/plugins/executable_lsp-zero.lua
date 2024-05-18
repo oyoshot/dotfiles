@@ -269,7 +269,10 @@ return {
 	{
 		"mrcjkb/rustaceanvim",
 		version = "^4", -- Recommended
-		lazy = false, -- This plugin is already lazy
+		--lazy = false, -- This plugin is already lazy
+		ft = {
+			"rust",
+		},
 		config = function()
 			vim.g.rustaceanvim = function()
 				-- Update this path
