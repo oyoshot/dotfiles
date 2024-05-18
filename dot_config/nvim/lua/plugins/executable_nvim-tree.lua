@@ -1,5 +1,4 @@
 return {
-	--event = "VimEnter",
 	keys = {
 		{ "<C-n>", "<cmd>NvimTreeFindFileToggle<CR>", desc = "Toggle file explorer" },
 		{
