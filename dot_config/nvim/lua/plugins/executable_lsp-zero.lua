@@ -48,6 +48,7 @@ return {
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v2.x",
+		event = { "BufReadPre", "BufNewFile" },
 		lazy = true,
 		opts = {
 			{
@@ -130,7 +131,8 @@ return {
 	-- Mason
 	{
 		"williamboman/mason.nvim",
-		event = "VeryLazy",
+		--event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("mason").setup({})
 		end,
@@ -144,7 +146,8 @@ return {
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = "williamboman/mason.nvim",
-		event = "VeryLazy",
+		--event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp_zero = require("lsp-zero")
 			require("mason-lspconfig").setup({
@@ -227,7 +230,8 @@ return {
 
 	{
 		"jay-babu/mason-null-ls.nvim",
-		event = "VeryLazy",
+		--event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
 		config = function()
 			-- See mason-null-ls.nvim's documentation for more details:
@@ -250,7 +254,8 @@ return {
 
 	{
 		"nvimtools/none-ls.nvim",
-		event = "VeryLazy",
+		--event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
