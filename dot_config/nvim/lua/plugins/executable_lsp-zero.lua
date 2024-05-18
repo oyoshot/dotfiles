@@ -131,7 +131,6 @@ return {
 	-- Mason
 	{
 		"williamboman/mason.nvim",
-		--event = "VeryLazy",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("mason").setup({})
@@ -146,7 +145,6 @@ return {
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = "williamboman/mason.nvim",
-		--event = "VeryLazy",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp_zero = require("lsp-zero")
@@ -230,7 +228,6 @@ return {
 
 	{
 		"jay-babu/mason-null-ls.nvim",
-		--event = "VeryLazy",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
 		config = function()
@@ -254,7 +251,6 @@ return {
 
 	{
 		"nvimtools/none-ls.nvim",
-		--event = "VeryLazy",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local null_ls = require("null-ls")
@@ -274,7 +270,6 @@ return {
 	{
 		"mrcjkb/rustaceanvim",
 		version = "^4", -- Recommended
-		--lazy = false, -- This plugin is already lazy
 		ft = {
 			"rust",
 		},
