@@ -1,53 +1,9 @@
 return {
-	-- Autocompletion
-	{
-		"hrsh7th/nvim-cmp",
-		lazy = true,
-		event = "InsertEnter",
-		dependencies = {
-			{ "L3MON4D3/LuaSnip" },
-			{ "hrsh7th/cmp-path" },
-		},
-		config = function()
-			-- Here is where you configure the autocompletion settings.
-			-- The arguments for .extend() have the same shape as `manage_nvim_cmp`:
-			-- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v2.x/doc/md/api-reference.md#manage_nvim_cmp
-
-			require("lsp-zero.cmp").extend()
-
-			-- And you can configure cmp even more, if you want to.
-			local cmp = require("cmp")
-			local cmp_action = require("lsp-zero.cmp").action()
-
-			cmp.setup({
-				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
-				},
-				mapping = {
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-f>"] = cmp_action.luasnip_jump_forward(),
-					["<C-b>"] = cmp_action.luasnip_jump_backward(),
-				},
-				completion = {
-					completeopt = "menu,menuone,preview,noselect",
-				},
-				formatting = {
-					fields = { "abbr", "kind", "menu" },
-				},
-			})
-
-			-- If you want insert `(` after select function or method item
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
-	},
-
 	-- LSP
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v2.x",
+		event = { "BufReadPre", "BufNewFile" },
 		lazy = true,
 		opts = {
 			{
@@ -103,6 +59,10 @@ return {
 						vim.lsp.buf.format({
 							async = true,
 							timeout_ms = 10000,
+							filter = function(c)
+								local disabled_format_clients = { "lua_ls", "tsserver" }
+								return not vim.tbl_contains(disabled_format_clients, c.name)
+							end,
 						})
 					end,
 				})
@@ -119,6 +79,7 @@ return {
 				lsp_format_on_save(bufnr)
 			end)
 
+			vim.lsp.inlay_hint.enable(true)
 			lsp_zero.setup()
 		end,
 	},
@@ -126,15 +87,21 @@ return {
 	-- Mason
 	{
 		"williamboman/mason.nvim",
-		event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("mason").setup({})
 		end,
+		optional = true,
+		opts = function(_, opts)
+			opts.ensure_installed = opts.ensure_installed or {}
+			vim.list_extend(opts.ensure_installed, { "codelldb" })
+		end,
 	},
+
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = "williamboman/mason.nvim",
-		event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp_zero = require("lsp-zero")
 			require("mason-lspconfig").setup({
@@ -201,6 +168,7 @@ return {
 					config = vim.fn.expand("~/.config/typos/typos.toml"),
 				},
 			})
+
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = { "sh", "zsh" },
 				callback = function()
@@ -213,9 +181,10 @@ return {
 			})
 		end,
 	},
+
 	{
 		"jay-babu/mason-null-ls.nvim",
-		event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
 		config = function()
 			-- See mason-null-ls.nvim's documentation for more details:
@@ -235,9 +204,10 @@ return {
 			})
 		end,
 	},
+
 	{
 		"nvimtools/none-ls.nvim",
-		event = "VeryLazy",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
@@ -250,86 +220,5 @@ return {
 				},
 			})
 		end,
-	},
-
-	-- Rust
-	{
-		{ "simrat39/rust-tools.nvim", enable = false },
-		{
-			"mrcjkb/rustaceanvim",
-			version = "^3", -- Recommended
-			dependencies = {
-				"nvim-lua/plenary.nvim",
-				"mfussenegger/nvim-dap",
-				{
-					"lvimuser/lsp-inlayhints.nvim",
-					opts = {},
-				},
-			},
-			ft = { "rust" },
-			opts = {
-				server = {
-					on_attach = function(client, bufnr)
-						-- register which-key mappings
-						local wk = require("which-key")
-						wk.register({
-							["<leader>cR"] = {
-								function()
-									vim.cmd.RustLsp("codeAction")
-								end,
-								"Code Action",
-							},
-							["<leader>dr"] = {
-								function()
-									vim.cmd.RustLsp("debuggables")
-								end,
-								"Rust debuggables",
-							},
-						}, { mode = "n", buffer = bufnr })
-					end,
-					settings = {
-						-- rust-analyzer language server configuration
-						["rust-analyzer"] = {
-							cargo = {
-								allFeatures = true,
-								loadOutDirsFromCheck = true,
-								runBuildScripts = true,
-							},
-							-- Add clippy lints for Rust.
-							checkOnSave = {
-								allFeatures = true,
-								command = "clippy",
-								extraArgs = { "--no-deps" },
-							},
-							procMacro = {
-								enable = true,
-								ignored = {
-									["async-trait"] = { "async_trait" },
-									["napi-derive"] = { "napi" },
-									["async-recursion"] = { "async_recursion" },
-								},
-							},
-						},
-					},
-				},
-			},
-			config = function(_, opts)
-				vim.g.rustaceanvim = vim.tbl_deep_extend("force", {}, {
-					inlay_hints = {
-						highlight = "NonText",
-					},
-					tools = {
-						hover_actions = {
-							auto_focus = true,
-						},
-					},
-					server = {
-						on_attach = function(client, bufnr)
-							require("lsp-inlayhints").on_attach(client, bufnr)
-						end,
-					},
-				})
-			end,
-		},
 	},
 }
