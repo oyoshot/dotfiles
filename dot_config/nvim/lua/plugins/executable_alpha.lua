@@ -113,9 +113,6 @@ end
 return {
 	"goolord/alpha-nvim",
 	event = "VimEnter",
-	cond = function()
-		return not vim.g.vscode
-	end,
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		local present, alpha = pcall(require, "alpha")
@@ -144,7 +141,7 @@ return {
 		local buttons = {
 			type = "group",
 			val = {
-				button("f", "󰱼  Search", ":Telescope find_files<CR>"),
+				button("f", "󰱼  Search", ":Telescope smart_open<CR>"),
 				button("e", "  New", ":ene<CR>"),
 				-- button("b", " Jump to bookmarks", ":Telescope marks<CR>"),
 				button("c", "  Config", ":e $HOME/.config/nvim/init.lua | :cd %:p:h | :silent !pwd<CR>"),
