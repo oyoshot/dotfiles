@@ -1,0 +1,11 @@
+memodir = "$XDG_CONFIG_HOME/memo/_posts"
+editor = "nvim"
+column = 20
+width = 0
+selectcmd = "fzf-tmux -p 90%,90% --ansi --no-sort --reverse --preview-window=\"right,65%\" --preview=\"cat \"$XDG_CONFIG_HOME/memo/_posts/{}\"\""
+grepcmd = "grep -nH ${PATTERN} ${FILES}"
+memotemplate = ""
+assetsdir = "."
+pluginsdir = "$XDG_CONFIG_HOME/memo/plugins"
+templatedirfile = ""
+templatebodyfile = ""
