@@ -1,4 +1,4 @@
-memodir = "~/dev/memo/_posts"
+memodir = "~/dev/github.com/oyoshot/memo/_posts"
 editor = "nvim"
 column = 20
 width = 0
