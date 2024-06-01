@@ -1,0 +1,8 @@
+#!/bin/zsh
+
+if ! type memo > /dev/null 2>&1; then
+  go install github.com/mattn/memo@latest
+fi
+if ! type ghq > /dev/null 2>&1; then
+  go install github.com/x-motemen/ghq@latest
+fi
