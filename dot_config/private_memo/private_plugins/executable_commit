@@ -1,0 +1,27 @@
+#!/bin/zsh
+
+usage() {
+    echo "Commit Memo"
+    exit 0
+}
+
+for arg in "$@"; do
+  case $arg in
+    -usage)
+      usage
+      ;;
+    *)
+      echo "Invalid option: $arg" 1>&2
+      usage
+      ;;
+  esac
+done
+
+cd "$(ghq root)/github.com/oyoshot/_memo"
+
+git pull --no-edit
+git add .
+git commit -m "Auto update"
+git push origin main
+
+cd -

@@ -1,0 +1,19 @@
+memodir = "~/dev/github.com/oyoshot/_memo/_posts"
+editor = "nvim"
+column = 20
+width = 0
+selectcmd = """
+fzf-tmux \
+  -p 90%,90% \
+  --ansi \
+  --no-sort \
+  --reverse \
+  --preview-window="right,65%" \
+  --preview="cat ~/dev/github.com/oyoshot/_memo/_posts/{}"
+"""
+grepcmd = "grep -nH ${PATTERN} ${FILES}"
+memotemplate = ""
+assetsdir = "."
+pluginsdir = "~/.config/memo/plugins"
+templatedirfile = ""
+templatebodyfile = ""
