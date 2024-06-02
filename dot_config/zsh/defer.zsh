@@ -16,6 +16,8 @@ if (( ${+commands[brew]} )); then
   export GRAVEYARD="~/.Trash"
 fi
 
+(( ${+commands[memo]} )) && alias m='memo'
+
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
