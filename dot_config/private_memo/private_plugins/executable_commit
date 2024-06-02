@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+cd "$(ghq root)/github.com/oyoshot/_memo"
+
+git pull --no-edit
+git add .
+git commit -m "Auto update"
+git push origin main
+
+cd -
