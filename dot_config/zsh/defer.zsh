@@ -87,7 +87,7 @@ fi
 
 (( ${+commands[bat]} )) && alias cat='bat --theme ansi'
 
-(( ${+commands[memo]} )) && alias m='memo'
+alias m='memo'
 
 alias mkdir='mkdir -p'
 

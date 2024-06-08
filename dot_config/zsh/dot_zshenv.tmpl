@@ -82,6 +82,12 @@ export RUST_BACKTRACE=1
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 
+{{ if eq .chezmoi.os "linux" }}
+{{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+export CARGO_TARGET_DIR="$XDG_CACHE_HOME/target"
+{{   end }}
+{{ end }}
+
 # Go
 export GOPATH="$XDG_DATA_HOME/go"
 export GO111MODULE="on"
