@@ -132,6 +132,7 @@ export LESSHISTFILE='-'
 
 # Node.js
 export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
+export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
 
 # npm
 export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
