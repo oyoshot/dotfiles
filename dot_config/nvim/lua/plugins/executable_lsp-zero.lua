@@ -133,6 +133,9 @@ return {
 				lsp_format_on_save(bufnr)
 			end)
 
+			vim.g.markdown_fenced_language = {
+				"ts=typescript",
+			}
 			vim.lsp.inlay_hint.enable(true)
 			lsp_zero.setup()
 		end,
@@ -176,13 +179,16 @@ return {
 					"ruff_lsp",
 					"pyright",
 					"typos_lsp",
+					"denols",
 				},
 				handlers = {
 					lsp_zero.default_setup,
 				},
 			})
 
-			require("lspconfig").lua_ls.setup({
+			local lspconfig = require("lspconfig")
+
+			lspconfig.lua_ls.setup({
 				settings = {
 					diagnostics = {
 						globals = { "vim" },
@@ -191,7 +197,7 @@ return {
 			})
 
 			-- (Optional) Configure lua language server for neovim
-			require("lspconfig").gopls.setup({
+			lspconfig.gopls.setup({
 				on_attach = function(client, bufnr)
 					print("hello gopls")
 					vim.api.nvim_create_autocmd("BufWritePre", {
@@ -203,7 +209,7 @@ return {
 				end,
 			})
 
-			require("lspconfig").pyright.setup({
+			lspconfig.pyright.setup({
 				settings = {
 					pyright = {
 						-- Using Ruff's import organizer
@@ -212,7 +218,7 @@ return {
 				},
 			})
 
-			require("lspconfig").ruff_lsp.setup({
+			lspconfig.ruff_lsp.setup({
 				init_options = {
 					settings = {
 						format = {
@@ -225,10 +231,50 @@ return {
 				},
 			})
 
-			require("lspconfig").typos_lsp.setup({
+			lspconfig.typos_lsp.setup({
 				init_options = {
 					config = vim.fn.expand("~/.config/typos/typos.toml"),
 				},
+			})
+
+			local function custom_attach(client, bufnr)
+				local active_clients = vim.lsp.get_active_clients()
+				if client.name == "denols" then
+					for _, other_client in ipairs(active_clients) do
+						if other_client.name == "tsserver" then
+							other_client.stop()
+						end
+					end
+				elseif client.name == "tsserver" then
+					for _, other_client in ipairs(active_clients) do
+						if other_client.name == "denols" then
+							client.stop()
+						end
+					end
+				end
+			end
+
+			lspconfig.tsserver.setup({
+				root_dir = function(fname)
+					local deno_root = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(fname)
+					if deno_root then
+						return nil
+					end
+					return lspconfig.util.root_pattern("package.json", "tsconfig.json", ".git")(fname)
+				end,
+				on_attach = custom_attach,
+				single_file_support = false,
+			})
+
+			lspconfig.denols.setup({
+				root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+				on_attach = custom_attach,
+			})
+
+			lspconfig.terraformls.setup({
+				on_attach = function(_, _)
+					vim.env.PATH = "/usr/bin:" .. vim.env.PATH
+				end,
 			})
 
 			vim.api.nvim_create_autocmd("FileType", {
@@ -259,7 +305,7 @@ return {
 					"stylua",
 					"gofumpt",
 					"golangci_lint",
-					"prettierd",
+					-- "prettierd",
 				},
 				automatic_installation = true,
 				handlers = {},
