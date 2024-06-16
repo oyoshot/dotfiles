@@ -1,21 +1,5 @@
 #!/bin/zsh
 
-# Zoxide
-(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Mise
-(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
-
-# fzf
-(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
-
-if (( ${+commands[brew]} )); then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-  # rip
-  export GRAVEYARD="~/.Trash"
-fi
-
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
@@ -87,7 +71,7 @@ fi
 
 (( ${+commands[bat]} )) && alias cat='bat --theme ansi'
 
-(( ${+commands[memo]} )) && alias m='memo'
+alias m='memo'
 
 alias mkdir='mkdir -p'
 
@@ -132,6 +116,7 @@ export LESSHISTFILE='-'
 
 # Node.js
 export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
+export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
 
 # npm
 export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
@@ -166,3 +151,23 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 # GPG
 export GPG_TTY=$TTY
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+
+#export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
+export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
+
+# Zoxide
+(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Mise
+(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
+
+# fzf
+(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
+
+if (( ${+commands[brew]} )); then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+  # rip
+  export GRAVEYARD="~/.Trash"
+fi
