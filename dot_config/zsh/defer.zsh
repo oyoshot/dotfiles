@@ -26,7 +26,7 @@ function j() {
 }
 
 function jj() {
-    local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90%)
+    local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90% --preview-window="right,35%" --preview="git --git-dir {}/.git log --color=always")
     [ -n "$repository" ] && builtin cd "$repository"
 }
 
