@@ -85,8 +85,10 @@ function j() {
 }
 
 function jj() {
-    local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90% --preview-window="right,35%" --preview="git --git-dir {}/.git log --color=always")
-    [ -n "$repository" ] && builtin cd "$repository"
+ local root=$(ghq root)
+ local r=$(ghq list | fzf-tmux -p 90%,90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
+ local repository="$root/$r"
+ [ -n "$repository" ] && builtin cd "$repository"
 }
 
 function awsc() {
