@@ -84,6 +84,6 @@ threshold = -1
 symbol = " "
 style = "bold underline white"
 
-[battery.display]
+[[battery.display]]
 threshold = 10
 style = "bold red"
