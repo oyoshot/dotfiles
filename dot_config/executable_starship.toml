@@ -1,7 +1,6 @@
 # https://starship.rs/ja-jp/config/
-# https://i.stack.imgur.com/KTSQa.png
 format = """
-[┌── ](bold white)$status$username$directory$git_branch$git_status$git_commit$golang$python$deno$cmd_duration$memory_usage$battery$time
+[┌── ](bold white)$status$all
 [└─](bold white)$character"""
 
 scan_timeout = 10
@@ -15,13 +14,15 @@ success_symbol = "[▶ ](bold white) "
 #error_symbol =   "[▶ ](bold red) "
 error_symbol =   "[✗ ](bold red) "
 
+[line_break]
+disabled = true
+
 [shell]
-disabled = false
+disabled = true
 
 [shlvl]
 disabled = false
-format = "[ Lv.$shlvl ](bold black)"
-threshold = 2
+format = '[\[ Lv.$shlvl\] ]($style)'
 
 [username]
 disabled = true
@@ -30,10 +31,13 @@ style_user = "bold green"
 style_root = "bold red"
 format = "[ $user]($style) "
 
+[package]
+disabled = true
+
 [directory]
 style = "bold blue"
 read_only_style = "white"
-fish_style_pwd_dir_length = 3
+fish_style_pwd_dir_length = 1
 format = "[$read_only]($read_only_style)[  ]($style)[$path]($style) "
 truncation_length = 4
 truncation_symbol = ".../"
@@ -83,18 +87,3 @@ style = "bold underline white"
 [[battery.display]]
 threshold = 10
 style = "bold red"
-
-[python]
-style = "bold green"
-
-[golang]
-disabled = false
-symbol = "Go "
-
-[docker_context]
-format = "via [🐋 $context](blue bold)"
-
-#[custom.fd_count]
-#command = "cat ${XDG_CONFIG_HOME}/rclone/cache_file.txt"
-#when = "test -f ${XDG_CONFIG_HOME}/rclone/cache_file.txt"
-#format = "☁️⬆️⬆️+$output"

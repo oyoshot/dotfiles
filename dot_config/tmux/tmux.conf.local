@@ -47,14 +47,13 @@ set -g window-status-bell-style default
 
 set -g window-status-activity-style default
 
-# Set inactive pane border color to grey
-#set -g pane-border-style fg=grey
+setw -g window-active-style fg=white  # アクティブペインの前景色
 
-# Set active pane border color to cyan
-set -g pane-active-border-style fg=cyan
+setw -g window-style fg=colour244  # 非アクティブペインの前景色
 
-# Set active pane background color to a light black
-set -g pane-active-border-style bg=colour228
+set-option -g pane-active-border-style fg=colour10  # アクティブなペインの分割線の色
+
+set-option -g pane-border-style fg=colour244  # 非アクティブなペインの分割線の色
 
 # Customize the status line format
 set -g status-left "#[fg=green]*#W"

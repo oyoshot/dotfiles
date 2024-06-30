@@ -1,5 +1,64 @@
 #!/bin/zsh
 
+# Zoxide
+(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
+
+# Mise
+(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
+
+# Go
+export GO111MODULE="on"
+export MISE_GO_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-go-packages"
+
+# less
+export LESSHISTFILE='-'
+
+# Node.js
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
+export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
+
+# npm
+export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
+export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
+export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
+
+# irb
+export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
+
+# Python
+export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/startup.py"
+
+# pylint
+export PYLINTHOME="$XDG_CACHE_HOME/pylint"
+
+# SQLite3
+export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite_history"
+
+# MySQL
+export MYSQL_HISTFILE="$XDG_STATE_HOME/mysql_history"
+
+# PostgreSQL
+export PSQL_HISTORY="$XDG_STATE_HOME/psql_history"
+
+# ripgrep
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
+
+# tealdeer
+export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
+
+# GPG
+export GPG_TTY=$TTY
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+
+#export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
+export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
+
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
@@ -26,8 +85,10 @@ function j() {
 }
 
 function jj() {
-    local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90%)
-    [ -n "$repository" ] && builtin cd "$repository"
+ local root=$(ghq root)
+ local r=$(ghq list | fzf-tmux -p 90%,90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
+ local repository="$root/$r"
+ [ -n "$repository" ] && builtin cd "$repository"
 }
 
 function awsc() {
@@ -111,60 +172,7 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   alias II='explorer.exe'
 fi
 
-# less
-export LESSHISTFILE='-'
 
-# Node.js
-export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
-export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
-
-# npm
-export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
-export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
-export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
-export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
-
-# irb
-export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
-
-# Python
-export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/startup.py"
-
-# pylint
-export PYLINTHOME="$XDG_CACHE_HOME/pylint"
-
-# SQLite3
-export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite_history"
-
-# MySQL
-export MYSQL_HISTFILE="$XDG_STATE_HOME/mysql_history"
-
-# PostgreSQL
-export PSQL_HISTORY="$XDG_STATE_HOME/psql_history"
-
-# ripgrep
-export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
-
-# tealdeer
-export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
-
-# GPG
-export GPG_TTY=$TTY
-export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
-
-#export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
-export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
-export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
-
-# Zoxide
-(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Mise
-(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
-
-# fzf
-(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
 
 if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"

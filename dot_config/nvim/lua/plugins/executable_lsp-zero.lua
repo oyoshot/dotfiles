@@ -163,14 +163,14 @@ return {
 			local lsp_zero = require("lsp-zero")
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					"gopls",
+					--"gopls",
 					"marksman",
 					"lua_ls",
 					"terraformls",
 					"tflint",
 					"tsserver",
 					"yamlls",
-					"dagger",
+					--"dagger",
 					-- "rust_analyzer",
 					"jdtls",
 					"clangd",
@@ -303,7 +303,7 @@ return {
 					"terraform_fmt",
 					"terraform_validate",
 					"stylua",
-					"gofumpt",
+					--"gofumpt",
 					"golangci_lint",
 					-- "prettierd",
 				},
