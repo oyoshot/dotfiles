@@ -132,7 +132,7 @@ fi
 
 (( ${+commands[bat]} )) && alias cat='bat --theme ansi'
 
-alias m='memo'
+(( ${+commands[memo]} )) && alias m='memo'
 
 alias mkdir='mkdir -p'
 
@@ -171,8 +171,6 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   export PATH=$PATH:/mnt/c/windows
   alias II='explorer.exe'
 fi
-
-
 
 if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
