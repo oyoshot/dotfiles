@@ -1,0 +1,12 @@
+[Unit]
+Description=Start tmux with username as session name at user login
+After=graphical.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/tmux new-session -d -s %u
+ExecStop=/usr/bin/tmux kill-session -t %u
+
+[Install]
+WantedBy=default.target
