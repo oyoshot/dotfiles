@@ -56,7 +56,7 @@ export GPG_TTY=$TTY
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 #export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
-export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+#export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
 
 # anyframe
@@ -132,13 +132,19 @@ fi
 
 (( ${+commands[bat]} )) && alias cat='bat --theme ansi'
 
-alias m='memo'
+(( ${+commands[memo]} )) && alias m='memo'
 
 alias mkdir='mkdir -p'
 
 alias c='clear'
 
 alias e='exit'
+
+if type tmux > /dev/null 2>&1; then
+  alias t='tmux'
+  alias ta='tmux a'
+  alias tn='tmux new -A -s $(whoami)'
+fi
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
@@ -171,8 +177,6 @@ if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
   export PATH=$PATH:/mnt/c/windows
   alias II='explorer.exe'
 fi
-
-
 
 if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
