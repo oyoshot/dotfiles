@@ -141,7 +141,7 @@ return {
 		local buttons = {
 			type = "group",
 			val = {
-				button("f", "󰱼  Search", ":Telescope smart_open<CR>"),
+				button("f", "󰱼  Search", ":Telescope  find_files<CR>"),
 				button("e", "  New", ":ene<CR>"),
 				-- button("b", " Jump to bookmarks", ":Telescope marks<CR>"),
 				button("c", "  Config", ":e $HOME/.config/nvim/init.lua | :cd %:p:h | :silent !pwd<CR>"),

@@ -7,16 +7,23 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		keys = {
 			{ "<leader>m", "<cmd>Telescope marks<cr>", desc = "search by [M]arks" },
-			{ "<leader>f", "<cmd>Telescope smart_open<cr>", desc = "search [F]iles" },
+			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "search by [B]uffers" },
+			{ "<leader>f", "<cmd>Telescope find_files<cr>", desc = "search [F]iles" },
+			--{ "<leader>f", "<cmd>Telescope smart_open<cr>", desc = "search [F]iles with smart_open" },
 			{ "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "search by [G]rep" },
 		},
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 			"nvim-tree/nvim-web-devicons",
-			--"prochri/telescope-all-recent.nvim",
-			"prochri/telescope-all-recent.nvim",
-			"nvim-lua/plenary.nvim",
+			{
+				"prochri/telescope-all-recent.nvim",
+				config = function()
+					require("telescope-all-recent").setup({})
+				end,
+				after = "telescope.nvim",
+				dependencies = "kkharji/sqlite.lua",
+			},
 		},
 		config = function()
 			local telescope = require("telescope")
@@ -51,20 +58,8 @@ return {
 	},
 
 	{
-		"prochri/telescope-all-recent.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		cond = false,
-		dependencies = {
-			"nvim-telescope/telescope.nvim",
-			"kkharji/sqlite.lua",
-			-- optional, if using telescope for vim.ui.select
-			-- "stevearc/dressing.nvim",
-		},
-		opts = {},
-	},
-
-	{
 		"danielfalk/smart-open.nvim",
+		cond = false,
 		branch = "0.2.x",
 		dependencies = {
 			"kkharji/sqlite.lua",
