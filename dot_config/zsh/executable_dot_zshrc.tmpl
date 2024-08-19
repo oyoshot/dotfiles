@@ -67,10 +67,6 @@ fi
 
 {{ if eq .chezmoi.os "linux" }}
 {{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
-# Start tmux if it's not running
-if [ -z "$TMUX" ]; then
   cd
-  exec tmux
-fi
 {{   end }}
 {{ end }}
