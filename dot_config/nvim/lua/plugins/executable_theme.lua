@@ -48,6 +48,8 @@ return {
 				lsp_trouble = true,
 				mason = true,
 				which_key = true,
+				noice = true,
+				notify = true,
 			},
 		},
 		config = function()
