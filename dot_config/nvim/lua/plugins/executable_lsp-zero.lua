@@ -1,88 +1,57 @@
 return {
 	-- Autocompletion
 	{
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
+		dependencies = {
+			{ "L3MON4D3/LuaSnip" },
+		},
+		config = function()
+			-- Here is where you configure the autocompletion settings.
+			local lsp_zero = require("lsp-zero")
+			lsp_zero.extend_cmp()
+
+			-- And you can configure cmp even more, if you want to.
+			local cmp = require("cmp")
+			local cmp_action = lsp_zero.cmp_action()
+
+			cmp.setup({
+				formatting = lsp_zero.cmp_format({ details = true }),
+				mapping = cmp.mapping.preset.insert({
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-u>"] = cmp.mapping.scroll_docs(-4),
+					["<C-d>"] = cmp.mapping.scroll_docs(4),
+					["<C-f>"] = cmp_action.luasnip_jump_forward(),
+					["<C-b>"] = cmp_action.luasnip_jump_backward(),
+				}),
+				snippet = {
+					expand = function(args)
+						require("luasnip").lsp_expand(args.body)
+					end,
+				},
+			})
+		end,
+	},
+
+	{
 		"L3MON4D3/LuaSnip",
-		version = "v2.*",
 		build = "make install_jsregexp",
 		config = function()
 			require("luasnip.loaders.from_vscode").lazy_load()
 		end,
 	},
 
-	{
-		"hrsh7th/nvim-cmp",
-		lazy = true,
-		event = "InsertEnter",
-		dependencies = {
-			{ "hrsh7th/cmp-path" },
-			{ "L3MON4D3/LuaSnip" },
-		},
-		config = function()
-			-- Here is where you configure the autocompletion settings.
-			-- The arguments for .extend() have the same shape as `manage_nvim_cmp`:
-			-- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v2.x/doc/md/api-reference.md#manage_nvim_cmp
-
-			require("lsp-zero.cmp").extend()
-
-			-- And you can configure cmp even more, if you want to.
-			local cmp = require("cmp")
-			local cmp_action = require("lsp-zero.cmp").action()
-
-			cmp.setup({
-				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
-				},
-				mapping = {
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-f>"] = cmp_action.luasnip_jump_forward(),
-					["<C-b>"] = cmp_action.luasnip_jump_backward(),
-				},
-				completion = {
-					completeopt = "menu,menuone,preview,noselect",
-				},
-				formatting = {
-					fields = { "abbr", "kind", "menu" },
-				},
-			})
-
-			-- If you want insert `(` after select function or method item
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
-	},
-
 	-- LSP
 	{
 		"VonHeikemen/lsp-zero.nvim",
-		branch = "v2.x",
-		event = { "BufReadPre", "BufNewFile" },
+		branch = "v3.x",
 		lazy = true,
-		opts = {
-			{
-				float_border = "rounded",
-				call_servers = "local",
-				configure_diagnostics = true,
-				setup_servers_on_start = true,
-				set_lsp_keymaps = {
-					preserve_mappings = false,
-					omit = {},
-				},
-				manage_nvim_cmp = {
-					set_sources = "recommended",
-					set_basic_mappings = true,
-					set_extra_mappings = false,
-					use_luasnip = true,
-					set_format = true,
-					documentation_window = true,
-				},
-			},
-		},
-		config = function(_, opts)
-			-- This is where you modify the settings for lsp-zero
-			-- Note: autocompletion settings will not take effect
-			require("lsp-zero.settings").preset(opts)
+		event = { "BufReadPre", "BufNewFile" },
+		config = false,
+		init = function()
+			-- Disable automatic setup, we are doing it manually
+			vim.g.lsp_zero_extend_cmp = 0
+			vim.g.lsp_zero_extend_lspconfig = 0
 		end,
 	},
 
@@ -114,7 +83,7 @@ return {
 							async = true,
 							timeout_ms = 10000,
 							filter = function(c)
-								local disabled_format_clients = { "lua_ls", "tsserver" }
+								local disabled_format_clients = { "lua_ls" }
 								return not vim.tbl_contains(disabled_format_clients, c.name)
 							end,
 						})
@@ -305,7 +274,7 @@ return {
 					"stylua",
 					--"gofumpt",
 					"golangci_lint",
-					-- "prettierd",
+					--"prettierd",
 				},
 				automatic_installation = true,
 				handlers = {},
@@ -322,6 +291,29 @@ return {
 				sources = {
 					null_ls.builtins.diagnostics.fish,
 					null_ls.builtins.formatting.fish_indent,
+					null_ls.builtins.formatting.prettierd.with({
+						filetypes = {
+							--"javascript",
+							--"javascriptreact",
+							--"typescript",
+							--"typescriptreact",
+							--"vue",
+							"css",
+							"scss",
+							"less",
+							"html",
+							"json",
+							"jsonc",
+							"yaml",
+							"markdown",
+							"markdown.mdx",
+							"graphql",
+							"handlebars",
+							"svelte",
+							"astro",
+							"htmlangular",
+						},
+					}),
 					-- null_ls.builtins.formatting.shfmt.with({
 					--     filetypes = { "sh", "zsh" },
 					-- }),

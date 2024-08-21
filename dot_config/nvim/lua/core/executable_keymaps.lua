@@ -42,7 +42,7 @@ vim.keymap.set("n", "s<", "5<C-w><", opts)
 vim.keymap.set("n", "s>", "5<C-w>>", opts)
 
 -- Select all
-vim.keymap.set("n", "<C-a>", "gg<S-v>G", opts)
+--vim.keymap.set("n", "<C-a>", "gg<S-v>G", opts)
 
 -- No yank with x
 vim.keymap.set("n", "x", '"_x', opts)
