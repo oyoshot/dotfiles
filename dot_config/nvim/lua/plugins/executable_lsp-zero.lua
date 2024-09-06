@@ -137,7 +137,7 @@ return {
 					"lua_ls",
 					"terraformls",
 					"tflint",
-					"tsserver",
+					-- "tsserver",
 					"yamlls",
 					--"dagger",
 					-- "rust_analyzer",
@@ -149,6 +149,7 @@ return {
 					"pyright",
 					"typos_lsp",
 					"denols",
+					"vtsls",
 				},
 				handlers = {
 					lsp_zero.default_setup,
@@ -210,11 +211,11 @@ return {
 				local active_clients = vim.lsp.get_active_clients()
 				if client.name == "denols" then
 					for _, other_client in ipairs(active_clients) do
-						if other_client.name == "tsserver" then
+						if other_client.name == "vtsls" then
 							other_client.stop()
 						end
 					end
-				elseif client.name == "tsserver" then
+				elseif client.name == "vtsls" then
 					for _, other_client in ipairs(active_clients) do
 						if other_client.name == "denols" then
 							client.stop()
@@ -223,7 +224,7 @@ return {
 				end
 			end
 
-			lspconfig.tsserver.setup({
+			lspconfig.vtsls.setup({
 				root_dir = function(fname)
 					local deno_root = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(fname)
 					if deno_root then
@@ -233,6 +234,28 @@ return {
 				end,
 				on_attach = custom_attach,
 				single_file_support = false,
+				settings = {
+					typescript = {
+						inlayHints = {
+							parameterNames = { enabled = "literals" },
+							parameterTypes = { enabled = true },
+							variableTypes = { enabled = true },
+							propertyDeclarationTypes = { enabled = true },
+							functionLikeReturnTypes = { enabled = true },
+							enumMemberValues = { enabled = true },
+						},
+					},
+					javascript = {
+						inlayHints = {
+							parameterNames = { enabled = "literals" },
+							parameterTypes = { enabled = true },
+							variableTypes = { enabled = true },
+							propertyDeclarationTypes = { enabled = true },
+							functionLikeReturnTypes = { enabled = true },
+							enumMemberValues = { enabled = true },
+						},
+					},
+				},
 			})
 
 			lspconfig.denols.setup({
