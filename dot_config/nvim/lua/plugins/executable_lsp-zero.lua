@@ -16,7 +16,6 @@ return {
 		lazy = true,
 		config = function()
 			-- This is where all the LSP shenanigans will live
-
 			require("cmp_nvim_lsp").setup({})
 
 			local lsp_zero = require("lsp-zero")
@@ -47,7 +46,7 @@ return {
 
 			lsp_zero.preset("recommended")
 
-			lsp_zero.on_attach(function(client, bufnr)
+			lsp_zero.on_attach(function(_, bufnr)
 				-- see :help lsp-zero-keybindings
 				-- to learn the available actions
 				lsp_zero.default_keymaps({ buffer = bufnr })

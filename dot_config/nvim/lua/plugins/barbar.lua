@@ -1,12 +1,6 @@
 return {
-	-- OPTIONAL: for git status
-	{ "lewis6991/gitsigns.nvim", lazy = true },
-	-- OPTIONAL: for file icons
-	{ "nvim-tree/nvim-web-devicons", lazy = true },
-
 	{
 		"romgrk/barbar.nvim",
-		--	event = "BufEnter",
 		event = { "BufReadPre", "BufNewFile" },
 		init = function()
 			vim.g.barbar_auto_setup = false

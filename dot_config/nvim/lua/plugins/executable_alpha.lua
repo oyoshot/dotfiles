@@ -111,8 +111,6 @@ local function button(sc, txt, keybind)
 end
 
 return {
-	{ "nvim-tree/nvim-web-devicons", lazy = true },
-
 	{
 		"goolord/alpha-nvim",
 		event = "VimEnter",

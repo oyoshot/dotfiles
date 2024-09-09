@@ -1,7 +1,7 @@
 return {
 	"uga-rosa/translate.nvim",
 	keys = {
-		{ "t", mode = { "n", "v" } },
+		{ "tt", mode = { "n", "v" } },
 	},
 	config = function()
 		require("translate").setup({})
