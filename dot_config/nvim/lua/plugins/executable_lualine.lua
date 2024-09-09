@@ -4,6 +4,11 @@ return {
 	"nvim-lualine/lualine.nvim",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		require("lualine").setup({})
+		local custom_catppuccin = require("lualine.themes.catppuccin")
+		require("lualine").setup({
+			options = {
+				theme = custom_catppuccin,
+			},
+		})
 	end,
 }
