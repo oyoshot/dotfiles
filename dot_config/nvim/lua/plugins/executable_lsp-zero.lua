@@ -1,53 +1,9 @@
 return {
-	-- Autocompletion
-	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			{ "L3MON4D3/LuaSnip" },
-		},
-		config = function()
-			-- Here is where you configure the autocompletion settings.
-			local lsp_zero = require("lsp-zero")
-			lsp_zero.extend_cmp()
-
-			-- And you can configure cmp even more, if you want to.
-			local cmp = require("cmp")
-			local cmp_action = lsp_zero.cmp_action()
-
-			cmp.setup({
-				formatting = lsp_zero.cmp_format({ details = true }),
-				mapping = cmp.mapping.preset.insert({
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-u>"] = cmp.mapping.scroll_docs(-4),
-					["<C-d>"] = cmp.mapping.scroll_docs(4),
-					["<C-f>"] = cmp_action.luasnip_jump_forward(),
-					["<C-b>"] = cmp_action.luasnip_jump_backward(),
-				}),
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
-				},
-			})
-		end,
-	},
-
-	{
-		"L3MON4D3/LuaSnip",
-		build = "make install_jsregexp",
-		config = function()
-			require("luasnip.loaders.from_vscode").lazy_load()
-		end,
-	},
-
 	-- LSP
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		lazy = true,
-		event = { "BufReadPre", "BufNewFile" },
-		config = false,
 		init = function()
 			-- Disable automatic setup, we are doing it manually
 			vim.g.lsp_zero_extend_cmp = 0
@@ -57,13 +13,11 @@ return {
 
 	{
 		"neovim/nvim-lspconfig",
-		cmd = "LspInfo",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = {
-			{ "hrsh7th/cmp-nvim-lsp" },
-		},
+		lazy = true,
 		config = function()
 			-- This is where all the LSP shenanigans will live
+
+			require("cmp_nvim_lsp").setup({})
 
 			local lsp_zero = require("lsp-zero")
 			lsp_zero.set_sign_icons({
@@ -113,10 +67,7 @@ return {
 	-- Mason
 	{
 		"williamboman/mason.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			require("mason").setup({})
-		end,
+		lazy = true,
 		optional = true,
 		opts = function(_, opts)
 			opts.ensure_installed = opts.ensure_installed or {}
@@ -126,7 +77,6 @@ return {
 
 	{
 		"williamboman/mason-lspconfig.nvim",
-		dependencies = "williamboman/mason.nvim",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp_zero = require("lsp-zero")
@@ -207,7 +157,7 @@ return {
 				},
 			})
 
-			local function custom_attach(client, bufnr)
+			local function custom_attach(client, _)
 				local active_clients = vim.lsp.get_active_clients()
 				if client.name == "denols" then
 					for _, other_client in ipairs(active_clients) do
@@ -256,6 +206,11 @@ return {
 						},
 					},
 				},
+				config = function(_, opts)
+					local setup = lsp_utils.setup
+					require("lspconfig.configs").vtsls = require("vtsls").lspconfig
+					setup("vtsls", opts)
+				end,
 			})
 
 			lspconfig.denols.setup({
@@ -285,7 +240,7 @@ return {
 	{
 		"jay-babu/mason-null-ls.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
+		dependencies = { "williamboman/mason.nvim" },
 		config = function()
 			-- See mason-null-ls.nvim's documentation for more details:
 			-- https://github.com/jay-babu/mason-null-ls.nvim#setup
@@ -307,7 +262,7 @@ return {
 
 	{
 		"nvimtools/none-ls.nvim",
-		event = { "BufReadPre", "BufNewFile" },
+		lazy = true,
 		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
@@ -343,5 +298,6 @@ return {
 				},
 			})
 		end,
+		opts = {},
 	},
 }

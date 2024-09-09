@@ -4,6 +4,7 @@ return {
 		event = "VimEnter",
 		cond = false,
 	},
+
 	{
 		"rebelot/kanagawa.nvim",
 		event = "VimEnter",
@@ -13,6 +14,7 @@ return {
 			vim.cmd.colorscheme("kanagawa")
 		end,
 	},
+
 	{
 		"ayu-theme/ayu-vim",
 		-- cond = false,
@@ -35,6 +37,7 @@ return {
 			)
 		end,
 	},
+
 	{
 		"catppuccin/nvim",
 		event = "VimEnter",
@@ -59,6 +62,7 @@ return {
 			vim.cmd("hi LspInlayHint guibg=NONE ctermbg=NONE")
 		end,
 	},
+
 	{
 		"4513ECHO/vim-colors-hatsunemiku",
 		event = "VimEnter",
@@ -68,6 +72,7 @@ return {
 			vim.cmd.colorscheme("hatsunemiku")
 		end,
 	},
+
 	{
 		"rose-pine/neovim",
 		event = "VimEnter",
@@ -81,6 +86,7 @@ return {
 			vim.cmd.colorscheme("rose-pine")
 		end,
 	},
+
 	{
 		"kyoh86/momiji",
 		cond = false,
