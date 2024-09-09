@@ -11,7 +11,7 @@ on:
 
 jobs:
   dotfiles:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 180
     env:
       HOMEBREW_BUNDLE_BREW_SKIP: "awscli"
