@@ -294,6 +294,7 @@ return {
 					-- null_ls.builtins.formatting.shfmt.with({
 					--     filetypes = { "sh", "zsh" },
 					-- }),
+					null_ls.builtins.diagnostics.textlint.with({ filetypes = { "markdown", "mdx" } }),
 				},
 			})
 		end,

@@ -56,3 +56,8 @@
   type = "file"
   url = "https://raw.githubusercontent.com/azu/ni.zsh/main/ni.zsh"
   refreshPeriod = "168h"
+
+[".config/prh-rules/media/WEB+DB_PRESS.yml"]
+  type = "file"
+  url = "https://raw.githubusercontent.com/prh/rules/master/media/WEB+DB_PRESS.yml"
+  refreshPeriod = "168h"
