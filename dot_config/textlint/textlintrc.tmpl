@@ -1,32 +1,26 @@
 {
-  "filters": {},
   "rules": {
-    "preset-ja-technical-writing": {
-      "arabic-kanji-numbers": true,
-      "ja-no-weak-phrase": false,
-      "ja-no-mixed-period": false,
-      "no-exclamation-question-mark": false,
-      "no-dropping-the-ra": true,
-      "no-double-negative-ja": true,
-      "ja-no-redundant-expression": true,
-      "no-doubled-joshi": {
-        "min_interval": 1
-      }
-    },
+    "preset-ja-technical-writing": true,
     "preset-ja-spacing": {
       "ja-space-around-code": {
         "before": true,
         "after": true
       },
+      "ja-space-between-half-and-full-width": {
+        space: ["alphabets", "numbers"]
+      }
     },
-    "preset-jtf-style": true,
+    "preset-jtf-style": {
+      "3.1.1.全角文字と半角文字の間": false
+    },
     "prh": {
       "rulePaths": [
-        "{{ .chezmoi.homeDir }}/.config/prh-rules/media/WEB+DB_PRESS.yml",
+        "{{ .chezmoi.homeDir }}/.config/prh-rules/media/WEB+DB_PRESS.yml"
       ]
     },
     "terminology": {
       "defaultTerms": true
     }
-  }
+  },
+  "filters": {}
 }
