@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "preset-ja-technical-writing": true,
+    "preset-ja-spacing": {
+      "ja-space-around-code": {
+        "before": true,
+        "after": true
+      },
+      "ja-space-between-half-and-full-width": {
+        space: ["alphabets", "numbers"]
+      }
+    },
+    "preset-jtf-style": {
+      "3.1.1.全角文字と半角文字の間": false,
+      "4.3.1.丸かっこ（）": false,
+      "4.2.7.コロン(：)": false
+    },
+    "prh": {
+      "rulePaths": [
+        "{{ .chezmoi.homeDir }}/.config/prh-rules/media/WEB+DB_PRESS.yml"
+      ]
+    },
+    "terminology": {
+      "defaultTerms": true
+    }
+  },
+  "filters": {}
+}

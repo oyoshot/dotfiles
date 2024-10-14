@@ -1,3 +1,6 @@
+[settings]
+experimental = true
+
 [tools]
 python = "latest"
 ruby = "latest"
@@ -7,8 +10,8 @@ node = "latest"
 deno = "latest"
 zig = "latest"
 julia = "latest"
-#haskell = "latest"
-#scala = "latest"
+haskell = "latest"
+scala = "latest"
 elixir = "latest"
 erlang = "latest"
 bun = "latest"
@@ -17,3 +20,15 @@ helm = "latest"
 opentofu = "latest"
 uv = "latest"
 go = "latest"
+gradle = "latest"
+kotlin = "latest"
+
+"go:github.com/mattn/memo" = "latest"
+
+"npm:textlint" = "latest"
+"npm:textlint-rule-prh" = "latest"
+"npm:textlint-rule-preset-jtf-style" = "latest"
+"npm:textlint-rule-preset-ja-technical-writing" = "latest"
+"npm:textlint-rule-terminology" = "latest"
+"npm:textlint-rule-preset-ja-spacing" = "latest"
+"npm:md-to-pdf" = "latest"

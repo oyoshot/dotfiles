@@ -251,9 +251,9 @@ return {
 					"stylua",
 					--"gofumpt",
 					"golangci_lint",
-					--"prettierd",
 				},
-				automatic_installation = true,
+				--automatic_installation = true,
+				automatic_installation = { exclude = { "textlint" } },
 				handlers = {},
 			})
 		end,
@@ -294,6 +294,8 @@ return {
 					-- null_ls.builtins.formatting.shfmt.with({
 					--     filetypes = { "sh", "zsh" },
 					-- }),
+					null_ls.builtins.diagnostics.textlint,
+					null_ls.builtins.diagnostics.tfsec,
 				},
 			})
 		end,
