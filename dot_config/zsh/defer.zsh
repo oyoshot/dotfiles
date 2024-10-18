@@ -82,19 +82,19 @@ up() {
     run_command "rustup update" && run_command "cargo install-update -a"
 }
 
-function j() {
+function g() {
     local root="$(git rev-parse --show-toplevel)" && builtin cd "$root"
 }
 
-function jj() {
+function gg() {
  local root=$(ghq root)
- local r=$(ghq list | fzf-tmux -p 90%,90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
+ local r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
  local repository="$root/$r"
  [ -n "$repository" ] && builtin cd "$repository"
 }
 
 function awsc() {
-  local src=$(aws-vault list --profiles | fzf-tmux -p 90%,90%)
+  local src=$(aws-vault list --profiles | fzf --tmux 90%)
   echo "
 Vim にすれば...
 生産性向上！
@@ -129,7 +129,7 @@ Vim にすれば...
 function cdd() {
   local directory=$(
     fd -t d \
-    | fzf-tmux -p 90%,90%
+    | fzf --tmux 90%
   )
   [ -n "$directory" ] && cd $directory
 }
@@ -138,7 +138,7 @@ function cdd() {
 
 bindkey '^[' _ghq-fzf
 function _ghq-fzf() {
-  local repository=$(ghq list --full-path --vcs git | fzf-tmux -p 90%,90%)
+  local repository=$(ghq list --full-path --vcs git | fzf --tmux 90%)
   if [ -n "$repository" ]; then
     BUFFER="cd \"$repository\""
     zle accept-line

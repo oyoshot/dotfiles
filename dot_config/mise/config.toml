@@ -2,7 +2,7 @@
 experimental = true
 
 [tools]
-python = "latest"
+python = ["3.12", "latest"]
 ruby = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
 java = "latest"
@@ -10,7 +10,7 @@ node = "latest"
 deno = "latest"
 zig = "latest"
 julia = "latest"
-haskell = "latest"
+#haskell = "latest"
 scala = "latest"
 elixir = "latest"
 erlang = "latest"
@@ -23,6 +23,21 @@ go = "latest"
 gradle = "latest"
 kotlin = "latest"
 
+"cargo:cargo-expand" = "latest"
+"cargo:cargo-nextest" = "latest"
+"cargo:cargo-deny" = "latest"
+"cargo:cargo-make" = "latest"
+"cargo:cargo-udeps" = "latest"
+"cargo:cargo-audit" = "latest"
+"cargo:cargo-crev" = "latest"
+"cargo:cargo-compete" = "latest"
+"cargo:cargo-update" = "latest"
+"cargo:cargo-llvm-cov" = "latest"
+"cargo:cargo-machete" = "latest"
+"cargo:cargo-sort" = "latest"
+"cargo:cargo-features-manager" = "latest"
+"cargo:cargo-chef" = "latest"
+
 "go:github.com/mattn/memo" = "latest"
 
 "npm:textlint" = "latest"
@@ -32,3 +47,4 @@ kotlin = "latest"
 "npm:textlint-rule-terminology" = "latest"
 "npm:textlint-rule-preset-ja-spacing" = "latest"
 "npm:md-to-pdf" = "latest"
+"npm:neovim" = "latest"
