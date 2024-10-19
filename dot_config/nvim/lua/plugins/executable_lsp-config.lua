@@ -66,6 +66,7 @@ return {
 					vim.g.markdown_fenced_language = {
 						"ts=typescript",
 					}
+					vim.lsp.inlay_hint.enable(true)
 					lsp_format_on_save(bufnr)
 				end,
 			})
@@ -111,8 +112,10 @@ return {
 
 			lspconfig.lua_ls.setup({
 				settings = {
-					diagnostics = {
-						globals = { "vim" },
+					Lua = {
+						diagnostics = {
+							globals = { "vim" },
+						},
 					},
 				},
 			})
