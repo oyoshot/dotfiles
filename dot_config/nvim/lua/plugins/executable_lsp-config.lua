@@ -1,30 +1,31 @@
 return {
+	-- Mason
+
+	{ "williamboman/mason.nvim", lazy = true },
+	{ "williamboman/mason-lspconfig.nvim", lazy = true },
+
+	-- null-ls
+
+	{ "jay-babu/mason-null-ls.nvim", lazy = true },
+	{ "nvimtools/none-ls.nvim", lazy = true },
+
 	-- LSP
-	{
-		"VonHeikemen/lsp-zero.nvim",
-		branch = "v3.x",
-		lazy = true,
-		init = function()
-			-- Disable automatic setup, we are doing it manually
-			vim.g.lsp_zero_extend_cmp = 0
-			vim.g.lsp_zero_extend_lspconfig = 0
-		end,
-	},
 
 	{
 		"neovim/nvim-lspconfig",
-		lazy = true,
+		cmd = { "LspInfo", "LspInstall", "LspStart" },
+		event = { "BufReadPre", "BufNewFile" },
+		init = function()
+			-- Reserve a space in the gutter
+			-- This will avoid an annoying layout shift in the screen
+			vim.opt.signcolumn = "yes"
+		end,
 		config = function()
-			-- This is where all the LSP shenanigans will live
-			require("cmp_nvim_lsp").setup({})
-
-			local lsp_zero = require("lsp-zero")
-			lsp_zero.set_sign_icons({
-				error = "✘",
-				warn = "▲",
-				hint = "⚑",
-				info = "»",
-			})
+			-- Add cmp_nvim_lsp capabilities settings to lspconfig
+			-- This should be executed before you configure any language server
+			local lsp_defaults = require("lspconfig").util.default_config
+			lsp_defaults.capabilities =
+				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local lsp_format_on_save = function(bufnr)
 				local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
@@ -44,41 +45,39 @@ return {
 				})
 			end
 
-			lsp_zero.preset("recommended")
+			-- LspAttach is where you enable features that only work
+			-- if there is a language server active in the file
+			vim.api.nvim_create_autocmd("LspAttach", {
+				desc = "LSP actions",
+				callback = function(event)
+					local opts = { buffer = event.buf }
 
-			lsp_zero.on_attach(function(_, bufnr)
-				-- see :help lsp-zero-keybindings
-				-- to learn the available actions
-				lsp_zero.default_keymaps({ buffer = bufnr })
-				vim.keymap.set("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>")
-				vim.keymap.set("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-				lsp_format_on_save(bufnr)
-			end)
+					vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+					vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+					vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+					vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+					vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+					vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+					vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+					vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+					vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
+					vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 
-			vim.g.markdown_fenced_language = {
-				"ts=typescript",
-			}
-			vim.lsp.inlay_hint.enable(true)
-			lsp_zero.setup()
-		end,
-	},
+					vim.g.markdown_fenced_language = {
+						"ts=typescript",
+					}
+					vim.lsp.inlay_hint.enable(true)
+					lsp_format_on_save(bufnr)
+				end,
+			})
 
-	-- Mason
-	{
-		"williamboman/mason.nvim",
-		lazy = true,
-		optional = true,
-		opts = function(_, opts)
-			opts.ensure_installed = opts.ensure_installed or {}
-			vim.list_extend(opts.ensure_installed, { "codelldb" })
-		end,
-	},
+			-- NOTE: It's important that you set up the plugins in the following order:
+			-- 1. mason.nvim
+			-- 2. mason-lspconfig.nvim
+			-- 3. Setup servers via lspconfig
 
-	{
-		"williamboman/mason-lspconfig.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			local lsp_zero = require("lsp-zero")
+			require("mason").setup({})
+
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					--"gopls",
@@ -101,7 +100,11 @@ return {
 					"vtsls",
 				},
 				handlers = {
-					lsp_zero.default_setup,
+					-- this first function is the "default handler"
+					-- it applies to every language server without a "custom handler"
+					function(server_name)
+						require("lspconfig")[server_name].setup({})
+					end,
 				},
 			})
 
@@ -109,20 +112,25 @@ return {
 
 			lspconfig.lua_ls.setup({
 				settings = {
-					diagnostics = {
-						globals = { "vim" },
+					Lua = {
+						diagnostics = {
+							globals = { "vim" },
+						},
 					},
 				},
 			})
 
 			-- (Optional) Configure lua language server for neovim
 			lspconfig.gopls.setup({
-				on_attach = function(client, bufnr)
+				on_attach = function(_, _)
 					print("hello gopls")
 					vim.api.nvim_create_autocmd("BufWritePre", {
 						pattern = "*.go",
 						callback = function()
-							vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })
+							vim.lsp.buf.code_action({
+								context = { only = { "source.organizeImports" } },
+								apply = true,
+							})
 						end,
 					})
 				end,
@@ -233,36 +241,11 @@ return {
 					-- 頑張って shfmt するかもしれない
 				end,
 			})
-		end,
-	},
 
-	{
-		"jay-babu/mason-null-ls.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = { "williamboman/mason.nvim" },
-		config = function()
+			--NOTE: Sources found installed in mason will automatically be setup for null-ls.
 			-- See mason-null-ls.nvim's documentation for more details:
 			-- https://github.com/jay-babu/mason-null-ls.nvim#setup
-			require("mason-null-ls").setup({
-				ensure_installed = {
-					"hadolint",
-					"terraform_fmt",
-					"terraform_validate",
-					"stylua",
-					--"gofumpt",
-					"golangci_lint",
-				},
-				--automatic_installation = true,
-				automatic_installation = { exclude = { "textlint" } },
-				handlers = {},
-			})
-		end,
-	},
 
-	{
-		"nvimtools/none-ls.nvim",
-		lazy = true,
-		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
 				sources = {
@@ -298,7 +281,21 @@ return {
 					null_ls.builtins.diagnostics.tfsec,
 				},
 			})
+
+			local mason_null_ls = require("mason-null-ls")
+			mason_null_ls.setup({
+				ensure_installed = {
+					"hadolint",
+					"terraform_fmt",
+					"terraform_validate",
+					"stylua",
+					--"gofumpt",
+					"golangci_lint",
+				},
+				--automatic_installation = true,
+				automatic_installation = { exclude = { "textlint" } },
+				handlers = {},
+			})
 		end,
-		opts = {},
 	},
 }

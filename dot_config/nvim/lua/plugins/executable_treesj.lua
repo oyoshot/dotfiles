@@ -1,10 +1,7 @@
 return {
-	{
-		"Wansmer/treesj",
-		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			require("treesj").setup({})
-			vim.keymap.set("n", "<leader>s", require("treesj").toggle)
-		end,
-	},
+	"Wansmer/treesj",
+	keys = { "<space>m", "<space>j", "<space>s" },
+	config = function()
+		require("treesj").setup({})
+	end,
 }
