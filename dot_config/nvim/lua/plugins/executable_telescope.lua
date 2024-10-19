@@ -1,4 +1,5 @@
 return {
+	{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0", lazy = true },
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make", lazy = true },
 	{
 		"prochri/telescope-all-recent.nvim",
@@ -29,6 +30,11 @@ return {
 			--{ "<leader>f", "<cmd>Telescope smart_open<cr>", desc = "search [F]iles with smart_open" },
 			{ "<leader>H", "<cmd>Telescope help_tags<cr>", desc = "search [H]elp" },
 			{ "<leader>d", "<cmd>Telescope diagnostics<cr>", desc = "search [D]iagnostics" },
+			{
+				"<leader>w",
+				":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
+				desc = "search [W]ord with args",
+			},
 		},
 		config = function()
 			local telescope = require("telescope")

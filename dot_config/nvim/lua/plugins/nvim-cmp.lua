@@ -5,6 +5,7 @@ return {
 	{ "hrsh7th/cmp-path", lazy = true },
 	{ "hrsh7th/cmp-cmdline", lazy = true },
 	{ "saadparwaiz1/cmp_luasnip", lazy = true },
+	{ "onsails/lspkind.nvim", lazy = true },
 
 	{
 		"L3MON4D3/LuaSnip",
@@ -20,8 +21,8 @@ return {
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		config = function()
+			local lspkind = require("lspkind")
 			local cmp = require("cmp")
-
 			cmp.setup({
 				sources = {
 					{ name = "nvim_lsp" },
@@ -36,6 +37,8 @@ return {
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<C-u>"] = cmp.mapping.scroll_docs(-4),
 					["<C-d>"] = cmp.mapping.scroll_docs(4),
+					["<C-e>"] = cmp.mapping.abort(),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
 
 				snippet = {
@@ -49,7 +52,13 @@ return {
 				},
 
 				formatting = {
-					fields = { "abbr", "kind", "menu" },
+					format = lspkind.cmp_format({}),
+				},
+
+				snippet = {
+					expand = function(args)
+						require("luasnip").lsp_expand(args.body)
+					end,
 				},
 
 				window = {
