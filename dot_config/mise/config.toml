@@ -1,5 +1,6 @@
 [settings]
 experimental = true
+python_default_packages_file = "~/.config/mise/default-python-packages"
 
 [tools]
 python = ["3.12", "latest"]
@@ -48,3 +49,4 @@ kotlin = "latest"
 "npm:textlint-rule-preset-ja-spacing" = "latest"
 "npm:md-to-pdf" = "latest"
 "npm:neovim" = "latest"
+"npm:atcoder-cli" = "latest"

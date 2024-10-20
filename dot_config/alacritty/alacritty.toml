@@ -1,5 +1,5 @@
 [env]
-TERM = "xterm-256color"
+TERM = "alacritty-direct"
 
 [colors.bright]
 black = "0x676767"
@@ -33,7 +33,7 @@ foreground = "0xD1D2D3"
 thickness = 0.18
 
 [font]
-size = 17
+size = 16
 
 [font.bold]
 family = "UDEV Gothic NF"
