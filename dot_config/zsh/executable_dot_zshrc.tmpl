@@ -65,6 +65,55 @@ if [ -f ${HOME}/.zshrc.mine ]; then
     source ${HOME}/.zshrc.mine
 fi
 
+{{ if stat "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+
+{{ end -}}
+{{ if stat "~/.1password/agent.sock" -}}
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+{{ end -}}
+
+# Rust
+export RUST_BACKTRACE=1
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export CARGO_TARGET_DIR="$XDG_DATA_HOME/cargo/target"
+
+# Deno
+export DENO_INSTALL="$XDG_DATA_HOME/deno"
+export DENO_INSTALL_ROOT="$DENO_INSTALL"
+
+# Python
+export RYE_HOME="$XDG_CONFIG_HOME/rye"
+export IPYTHONDIR="$XDG_CONFIG_HOME/jupyter"
+export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+
+# Rubygems
+export GEM_HOME="$XDG_DATA_HOME/gem"
+export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem"
+
+export BUNDLE_USER_HOME="$XDG_CONFIG_HOME/bundle"
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle/plugin"
+
+# sheldon
+export SHELDON_CONFIG_DIR="$ZDOTDIR"
+
+# gh-red
+export GHRED_CONFIG_HOME="$XDG_CONFIG_HOME/gh-red"
+export GHRED_DATA_HOME="$XDG_DATA_HOME/gh-red"
+
+# Docker
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+
+# Helm
+export HELM_CACHE_HOME="$XDG_CACHE_HOME/helm"
+export HELM_CONFIG_HOME="$XDG_CONFIG_HOME/helm"
+export HELM_DATA_HOME="$XDG_DATA_HOME/helm"
+
+# Keras
+export KERAS_HOME="$XDG_CONFIG_HOME/keras"
+
 {{ if eq .chezmoi.os "linux" }}
 {{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
   ln -sf /mnt/c/Users/$(whoami)/AppData/Local/ssh-agent.sock ~/.ssh/agent.sock
