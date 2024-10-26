@@ -1,6 +1,7 @@
 return {
 	"cshuaimin/ssr.nvim",
-	event = { "BufReadPre", "BufNewFile" },
+	lazy = true,
+	event = { "CursorHold", "CursorHoldI" },
 	config = function()
 		require("ssr").setup({
 			border = "rounded",

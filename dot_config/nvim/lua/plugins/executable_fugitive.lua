@@ -4,7 +4,8 @@ return {
 
 	{
 		"tpope/vim-fugitive",
-		event = { "BufReadPre", "BufNewFile" },
+		lazy = true,
+		event = { "CursorHold", "CursorHoldI" },
 		cond = function()
 			return not vim.g.vscode
 		end,

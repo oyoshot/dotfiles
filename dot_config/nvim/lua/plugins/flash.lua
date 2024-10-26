@@ -1,7 +1,7 @@
 return {
 	"folke/flash.nvim",
-	event = "VeryLazy",
-	opts = {},
+	lazy = true,
+	event = { "CursorHold", "CursorHoldI" },
 	keys = {
 		{
 			"s",

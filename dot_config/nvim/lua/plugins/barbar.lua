@@ -1,7 +1,8 @@
 return {
 	{
 		"romgrk/barbar.nvim",
-		event = { "BufReadPre", "BufNewFile" },
+		lazy = true,
+		event = { "BufReadPost", "BufAdd", "BufNewFile" },
 		init = function()
 			vim.g.barbar_auto_setup = false
 		end,

@@ -13,8 +13,9 @@ return {
 
 	{
 		"neovim/nvim-lspconfig",
+		lazy = true,
+		event = { "CursorHold", "CursorHoldI" },
 		cmd = { "LspInfo", "LspInstall", "LspStart" },
-		event = { "BufReadPre", "BufNewFile" },
 		init = function()
 			-- Reserve a space in the gutter
 			-- This will avoid an annoying layout shift in the screen
@@ -93,8 +94,9 @@ return {
 					"clangd",
 					"solargraph",
 					"bashls",
-					"ruff_lsp",
+					"ruff",
 					"pyright",
+					--"pylsp",
 					"typos_lsp",
 					"denols",
 					"vtsls",
@@ -136,23 +138,24 @@ return {
 				end,
 			})
 
+			require("lspconfig").ruff.setup({
+				init_options = {
+					settings = {
+						configuration = "--config=~/.config/ruff/pyproject.toml",
+					},
+				},
+			})
+
 			lspconfig.pyright.setup({
 				settings = {
 					pyright = {
 						-- Using Ruff's import organizer
 						disableOrganizeImports = true,
 					},
-				},
-			})
-
-			lspconfig.ruff_lsp.setup({
-				init_options = {
-					settings = {
-						format = {
-							args = {},
-						},
-						lint = {
-							args = {},
+					python = {
+						analysis = {
+							-- Ignore all files for analysis to exclusively use Ruff for linting
+							ignore = { "*" },
 						},
 					},
 				},
@@ -291,6 +294,7 @@ return {
 					"stylua",
 					--"gofumpt",
 					"golangci_lint",
+					--"isort",
 				},
 				--automatic_installation = true,
 				automatic_installation = { exclude = { "textlint" } },
