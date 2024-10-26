@@ -1,5 +1,6 @@
 return {
 	"keaising/im-select.nvim",
+	lazy = true,
 	event = "InsertEnter",
 	cond = function()
 		if vim.fn.has("wsl") == 1 then

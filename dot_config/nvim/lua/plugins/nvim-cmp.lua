@@ -19,51 +19,126 @@ return {
 	-- Autocompletion
 	{
 		"hrsh7th/nvim-cmp",
+		lazy = true,
 		event = "InsertEnter",
 		config = function()
+			local border = function(hl)
+				return {
+					{ "┌", hl },
+					{ "─", hl },
+					{ "┐", hl },
+					{ "│", hl },
+					{ "┘", hl },
+					{ "─", hl },
+					{ "└", hl },
+					{ "│", hl },
+				}
+			end
 			local lspkind = require("lspkind")
 			local cmp = require("cmp")
 			cmp.setup({
-				sources = {
-					{ name = "nvim_lsp" },
-					{ name = "nvim_lua" },
-					{ name = "luasnip" }, -- For luasnip users.
-					-- { name = "orgmode" },
-					{ name = "buffer" },
-					{ name = "path" },
+				preselect = cmp.PreselectMode.None,
+
+				window = {
+					completion = {
+						border = border("PmenuBorder"),
+						winhighlight = "Normal:Pmenu,CursorLine:PmenuSel,Search:PmenuSel",
+						scrollbar = false,
+					},
+					documentation = {
+						border = border("CmpDocBorder"),
+						winhighlight = "Normal:CmpDoc",
+					},
 				},
 
-				mapping = cmp.mapping.preset.insert({
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-u>"] = cmp.mapping.scroll_docs(-4),
-					["<C-d>"] = cmp.mapping.scroll_docs(4),
-					["<C-e>"] = cmp.mapping.abort(),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-				}),
-
-				snippet = {
-					expand = function(args)
-						vim.snippet.expand(args.body)
-					end,
-				},
-
-				completion = {
-					completeopt = "menu,menuone,preview,noselect",
+				sorting = {
+					priority_weight = 2,
 				},
 
 				formatting = {
+					fields = { "abbr", "kind", "menu" },
 					format = lspkind.cmp_format({}),
 				},
 
+				matching = {
+					disallow_partial_fuzzy_matching = false,
+				},
+				performance = {
+					async_budget = 1,
+					max_view_entries = 120,
+				},
+
+				-- You can set mappings if you want
+
+				mapping = cmp.mapping.preset.insert({
+					["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+					["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+					["<C-d>"] = cmp.mapping.scroll_docs(-4),
+					["<C-f>"] = cmp.mapping.scroll_docs(4),
+					["<C-w>"] = cmp.mapping.abort(),
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+						elseif require("luasnip").expand_or_locally_jumpable() then
+							require("luasnip").expand_or_jump()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+						elseif require("luasnip").jumpable(-1) then
+							require("luasnip").jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<CR>"] = cmp.mapping({
+						i = function(fallback)
+							if cmp.visible() and cmp.get_active_entry() then
+								cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false })
+							else
+								fallback()
+							end
+						end,
+						s = cmp.mapping.confirm({ select = true }),
+						c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
+					}),
+				}),
 				snippet = {
 					expand = function(args)
 						require("luasnip").lsp_expand(args.body)
 					end,
 				},
+				-- You should specify your *installed* sources.
+				sources = {
+					{ name = "nvim_lsp", max_item_count = 350 },
+					{ name = "nvim_lua" },
+					{ name = "luasnip" },
+					{ name = "path" },
+					{ name = "treesitter" },
+					{ name = "spell" },
+					{ name = "tmux" },
+					{ name = "orgmode" },
+					{
+						name = "buffer",
+						option = {
+							get_bufnrs = function()
+								return vim.api.nvim_buf_line_count(0) < 7500 and vim.api.nvim_list_bufs() or {}
+							end,
+						},
+					},
+					{ name = "latex_symbols" },
+					--{ name = "copilot" },
+					-- { name = "codeium" },
+					-- { name = "cmp_tabnine" },
+				},
 
-				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
+				experimental = {
+					ghost_text = {
+						hl_group = "Whitespace",
+					},
 				},
 			})
 		end,

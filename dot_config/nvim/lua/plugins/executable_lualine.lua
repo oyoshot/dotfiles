@@ -2,7 +2,8 @@ return {
 	-- See `:help lualine.txt`
 	-- Set lualine as statusline
 	"nvim-lualine/lualine.nvim",
-	event = { "BufReadPre", "BufNewFile" },
+	lazy = true,
+	event = { "BufReadPost", "BufAdd", "BufNewFile" },
 	config = function()
 		local custom_catppuccin = require("lualine.themes.catppuccin")
 		require("lualine").setup({

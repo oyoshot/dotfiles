@@ -1,6 +1,7 @@
 return {
 	"folke/trouble.nvim",
-	event = { "BufReadPre", "BufNewFile" },
+	lazy = true,
+	cmd = { "Trouble", "TroubleToggle", "TroubleRefresh" },
 	opts = {
 		-- your configuration comes here
 		-- or leave it empty to use the default settings

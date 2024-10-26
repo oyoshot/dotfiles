@@ -1,4 +1,5 @@
 return {
-    event = { "BufReadPre", "BufNewFile" },
-    'simeji/winresizer',
+	"simeji/winresizer",
+	lazy = true,
+	event = { "CursorHold", "CursorHoldI" },
 }

@@ -1,6 +1,7 @@
 return {
 	"shellRaining/hlchunk.nvim",
-	event = { "BufReadPre", "BufNewFile" },
+	lazy = true,
+	event = { "CursorHold", "CursorHoldI" },
 	config = function()
 		require("hlchunk").setup({
 			chunk = {

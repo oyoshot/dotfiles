@@ -1,6 +1,7 @@
 return {
 	"lewis6991/gitsigns.nvim",
-	event = { "BufReadPre", "BufNewFile" },
+	lazy = true,
+	event = { "CursorHold", "CursorHoldI" },
 	opts = {
 		-- See `:help gitsigns.txt`
 		signs = {
