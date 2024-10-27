@@ -11,7 +11,7 @@ if ! type yay > /dev/null 2>&1; then
     cd
     rm -rf yay
 fi
-yay -S --needed --noconfirm - < .config/yay/extra-packeges
+yay -S --needed --noconfirm - < .config/yay/extra-packages
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
 {{ end }}
 {{ end }}

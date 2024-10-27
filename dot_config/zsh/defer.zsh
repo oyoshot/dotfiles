@@ -1,18 +1,5 @@
 #!/bin/zsh
 
-# Zoxide
-(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
-
-# Mise
-(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
-#export MISE_GO_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-go-packages"
-#export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
-#export MISE_PYTHON_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-python-packages"
-
 # Go
 export GO111MODULE="on"
 
@@ -176,14 +163,6 @@ if type tmux > /dev/null 2>&1; then
   alias tn='tmux new -A -s $(whoami)'
 fi
 
-if type yay > /dev/null 2>&1 && type mise > /dev/null 2>&1; then
-  function ya() {
-    alias mise deactivate
-    yay "$@"
-    eval "$(mise activate zsh)"
-  }
-fi
-
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
 
@@ -220,4 +199,23 @@ if (( ${+commands[brew]} )); then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
   # rip
   export GRAVEYARD="~/.Trash"
+fi
+
+# Zoxide
+(( ${+commands[zoxide]} )) && eval "$(zoxide init zsh)"
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
+
+# Mise
+(( ${+commands[mise]} )) && eval "$(mise activate zsh)"
+#export MISE_GO_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-go-packages"
+#export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
+#export MISE_PYTHON_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-python-packages"
+
+if type yay > /dev/null 2>&1 && type mise > /dev/null 2>&1; then
+  function ya() {
+    mise deactivate && yay "$@" && eval "$(mise activate zsh)"
+  }
 fi
