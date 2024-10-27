@@ -1,6 +1,11 @@
 #!/bin/zsh
 
-echo "🚀 Reload .zshenv..."
-source ~/.zshenv
-echo "🚀 Reload .zshrc..."
-source ~/.zshrc
+if [ -e ~/.zshenv ]; then
+  echo "🚀 Reload .zshenv..."
+  source ~/.zshenv
+fi
+
+if [ -e ~/.zshrc ]; then
+  echo "🚀 Reload .zshrc..."
+  source ~/.zshrc
+fi
