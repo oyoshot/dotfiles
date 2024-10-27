@@ -55,11 +55,9 @@ return {
 				preselect = cmp.PreselectMode.None,
 
 				window = {
-					completion = {
-						border = border("PmenuBorder"),
-						winhighlight = "Normal:Pmenu,CursorLine:PmenuSel,Search:PmenuSel",
+					completion = cmp.config.window.bordered({
 						scrollbar = false,
-					},
+					}),
 					documentation = {
 						border = border("CmpDocBorder"),
 						winhighlight = "Normal:CmpDoc",
