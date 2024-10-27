@@ -1,0 +1,4 @@
+#compdef rye
+if command -v rye >/dev/null 2>&1; then
+    source <(rye self completion -s zsh)
+fi
