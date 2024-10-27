@@ -46,12 +46,7 @@ export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
 #export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
 #export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
-export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
-
-# anyframe
-autoload -Uz anyframe-init && anyframe-init
-
-autoload -Uz compinit && compinit
+#export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
 
 run_command() {
     command="$1"
@@ -213,6 +208,12 @@ fi
 #export MISE_GO_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-go-packages"
 #export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
 #export MISE_PYTHON_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-python-packages"
+
+# anyframe
+autoload -Uz anyframe-init && anyframe-init
+
+autoload -Uz compinit && compinit
+
 
 if type yay > /dev/null 2>&1 && type mise > /dev/null 2>&1; then
   function ya() {
