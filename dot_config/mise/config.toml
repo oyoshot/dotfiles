@@ -40,6 +40,7 @@ kotlin = "latest"
 "cargo:cargo-chef" = "latest"
 
 "go:github.com/mattn/memo" = "latest"
+"go:github.com/rhysd/vim-startuptime" = "latest"
 
 "npm:textlint" = "latest"
 "npm:textlint-rule-prh" = "latest"
