@@ -118,7 +118,7 @@ return {
 							end
 						end,
 						s = cmp.mapping.confirm({ select = true }),
-						c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
+						--c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
 					}),
 				}),
 

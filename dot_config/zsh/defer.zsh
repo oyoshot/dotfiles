@@ -207,7 +207,7 @@ fi
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-(( ${+commands[fzf]} )) && eval "$(fzf --zsh)"
+(( ${+commands[fzf]} )) && source <(fzf --zsh)
 
 # Mise
 (( ${+commands[mise]} )) && eval "$(mise activate zsh)"
