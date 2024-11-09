@@ -3,16 +3,16 @@ experimental = true
 python_default_packages_file = "~/.config/mise/default-python-packages"
 
 [tools]
-java = "latest"
-gradle = "latest"
-python = ["3.12", "latest"]
 ruby = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
-node = "latest"
+java = "latest"
+node = "22"
 deno = "latest"
+pnpm = "latest"
 zig = "latest"
 julia = "latest"
 #haskell = "latest"
+scala = "latest"
 elixir = "latest"
 erlang = "latest"
 bun = "latest"
@@ -21,8 +21,9 @@ helm = "latest"
 opentofu = "latest"
 uv = "latest"
 go = "latest"
+gradle = "latest"
 kotlin = "latest"
-#scala = "latest"
+python = "3.13"
 
 "cargo:cargo-expand" = "latest"
 "cargo:cargo-nextest" = "latest"
@@ -51,3 +52,5 @@ kotlin = "latest"
 "npm:md-to-pdf" = "latest"
 "npm:neovim" = "latest"
 "npm:atcoder-cli" = "latest"
+
+"pipx:poetry" = "latest"
