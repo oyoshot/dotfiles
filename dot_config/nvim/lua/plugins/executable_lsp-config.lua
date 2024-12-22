@@ -29,14 +29,12 @@ return {
 				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local lsp_format_on_save = function(bufnr)
-				local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-				vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
 				vim.api.nvim_create_autocmd("BufWritePre", {
-					group = augroup,
+					group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
+					buffer = bufnr,
 					callback = function()
 						vim.lsp.buf.format({
 							async = true,
-							timeout_ms = 10000,
 							filter = function(c)
 								local disabled_format_clients = { "lua_ls" }
 								return not vim.tbl_contains(disabled_format_clients, c.name)
