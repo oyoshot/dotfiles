@@ -98,12 +98,15 @@ return {
 					--"pylsp",
 					"typos_lsp",
 					"denols",
-					"vtsls",
+					--"vtsls",
 				},
 				handlers = {
 					-- this first function is the "default handler"
 					-- it applies to every language server without a "custom handler"
 					function(server_name)
+						if server_name == "denols" then
+							return
+						end
 						require("lspconfig")[server_name].setup({})
 					end,
 				},
@@ -166,66 +169,33 @@ return {
 				},
 			})
 
-			local function custom_attach(client, _)
-				local active_clients = vim.lsp.get_active_clients()
-				if client.name == "denols" then
-					for _, other_client in ipairs(active_clients) do
-						if other_client.name == "vtsls" then
-							other_client.stop()
-						end
-					end
-				elseif client.name == "vtsls" then
-					for _, other_client in ipairs(active_clients) do
-						if other_client.name == "denols" then
-							client.stop()
-						end
-					end
+			local async = require("plenary.async")
+			local root_finder = require("utils.root_finder")
+
+			async.run(function()
+				local cwd = vim.fn.getcwd()
+
+				local deno_root_task = root_finder.async_find_root({ "deno.json", "deno.jsonc" }, cwd, 5)
+				local node_root_task = root_finder.async_find_root({ "package.json", "tsconfig.json" }, cwd, 5)
+
+				local deno_root = deno_root_task()
+				local node_root = node_root_task()
+
+				if deno_root then
+					lspconfig.denols.setup({})
+					return -- `typescript-tools` のセットアップはスキップ
 				end
-			end
 
-			lspconfig.vtsls.setup({
-				root_dir = function(fname)
-					local deno_root = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(fname)
-					if deno_root then
-						return nil
-					end
-					return lspconfig.util.root_pattern("package.json", "tsconfig.json", ".git")(fname)
-				end,
-				on_attach = custom_attach,
-				single_file_support = false,
-				settings = {
-					typescript = {
-						inlayHints = {
-							parameterNames = { enabled = "literals" },
-							parameterTypes = { enabled = true },
-							variableTypes = { enabled = true },
-							propertyDeclarationTypes = { enabled = true },
-							functionLikeReturnTypes = { enabled = true },
-							enumMemberValues = { enabled = true },
+				if node_root then
+					require("typescript-tools").setup({
+						settings = {
+							tsserver_file_preferences = {
+								includeInlayParameterNameHints = "all",
+							},
 						},
-					},
-					javascript = {
-						inlayHints = {
-							parameterNames = { enabled = "literals" },
-							parameterTypes = { enabled = true },
-							variableTypes = { enabled = true },
-							propertyDeclarationTypes = { enabled = true },
-							functionLikeReturnTypes = { enabled = true },
-							enumMemberValues = { enabled = true },
-						},
-					},
-				},
-				config = function(_, opts)
-					local setup = lsp_utils.setup
-					require("lspconfig.configs").vtsls = require("vtsls").lspconfig
-					setup("vtsls", opts)
-				end,
-			})
-
-			lspconfig.denols.setup({
-				root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-				on_attach = custom_attach,
-			})
+					})
+				end
+			end)
 
 			lspconfig.terraformls.setup({
 				on_attach = function(_, _)
