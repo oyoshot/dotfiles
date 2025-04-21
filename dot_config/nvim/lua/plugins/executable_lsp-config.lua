@@ -105,7 +105,7 @@ return {
 						if server_name == "denols" then
 							return
 						end
-						require("lspconfig")[server_name].setup({})
+						-- require("lspconfig")[server_name].setup({})
 					end,
 				},
 			})
