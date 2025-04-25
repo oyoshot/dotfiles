@@ -1,5 +1,5 @@
 ansible
-aws-cli-v2
+aws-cli
 aws-session-manager-plugin
 base-devel
 bash
@@ -39,3 +39,4 @@ man-pages
 man-pages-ja
 nfs-utils
 bind
+mold
