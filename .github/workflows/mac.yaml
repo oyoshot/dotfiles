@@ -1,13 +1,6 @@
 name: Build the Mac
 
-on:
-  push:
-    branches:
-      - device/mac
-
-  pull_request:
-    branches-ignore:
-      - device/mac
+on: pull_request
 
 jobs:
   dotfiles:

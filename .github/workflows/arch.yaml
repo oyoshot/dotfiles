@@ -1,15 +1,6 @@
 name: Build the Arch
 
-on:
-  push:
-    branches:
-      - device/windows
-      - device/arch
-
-  pull_request:
-    branches-ignore:
-      - device/windows
-      - device/arch
+on: pull_request
 
 jobs:
   build:
