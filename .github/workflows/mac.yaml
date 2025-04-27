@@ -1,4 +1,4 @@
-name: Build the Mac
+name: Mac
 
 on: pull_request
 
