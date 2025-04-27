@@ -39,5 +39,6 @@ man-pages
 man-pages-ja
 nfs-utils
 bind
+clang
 mold
 zsh
