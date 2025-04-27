@@ -17,16 +17,5 @@ rustup default stable \
 
 # Install Mise dependency
 if type mise > /dev/null 2>&1; then
-  install_mise() {
-    local attempts=0
-
-    while ((attempts <= 2)); do
-        mise install -y -v && return 0
-        ((attempts++))
-    done
-
-    return 1
-  }
-
-  install_mise
+  mise install -y -v
 fi
