@@ -12,4 +12,7 @@ return {
 			},
 		})
 	end,
+	dependencies = {
+		"lewis6991/gitsigns.nvim",
+	},
 }

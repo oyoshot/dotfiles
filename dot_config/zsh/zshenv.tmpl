@@ -9,11 +9,6 @@ case ${UID} in
 esac
 
 export PATH
-export MANPATH
-
-# -U: keep only the first occurrence of each duplicated value
-# ref. http://zsh.sourceforge.net/Doc/Release/Shell-Builtin-Commands.html#index-typeset
-typeset -gU PATH path MANPATH manpath
 
 # ignore /etc/zprofile, /etc/zshrc, /etc/zlogin, and /etc/zlogout
 # ref. http://zsh.sourceforge.net/Doc/Release/Files.html
@@ -37,11 +32,6 @@ path=(
   /sbin (N-/)
   /Library/Apple/usr/bin (N-/)
   ${path}
-)
-
-manpath=(
-    /usr/local/share/man (N-/) # homebrew
-    ${manpath}
 )
 
 # XDG
