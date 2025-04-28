@@ -1,17 +1,18 @@
 name: Mac
-
 on: pull_request
-
 jobs:
   dotfiles:
     runs-on: macos-latest
     timeout-minutes: 180
+
     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HOMEBREW_BUNDLE_BREW_SKIP: "awscli"
 
     steps:
       - uses: actions/checkout@v3
       - name: Install dotfiles
+
         run: |
           brew upgrade
           /bin/zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
