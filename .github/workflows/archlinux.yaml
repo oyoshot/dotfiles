@@ -1,19 +1,14 @@
-name: Build the Arch
+name: Arch Linux
 
-on:
-  push:
-    branches:
-      - device/windows
-      - device/arch
-
-  pull_request:
-    branches-ignore:
-      - device/windows
-      - device/arch
+on: pull_request
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
