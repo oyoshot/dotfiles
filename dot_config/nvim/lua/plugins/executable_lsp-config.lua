@@ -28,10 +28,6 @@ return {
 			lsp_defaults.capabilities =
 				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-			-- 完全透過させたい
-			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
-			vim.api.nvim_set_hl(0, "FloatBorder", { bg = "NONE" })
-
 			vim.lsp.inlay_hint.enable(true)
 
 			local lsp_format_on_save = function(bufnr)
