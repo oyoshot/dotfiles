@@ -20,8 +20,6 @@ local opts = { noremap = true }
 vim.keymap.set("n", ";", ":", opts)
 vim.keymap.set("n", ":", ";", opts)
 
-vim.keymap.set({ "n", "v" }, "<Leader>v", "<C-v>", opts)
-
 -- Move to the end of the line
 vim.keymap.set("n", "<Leader>h", "^", opts)
 vim.keymap.set("n", "<Leader>l", "$", opts)
@@ -35,14 +33,12 @@ vim.keymap.set("n", "sh", "<C-w>h", opts)
 vim.keymap.set("n", "sj", "<C-w>j", opts)
 vim.keymap.set("n", "sk", "<C-w>k", opts)
 vim.keymap.set("n", "sl", "<C-w>l", opts)
-vim.keymap.set("n", "s+", "2<C-w>+", opts)
-vim.keymap.set("n", "s-", "2<C-w>-", opts)
-vim.keymap.set("n", "s=", "<C-w>=", opts)
-vim.keymap.set("n", "s<", "5<C-w><", opts)
-vim.keymap.set("n", "s>", "5<C-w>>", opts)
+
+vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
+vim.keymap.set("n", "<S-Tab>", ":bprev<CR>", opts)
 
 -- Select all
---vim.keymap.set("n", "<C-a>", "gg<S-v>G", opts)
+vim.keymap.set("n", "<C-a>", "gg<S-v>G", opts)
 
 -- No yank with x
 vim.keymap.set("n", "x", '"_x', opts)
