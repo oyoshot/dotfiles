@@ -28,6 +28,8 @@ return {
 			lsp_defaults.capabilities =
 				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
+			vim.lsp.inlay_hint.enable(true)
+
 			local lsp_format_on_save = function(bufnr)
 				vim.api.nvim_create_autocmd("BufWritePre", {
 					group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
@@ -64,7 +66,6 @@ return {
 					vim.g.markdown_fenced_language = {
 						"ts=typescript",
 					}
-					vim.lsp.inlay_hint.enable(true)
 					lsp_format_on_save(bufnr)
 				end,
 			})

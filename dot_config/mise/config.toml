@@ -39,6 +39,7 @@ python = "3.13"
 "cargo:cargo-sort" = "latest"
 "cargo:cargo-features-manager" = "latest"
 "cargo:cargo-chef" = "latest"
+"cargo:cargo-lambda" = "latest"
 
 "go:github.com/mattn/memo" = "latest"
 "go:github.com/rhysd/vim-startuptime" = "latest"
