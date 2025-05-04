@@ -38,7 +38,7 @@ vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<S-Tab>", ":bprev<CR>", opts)
 
 -- Select all
-vim.keymap.set("n", "<C-a>", "gg<S-v>G", opts)
+vim.keymap.set("n", "<Leader>a", "gg<S-v>G", opts)
 
 -- No yank with x
 vim.keymap.set("n", "x", '"_x', opts)
