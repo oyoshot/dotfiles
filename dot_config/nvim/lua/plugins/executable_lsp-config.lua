@@ -98,6 +98,7 @@ return {
 					"typos_lsp",
 					"denols",
 					--"vtsls",
+					"astro",
 				},
 				handlers = {
 					-- this first function is the "default handler"
@@ -112,6 +113,8 @@ return {
 			})
 
 			local lspconfig = require("lspconfig")
+
+			lspconfig.astro.setup({})
 
 			lspconfig.lua_ls.setup({
 				settings = {
@@ -241,7 +244,7 @@ return {
 							"graphql",
 							"handlebars",
 							"svelte",
-							"astro",
+							-- "astro",
 							"htmlangular",
 						},
 					}),

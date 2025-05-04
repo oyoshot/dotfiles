@@ -10,6 +10,7 @@ return {
 	end,
 	opts = {
 		ensure_installed = {
+			"astro",
 			"go",
 			"gosum",
 			"gomod",
