@@ -22,12 +22,9 @@ return {
 			vim.opt.signcolumn = "yes"
 		end,
 		config = function()
-			-- Add cmp_nvim_lsp capabilities settings to lspconfig
-			-- This should be executed before you configure any language server
-			local lsp_defaults = require("lspconfig").util.default_config
-			lsp_defaults.capabilities =
-				vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
-
+			vim.lsp.config("*", {
+				capabilities = require("cmp_nvim_lsp").default_capabilities(),
+			})
 			vim.lsp.inlay_hint.enable(true)
 
 			local lsp_format_on_save = function(bufnr)
