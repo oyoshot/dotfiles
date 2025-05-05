@@ -161,11 +161,35 @@ return {
 			lspconfig.denols.setup({
 				root_makers = { "deno.json", "deno.jsonc", "deps.ts" },
 				workspace_required = true,
+				settings = {
+					deno = {
+						inlayHints = {
+							parameterNames = { enabled = "all", suppressWhenArgumentMatchesName = true },
+							parameterTypes = { enabled = true },
+							variableTypes = { enabled = true, suppressWhenTypeMatchesName = true },
+							propertyDeclarationTypes = { enabled = true },
+							functionLikeReturnTypes = { enable = true },
+							enumMemberValues = { enabled = true },
+						},
+					},
+				},
 			})
 
 			lspconfig.vtsls.setup({
 				root_makers = { "package.json", "tsconfig.json" },
 				workspace_required = true,
+				settings = {
+					typescript = {
+						inlayHints = {
+							parameterNames = { enabled = "literals" },
+							parameterTypes = { enabled = true },
+							variableTypes = { enabled = true },
+							propertyDeclarationTypes = { enabled = true },
+							functionLikeReturnTypes = { enabled = true },
+							enumMemberValues = { enabled = true },
+						},
+					},
+				},
 			})
 
 			lspconfig.terraformls.setup({
