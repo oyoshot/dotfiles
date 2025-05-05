@@ -94,18 +94,8 @@ return {
 					--"pylsp",
 					"typos_lsp",
 					"denols",
-					--"vtsls",
+					"vtsls",
 					"astro",
-				},
-				handlers = {
-					-- this first function is the "default handler"
-					-- it applies to every language server without a "custom handler"
-					function(server_name)
-						if server_name == "denols" then
-							return
-						end
-						-- require("lspconfig")[server_name].setup({})
-					end,
 				},
 			})
 
@@ -168,33 +158,15 @@ return {
 				},
 			})
 
-			local async = require("plenary.async")
-			local root_finder = require("utils.root_finder")
+			lspconfig.denols.setup({
+				root_makers = { "deno.json", "deno.jsonc", "deps.ts" },
+				workspace_required = true,
+			})
 
-			async.run(function()
-				local cwd = vim.fn.getcwd()
-
-				local deno_root_task = root_finder.async_find_root({ "deno.json", "deno.jsonc" }, cwd, 5)
-				local node_root_task = root_finder.async_find_root({ "package.json", "tsconfig.json" }, cwd, 5)
-
-				local deno_root = deno_root_task()
-				local node_root = node_root_task()
-
-				if deno_root then
-					lspconfig.denols.setup({})
-					return -- `typescript-tools` のセットアップはスキップ
-				end
-
-				if node_root then
-					require("typescript-tools").setup({
-						settings = {
-							tsserver_file_preferences = {
-								includeInlayParameterNameHints = "all",
-							},
-						},
-					})
-				end
-			end)
+			lspconfig.vtsls.setup({
+				root_makers = { "package.json", "tsconfig.json" },
+				workspace_required = true,
+			})
 
 			lspconfig.terraformls.setup({
 				on_attach = function(_, _)
