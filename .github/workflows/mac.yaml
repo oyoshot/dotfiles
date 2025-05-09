@@ -18,7 +18,7 @@ jobs:
           path: |
             $HOME/Library/Caches/Homebrew
             $HOME/.cache/Homebrew
-          key: macos-brew-${{ hashFiles('Brewfile') }}
+          key: macos-brew-${{ hashFiles('.config/homebrew/Brewfile') }}
           restore-keys: |
             macos-brew-
 
@@ -37,3 +37,13 @@ jobs:
         run: |
           brew upgrade
           /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
+
+      - name: Debug cache dirs
+        if: always()
+        run: |
+          echo '--- Homebrew cache ---'
+          ls -la $HOME/Library/Caches/Homebrew || echo '(not exist)'
+          ls -la $HOME/.cache/Homebrew      || echo '(not exist)'
+          echo '--- mise cache ---'
+          ls -la $HOME/.cache/mise          || echo '(not exist)'
+          ls -la $HOME/.local/share/mise    || echo '(not exist)'
