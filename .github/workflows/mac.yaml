@@ -15,23 +15,19 @@ jobs:
       - name: Cache Homebrew
         uses: actions/cache@v3
         with:
-          path: |
-            $HOME/Library/Caches/Homebrew
-            $HOME/.cache/Homebrew
           key: macos-brew-${{ hashFiles('.config/homebrew/Brewfile') }}
-          restore-keys: |
-            macos-brew-
+          restore-keys: macos-brew-
+          path:
+            - ${{ env.HOME }}/Library/Caches/Homebrew
 
       - name: Cache mise
         uses: actions/cache@v3
         with:
-          path: |
-            $HOME/Library/Caches/mise
-            $HOME/.cache/mise
-            $HOME/.local/share/mise
           key: macos-mise-${{ hashFiles('.config/mise/config.toml') }}
-          restore-keys: |
-            macos-mise-
+          restore-keys: macos-mise-
+          path:
+            - ${{ env.HOME }}/.cache/mise
+            - ${{ env.HOME }}/.local/share/mise
 
       - name: Install dotfiles
         run: |
@@ -41,9 +37,8 @@ jobs:
       - name: Debug cache dirs
         if: always()
         run: |
-          echo '--- Homebrew cache ---'
-          ls -la $HOME/Library/Caches/Homebrew || echo '(not exist)'
-          ls -la $HOME/.cache/Homebrew      || echo '(not exist)'
+          echo '--- Brew cache ---'
+          ls -al $HOME/Library/Caches/Homebrew
           echo '--- mise cache ---'
-          ls -la $HOME/.cache/mise          || echo '(not exist)'
-          ls -la $HOME/.local/share/mise    || echo '(not exist)'
+          ls -al $HOME/.cache/mise
+          ls -al $HOME/.local/share/mise
