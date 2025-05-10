@@ -15,10 +15,11 @@ jobs:
       - name: Cache Homebrew
         uses: actions/cache@v3
         with:
-          key: macos-brew-${{ hashFiles('.config/homebrew/Brewfile') }}
+          key: macos-brew-${{ hashFiles('Brewfile') }}
           restore-keys: macos-brew-
           path:
             - ${{ env.HOME }}/Library/Caches/Homebrew
+            - ${{ env.HOME }}/.cache/Homebrew
 
       - name: Cache mise
         uses: actions/cache@v3
