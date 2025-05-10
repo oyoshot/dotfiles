@@ -15,7 +15,7 @@ jobs:
       - name: Cache Homebrew
         uses: actions/cache@v3
         with:
-          key: macos-brew-${{ hashFiles('Brewfile') }}
+          key: macos-brew-${{ hashFiles('.chezmoi/home/.config/homebrew/Brewfile') }}
           restore-keys: macos-brew-
           path: |
             ${{ env.HOME }}/Library/Caches/Homebrew
@@ -23,7 +23,7 @@ jobs:
       - name: Cache mise
         uses: actions/cache@v3
         with:
-          key: macos-mise-${{ hashFiles('.config/mise/config.toml') }}
+          key: macos-mise-${{ hashFiles('.chezmoi/home/.config/mise/config.toml') }}
           restore-keys: macos-mise-
           path: |
             ${{ env.HOME }}/.cache/mise
@@ -34,11 +34,16 @@ jobs:
           brew upgrade
           /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
 
+      - name: Show computed keys
+        run: |
+          echo "brew key: macos-brew-${{ hashFiles('.chezmoi/home/.config/homebrew/Brewfile') }}"
+          echo "mise key: macos-mise-${{ hashFiles('.chezmoi/home/.config/mise/config.toml') }}"
+
       - name: Debug cache dirs
         if: always()
         run: |
           echo '--- Brew cache ---'
-          ls -al $HOME/Library/Caches/Homebrew
+          ls -al $HOME/Library/Caches/Homebrew || echo "(no brew cache dir)"
           echo '--- mise cache ---'
-          ls -al $HOME/.cache/mise
-          ls -al $HOME/.local/share/mise
+          ls -al $HOME/.cache/mise    || echo "(no mise cache dir)"
+          ls -al $HOME/.local/share/mise || echo "(no mise data dir)"
