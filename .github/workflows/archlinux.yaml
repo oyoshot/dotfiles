@@ -45,7 +45,7 @@ jobs:
       - name: Prepare host cache dirs
         run: |
           mkdir -p $HOME/.cache/{mise,yay,chezmoi}
-          sudo chown -R 1000:1000
+          sudo chown -R 1000:1000 ${{ github.workspace }}
 
       - name: Run arch container
         run: |
