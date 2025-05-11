@@ -9,53 +9,59 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Cache yay
-        uses: actions/cache@v3
-        with:
-          key: arch-yay-${{ hashFiles('dot_config/yay/extra-packages') }}
-          restore-keys: arch-yay-
-          path: |
-            ~/.cache/yay
+    - name: Cache pacman packages
+      uses: actions/cache@v3
+      with:
+        key: arch-pacman
+        restore-keys: arch-pacman-
+        path: ${{ github.workspace }}/arch-pacman-cache
 
-      - name: Cache mise
-        uses: actions/cache@v3
-        with:
-          key: arch-mise-${{ hashFiles('dot_config/mise/config.toml') }}
-          restore-keys: arch-mise-
-          path: |
-            ~/.cache/mise
-            ~/.local/share/mise
+    - name: Cache yay
+      uses: actions/cache@v3
+      with:
+        key: arch-yay
+        restore-keys: arch-yay-
+        path: |
+          ${{ env.HOME }}/.cache/yay
 
-      - name: Create image tag
-        id: image_tag
-        run: |
-          VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
-          IMAGE_NAME="onlymyarch"
-          TAG="${IMAGE_NAME}:${VARIANT}"
-          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+    - name: Cache mise
+      uses: actions/cache@v3
+      with:
+        key: arch-mise-${{ hashFiles('dot_config/mise/config.toml') }}
+        restore-keys: arch-mise-
+        path: |
+          ${{ env.HOME }}/.cache/mise
+          ${{ env.HOME }}/.local/share/mise
 
-      - name: Build arch image
-        run: |
-          docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
+    - name: Ensure cache dirs exist
+      run: |
+        mkdir -p ${{ github.workspace }}/arch-pacman-cache
+        mkdir -p $HOME/.cache/yay
+        mkdir -p $HOME/.cache/mise $HOME/.local/share/mise
 
-      - name: Prepare host cache dirs
-        run: |
-          mkdir -p $HOME/.cache/{mise,yay,chezmoi}
-          mkdir -p $HOME/.local/share/mise
+    - name: Create image tag
+      id: image_tag
+      run: |
+        VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
+        echo "TAG=onlymyarch:$VARIANT" >> $GITHUB_OUTPUT
 
-      - name: Run arch container
-        shell: bash
-        run: |
-          sudo chown -R 1000:1000 ${{ github.workspace }}
-          IMAGE=${{ steps.image_tag.outputs.TAG }}
-          docker run --rm -t \
-            -v ${{ env.HOME }}/.cache:/home/user/.cache \
-            -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
-            -v ${{ github.workspace }}:/home/user \
-            -w /home/user \
-            "$IMAGE" \
-            zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
+    - name: Build arch image
+      run: docker build \
+             -t ${{ steps.image_tag.outputs.TAG }} \
+             images/arch
+
+    - name: Run arch container
+      run: |
+        sudo chown -R 1000:1000 ${{ github.workspace }}
+
+        docker run --rm -t \
+          -v ${{ github.workspace }}:/home/user \
+          -v ${{ github.workspace }}/arch-pacman-cache:/var/cache/pacman/pkg \
+          -v $HOME/.cache/yay:/home/user/.cache/yay \
+          -v $HOME/.cache/mise:/home/user/.cache/mise \
+          -v $HOME/.local/share/mise:/home/user/.local/share/mise \
+          -w /home/user \
+          ${{ steps.image_tag.outputs.TAG }} \
+          zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
