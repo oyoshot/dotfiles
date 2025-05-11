@@ -4,6 +4,7 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -11,20 +12,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache pacman packages
+    - name: Cache pacman/yay
       uses: actions/cache@v3
       with:
-        key: arch-pacman
-        restore-keys: arch-pacman-
-        path: ${{ github.workspace }}/arch-pacman-cache
-
-    - name: Cache yay
-      uses: actions/cache@v3
-      with:
-        key: arch-yay
-        restore-keys: arch-yay-
+        key: arch-pkg-${{ hashFiles('dot_config/yay/extra-packages') }}
+        restore-keys: arch-pkg-
+        # pacman と yay を同じホスト側ディレクトリにまとめる
         path: |
-          ${{ env.HOME }}/.cache/yay
+          ~/arch-cache/pacman-pkg        # /var/cache/pacman/pkg にマウント
+          ~/arch-cache/yay               # ~/.cache/yay にマウント
 
     - name: Cache mise
       uses: actions/cache@v3
@@ -32,37 +28,27 @@ jobs:
         key: arch-mise-${{ hashFiles('dot_config/mise/config.toml') }}
         restore-keys: arch-mise-
         path: |
-          ${{ env.HOME }}/.cache/mise
-          ${{ env.HOME }}/.local/share/mise
-
-    - name: Ensure cache dirs exist
-      run: |
-        mkdir -p ${{ github.workspace }}/arch-pacman-cache
-        mkdir -p $HOME/.cache/yay
-        mkdir -p $HOME/.cache/mise $HOME/.local/share/mise
-
-    - name: Create image tag
-      id: image_tag
-      run: |
-        VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
-        echo "TAG=onlymyarch:$VARIANT" >> $GITHUB_OUTPUT
+          ~/.cache/mise
+          ~/.local/share/mise
 
     - name: Build arch image
       run: |
         docker build \
-          -t ${{ steps.image_tag.outputs.TAG }} \
-          images/arch
+          --progress plain \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --cache-from type=local,src=~/arch-cache/pacman-pkg \
+          --cache-to   type=local,dest=~/arch-cache/pacman-pkg,mode=max \
+          -t ${{ github.sha }}-arch images/arch
 
     - name: Run arch container
       run: |
         sudo chown -R 1000:1000 ${{ github.workspace }}
-
         docker run --rm -t \
           -v ${{ github.workspace }}:/home/user \
-          -v ${{ github.workspace }}/arch-pacman-cache:/var/cache/pacman/pkg \
-          -v $HOME/.cache/yay:/home/user/.cache/yay \
-          -v $HOME/.cache/mise:/home/user/.cache/mise \
-          -v $HOME/.local/share/mise:/home/user/.local/share/mise \
+          -v ~/arch-cache/pacman-pkg:/var/cache/pacman/pkg \
+          -v ~/arch-cache/yay:/home/user/.cache/yay \
+          -v ~/.cache/mise:/home/user/.cache/mise \
+          -v ~/.local/share/mise:/home/user/.local/share/mise \
           -w /home/user \
-          ${{ steps.image_tag.outputs.TAG }} \
+          ${{ github.sha }}-arch \
           zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
