@@ -45,7 +45,7 @@ jobs:
       - name: Prepare host cache dirs
         run: |
           mkdir -p $HOME/.cache/{mise,yay,chezmoi}
-          sudo chown -R 1000:1000 $HOME/.cache
+          sudo chown -R 1000:1000
 
       - name: Run arch container
         run: |
