@@ -31,6 +31,15 @@ jobs:
           ~/.cache/mise
           ~/.local/share/mise
 
+    - name: Create image tag
+      id: image_tag
+      run: |
+        VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
+        IMAGE_NAME="onlymyarch"
+        TAG="${IMAGE_NAME}:${VARIANT}"
+        echo "TAG=${TAG}" >> $GITHUB_OUTPUT
+        echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+
     - name: Build arch image
       run: docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
 
