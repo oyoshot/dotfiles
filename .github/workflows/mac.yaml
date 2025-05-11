@@ -18,7 +18,7 @@ jobs:
           key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
           restore-keys: macos-brew-
           path: |
-            ${{ env.HOME }}/Library/Caches/Homebrew
+            ~/Library/Caches/Homebrew
 
       - name: Cache mise
         uses: actions/cache@v3
@@ -26,8 +26,8 @@ jobs:
           key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}
           restore-keys: macos-mise-
           path: |
-            ${{ env.HOME }}/.cache/mise
-            ${{ env.HOME }}/.local/share/mise
+            ~/.cache/mise
+            ~/.local/share/mise
 
       - name: Install dotfiles
         run: |
