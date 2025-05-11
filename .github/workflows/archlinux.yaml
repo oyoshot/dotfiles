@@ -47,9 +47,9 @@ jobs:
           # Change owner of workspace to ubuntu user
           sudo chown -R 1000:1000 ${{ github.workspace }}
           docker run -t --rm  \
+            -v ${{ github.workspace }}:/home/user \
             -v ${{ env.HOME }}/.cache/mise:/home/user/.cache/mise \
             -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
             -v ${{ env.HOME }}/.cache/yay:/home/user/.cache/yay \
-            -v ${{ github.workspace }}:/home/user \
             -w /home/user \
             ${{ steps.image_tag.outputs.TAG }} zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
