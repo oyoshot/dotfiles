@@ -45,15 +45,18 @@ jobs:
       - name: Prepare host cache dirs
         run: |
           mkdir -p $HOME/.cache/{mise,yay,chezmoi}
-          sudo chown -R 1000:1000 ${{ github.workspace }}
+          sudo chown -R 1000:1000 $HOME/.cache
 
       - name: Run arch container
         run: |
-          docker run -t --rm  \
-            -v ${{ github.workspace }}:/home/user \
+          IMAGE=${{ steps.image_tag.outputs.TAG }}
+
+          docker run --rm -t \
             -v ${{ env.HOME }}/.cache/mise:/home/user/.cache/mise \
-            -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
             -v ${{ env.HOME }}/.cache/yay:/home/user/.cache/yay \
+            -v ${{ env.HOME }}/.cache/chezmoi:/home/user/.cache/chezmoi \
+            -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
+            -v ${{ github.workspace }}:/home/user \
             -w /home/user \
-            ${{ steps.image_tag.outputs.TAG }} \
-            zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+            "$IMAGE" \
+            zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
