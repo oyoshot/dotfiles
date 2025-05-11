@@ -48,9 +48,10 @@ jobs:
         echo "TAG=onlymyarch:$VARIANT" >> $GITHUB_OUTPUT
 
     - name: Build arch image
-      run: docker build \
-             -t ${{ steps.image_tag.outputs.TAG }} \
-             images/arch
+      run: |
+        docker build \
+          -t ${{ steps.image_tag.outputs.TAG }} \
+          images/arch
 
     - name: Run arch container
       run: |
