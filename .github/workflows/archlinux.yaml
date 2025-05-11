@@ -42,14 +42,18 @@ jobs:
         run: |
           docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
 
+      - name: Prepare host cache dirs
+        run: |
+          mkdir -p $HOME/.cache/{mise,yay,chezmoi}
+          sudo chown -R 1000:1000 ${{ github.workspace }}
+
       - name: Run arch container
         run: |
-          # Change owner of workspace to ubuntu user
-          sudo chown -R 1000:1000 ${{ github.workspace }}
           docker run -t --rm  \
             -v ${{ github.workspace }}:/home/user \
             -v ${{ env.HOME }}/.cache/mise:/home/user/.cache/mise \
             -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
             -v ${{ env.HOME }}/.cache/yay:/home/user/.cache/yay \
             -w /home/user \
-            ${{ steps.image_tag.outputs.TAG }} zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+            ${{ steps.image_tag.outputs.TAG }} \
+            zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
