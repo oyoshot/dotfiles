@@ -53,5 +53,5 @@ jobs:
           -v ~/.cache/mise:/home/user/.cache/mise \
           -v ~/.local/share/mise:/home/user/.local/share/mise \
           -w /home/user \
-          ${{ github.sha }}-arch \
+          ${{ steps.image_tag.outputs.TAG }} \
           zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
