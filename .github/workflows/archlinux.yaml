@@ -32,13 +32,7 @@ jobs:
           ~/.local/share/mise
 
     - name: Build arch image
-      run: |
-        docker build \
-          --progress plain \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --cache-from type=local,src=~/arch-cache/pacman-pkg \
-          --cache-to   type=local,dest=~/arch-cache/pacman-pkg,mode=max \
-          -t ${{ github.sha }}-arch images/arch
+      run: docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
 
     - name: Run arch container
       run: |
