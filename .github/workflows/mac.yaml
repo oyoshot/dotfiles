@@ -12,11 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Show computed keys
-        run: |
-          echo "brew key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
-          echo "mise key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}"
-
       - name: Cache Homebrew
         uses: actions/cache@v3
         with:
