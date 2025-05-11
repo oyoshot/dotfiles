@@ -37,18 +37,17 @@ jobs:
           echo "TAG=${TAG}"       >> $GITHUB_OUTPUT
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Build arch image
-        run: docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
-
-      - name: Run arch container
-        run: |
-          sudo chown -R 1000:1000 ${{ github.workspace }}
-          docker run --rm -t \
-            -v ${{ github.workspace }}:/home/user \
-            # ホストの mise キャッシュ
-            -v ~/.cache/mise:/home/user/.cache/mise \
-            -v ~/.local/share/mise:/home/user/.local/share/mise \
-            # ホストの yay キャッシュ
-            -v ~/.cache/yay:/home/user/.cache/yay \
-            -w /home/user ${{ steps.image_tag.outputs.TAG }} \
-            zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
+    - name: Run arch container
+      shell: bash
+      run: |
+        # make sure runner can write your workspace
+        sudo chown -R 1000:1000 ${{ github.workspace }}
+        IMAGE=${{ steps.image_tag.outputs.TAG }}
+        docker run --rm -t \
+          -v ${{ github.workspace }}:/home/user \
+          -v ${{ env.HOME }}/.cache/mise:/home/user/.cache/mise \
+          -v ${{ env.HOME }}/.local/share/mise:/home/user/.local/share/mise \
+          -v ${{ env.HOME }}/.cache/yay:/home/user/.cache/yay \
+          -w /home/user \
+          $IMAGE \
+          zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
