@@ -12,24 +12,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache pacman/yay
+    - name: Cache pacman / yay / mise
       uses: actions/cache@v3
       with:
-        key: arch-pkg-${{ hashFiles('dot_config/yay/extra-packages') }}
-        restore-keys: arch-pkg-
-        # pacman と yay を同じホスト側ディレクトリにまとめる
+        key: arch-all-${{ hashFiles('dot_config/yay/extra-packages') }}-${{ hashFiles('dot_config/mise/config.toml') }}
+        restore-keys: arch-all-
         path: |
-          ~/arch-cache/pacman-pkg        # /var/cache/pacman/pkg にマウント
-          ~/arch-cache/yay               # ~/.cache/yay にマウント
-
-    - name: Cache mise
-      uses: actions/cache@v3
-      with:
-        key: arch-mise-${{ hashFiles('dot_config/mise/config.toml') }}
-        restore-keys: arch-mise-
-        path: |
-          ~/.cache/mise
-          ~/.local/share/mise
+          ~/.arch-cache
 
     - name: Create image tag
       id: image_tag
@@ -48,9 +37,7 @@ jobs:
         sudo chown -R 1000:1000 ${{ github.workspace }}
         docker run --rm -t \
           -v ${{ github.workspace }}:/home/user \
-          -v ~/arch-cache/pacman-pkg:/var/cache/pacman/pkg \
-          -v ~/arch-cache/yay:/home/user/.cache/yay \
-          -v ~/.cache/mise:/home/user/.cache/mise \
+          -v ~/.arch-cache:/home/user/.cache \
           -v ~/.local/share/mise:/home/user/.local/share/mise \
           -w /home/user \
           ${{ steps.image_tag.outputs.TAG }} \
