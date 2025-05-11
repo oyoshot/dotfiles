@@ -1,34 +1,44 @@
 name: Arch Linux
-
 on: pull_request
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Create image tag
-        id: image_tag
-        run: |
-          VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
-          IMAGE_NAME="onlymyarch"
-          TAG="${IMAGE_NAME}:${VARIANT}"
+    - name: Cache pacman / yay / mise
+      uses: actions/cache@v3
+      with:
+        key: arch-all-${{ hashFiles('dot_config/yay/extra-packages') }}-${{ hashFiles('dot_config/mise/config.toml') }}
+        restore-keys: arch-all-
+        path: |
+          ~/.arch-cache
 
-          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+    - name: Create image tag
+      id: image_tag
+      run: |
+        VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
+        IMAGE_NAME="onlymyarch"
+        TAG="${IMAGE_NAME}:${VARIANT}"
+        echo "TAG=${TAG}" >> $GITHUB_OUTPUT
+        echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Build arch image
-        run: |
-          docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
+    - name: Build arch image
+      run: docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
 
-      - name: Run arch container
-        run: |
-          # Change owner of workspace to ubuntu user
-          sudo chown -R 1000:1000 ${{ github.workspace }}
-          docker run -t --rm  -v ${{ github.workspace }}:/home/user -w /home/user ${{ steps.image_tag.outputs.TAG }} zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+    - name: Run arch container
+      run: |
+        sudo chown -R 1000:1000 ${{ github.workspace }}
+        docker run --rm -t \
+          -v ${{ github.workspace }}:/home/user \
+          -v ~/.arch-cache:/home/user/.cache \
+          -v ~/.local/share/mise:/home/user/.local/share/mise \
+          -w /home/user \
+          ${{ steps.image_tag.outputs.TAG }} \
+          zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
