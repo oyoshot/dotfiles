@@ -6,7 +6,6 @@ jobs:
 
     container:
       image: archlinux:latest
-      options: --tty
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -43,4 +42,5 @@ jobs:
       - name: Apply chezmoi (builder)
         run: |
           sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+            env CI=true TERM=dumb \
             zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
