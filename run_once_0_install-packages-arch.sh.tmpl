@@ -4,45 +4,15 @@ set -euo pipefail
 # Install packages on Arch
 {{ if eq .chezmoi.os "linux" }}
 {{ if eq .chezmoi.osRelease.id "arch" }}
-
 sudo pacman -Syu --noconfirm git binutils fakeroot make gcc base base-devel
-
 if ! type yay > /dev/null 2>&1; then
     git clone https://aur.archlinux.org/yay.git
     cd yay
-
-    if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
-        # stdin をリダイレクトして非対話モードを強制
-        makepkg -si --noconfirm < /dev/null
-    else
-        makepkg -si --noconfirm
-    fi
-
+    makepkg -si --noconfirm
     cd
     rm -rf yay
 fi
-
-echo "yay installed"
-
-# yay コマンドも非対話モードで実行
-if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
-    yay -S --needed \
-          --noconfirm \
-          --answerdiff None  \
-          --answeredit None  \
-          --answerclean None \
-          --batchinstall \
-          --removemake \
-          < ~/.config/yay/extra-packages
-else
-    yay -S --needed \
-          --noconfirm \
-          --answerdiff None  \
-          --answeredit None  \
-          --answerclean None \
-          < ~/.config/yay/extra-packages
-fi
-
+yay -S --needed --noconfirm - < ~/.config/yay/extra-packages
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
 {{ end }}
 {{ end }}

@@ -1,5 +1,6 @@
 name: Arch Linux
 on: pull_request
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Sy --noconfirm base-devel git sudo curl gnupg zsh
+          pacman -Sy --noconfirm base-devel git sudo curl gnupg
 
       - name: Create builder user
         run: |
@@ -42,5 +43,4 @@ jobs:
       - name: Apply chezmoi (builder)
         run: |
           sudo --preserve-env=GITHUB_TOKEN -Hu builder \
-            env CI=true TERM=dumb \
             zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
