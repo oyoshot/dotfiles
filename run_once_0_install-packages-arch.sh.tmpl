@@ -33,14 +33,14 @@ if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
           --answerclean None \
           --batchinstall \
           --removemake \
-          - < ~/.config/yay/extra-packages < /dev/null
+          < ~/.config/yay/extra-packages
 else
     yay -S --needed \
           --noconfirm \
           --answerdiff None  \
           --answeredit None  \
           --answerclean None \
-          - < ~/.config/yay/extra-packages
+          < ~/.config/yay/extra-packages
 fi
 
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
