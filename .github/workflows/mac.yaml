@@ -11,8 +11,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install dotfiles
 
+      - name: Cache Homebrew
+        uses: actions/cache@v3
+        with:
+          key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
+          restore-keys: macos-brew-
+          path: |
+            ~/Library/Caches/Homebrew
+
+      - name: Cache mise
+        uses: actions/cache@v3
+        with:
+          key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}
+          restore-keys: macos-mise-
+          path: |
+            ~/.cache/mise
+            ~/.local/share/mise
+
+      - name: Install dotfiles
         run: |
           brew upgrade
-          /bin/zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+          /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
