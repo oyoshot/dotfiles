@@ -12,6 +12,7 @@ if ! type yay > /dev/null 2>&1; then
     cd
     rm -rf yay
 fi
+yay --save --answerdiff None --answerclean None --sudoloop --removemake
 yay -S --needed --noconfirm - < .config/yay/extra-packages
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
 {{ end }}
