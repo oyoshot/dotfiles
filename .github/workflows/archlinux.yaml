@@ -34,12 +34,16 @@ jobs:
             /home/builder/.cache/yay
             /home/builder/.local/share/mise
             /home/builder/.cache/mise
-          key: |
-            ${{ runner.os }}-dotfiles-${{ hashFiles('dot_config/yay/extra-packages', 'dot_config/mise/config.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-dotfiles-
+          key:
+            ${{ runner.os }}-dotfiles-${{ hashFiles('dot_config/yay/extra-packages',
+            'dot_config/mise/config.toml') }}
+          restore-keys: ${{ runner.os }}-dotfiles-
 
       - name: Apply chezmoi (builder)
         run: |
-          sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+          sudo --preserve-env=GITHUB_TOKEN -Hu builder bash -euo pipefail -c '
+            mkdir -p ~/.config/yay
+            [[ -f ~/.config/yay/config.json ]] || \
+              yay --save --answerdiff None --answerclean None --sudoloop --removemake
             zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+          '
