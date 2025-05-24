@@ -1,34 +1,46 @@
 name: Arch Linux
-
 on: pull_request
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: archlinux:latest
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Create image tag
-        id: image_tag
+      - name: System bootstrap (root)
         run: |
-          VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
-          IMAGE_NAME="onlymyarch"
-          TAG="${IMAGE_NAME}:${VARIANT}"
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Sy --noconfirm base-devel git sudo curl gnupg zsh
 
-          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-
-      - name: Build arch image
+      - name: Create builder user
         run: |
-          docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
+          useradd --uid 1000 --create-home builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/builder
+          chown -R builder:builder "$GITHUB_WORKSPACE"
 
-      - name: Run arch container
+      - name: Restore caches
+        uses: actions/cache@v3
+        with:
+          path: |
+            /var/cache/pacman/pkg
+            /etc/pacman.d/gnupg
+            /home/builder/.cache/yay
+            /home/builder/.local/share/mise
+            /home/builder/.cache/mise
+          key: |
+            ${{ runner.os }}-dotfiles-${{ hashFiles('dot_config/yay/extra-packages', 'dot_config/mise/config.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-dotfiles-
+
+      - name: Apply chezmoi (builder)
         run: |
-          # Change owner of workspace to ubuntu user
-          sudo chown -R 1000:1000 ${{ github.workspace }}
-          docker run -t --rm  -v ${{ github.workspace }}:/home/user -w /home/user ${{ steps.image_tag.outputs.TAG }} zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+          sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+            zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
