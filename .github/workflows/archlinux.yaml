@@ -44,7 +44,7 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Sy --noconfirm
+          pacman -Sy --noconfirm zsh base-devel
 
       - name: Apply chezmoi
         run: |
