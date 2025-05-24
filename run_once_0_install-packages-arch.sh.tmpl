@@ -9,7 +9,6 @@ sudo pacman -Syu --noconfirm git binutils fakeroot make gcc base base-devel
 
 if ! type yay > /dev/null 2>&1; then
     git clone https://aur.archlinux.org/yay.git
-
     cd yay
 
     if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
@@ -25,6 +24,7 @@ fi
 
 echo "yay installed"
 
+# yay コマンドも非対話モードで実行
 if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
     yay -S --needed \
           --noconfirm \
