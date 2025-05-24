@@ -6,46 +6,41 @@ jobs:
 
     container:
       image: archlinux:latest
-      # options: --user 1000:1000
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Restore pacman & yay cache
-        id: pacman-cache
+      - name: System bootstrap (root)
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Sy --noconfirm \
+            base-devel git sudo curl gnupg
+
+      - name: Create builder user
+        run: |
+          useradd --uid 1000 --create-home builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/builder
+          chown -R builder:builder "$GITHUB_WORKSPACE"
+
+      - name: Restore caches
         uses: actions/cache@v3
         with:
           path: |
             /var/cache/pacman/pkg
             /etc/pacman.d/gnupg
-            ~/.cache/yay
+            /home/builder/.cache/yay
+            /home/builder/.local/share/mise
+            /home/builder/.cache/mise
           key: |
-            ${{ runner.os }}-pacman-yay-${{ hashFiles('dot_config/yay/extra-packages') }}
+            ${{ runner.os }}-dotfiles-${{ hashFiles('dot_config/yay/extra-packages', 'dot_config/mise/config.toml') }}
           restore-keys: |
-            ${{ runner.os }}-pacman-yay-
+            ${{ runner.os }}-dotfiles-
 
-      - name: Restore mise cache
-        id: mise-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.local/share/mise
-            ~/.cache/mise
-          key: |
-            ${{ runner.os }}-mise-${{ hashFiles('dot_config/mise/config.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-mise-
-
-      - name: pacman key init & system update
+      - name: Apply chezmoi (builder)
         run: |
-          pacman-key --init
-          pacman-key --populate archlinux
-          pacman -Sy --noconfirm zsh base-devel
-
-      - name: Apply chezmoi
-        run: |
-          zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+          sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+            zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
