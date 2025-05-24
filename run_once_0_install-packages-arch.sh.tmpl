@@ -13,7 +13,12 @@ if ! type yay > /dev/null 2>&1; then
     rm -rf yay
 fi
 echo "yay installed"
-yay -S --batchinstall --needed --noconfirm - < ~/.config/yay/extra-packages
+yay -S --needed \
+      --noconfirm \
+      --answerdiff None  \
+      --answeredit None  \
+      --answerclean None \
+      - < ~/.config/yay/extra-packages
 sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
 {{ end }}
 {{ end }}
