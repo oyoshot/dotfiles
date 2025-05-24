@@ -29,7 +29,6 @@ if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
     yay -S --needed \
           --noconfirm \
           --answerdiff None  \
-
           --answeredit None  \
           --answerclean None \
           --batchinstall \
@@ -37,12 +36,10 @@ if [ "${CI:-false}" = "true" ] || [ ! -t 0 ]; then
           - < ~/.config/yay/extra-packages < /dev/null
 else
     yay -S --needed \
-
           --noconfirm \
           --answerdiff None  \
           --answeredit None  \
           --answerclean None \
-
           - < ~/.config/yay/extra-packages
 fi
 
