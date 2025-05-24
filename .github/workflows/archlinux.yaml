@@ -1,10 +1,12 @@
 name: Arch Linux
-
 on: pull_request
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    container:
+      image: archlinux:latest
+      # options: --user 1000:1000
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -13,22 +15,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Create image tag
-        id: image_tag
-        run: |
-          VARIANT="$(TZ=UTC-9 date +%Y%m%d)_${IMAGE_HASH:0:7}"
-          IMAGE_NAME="onlymyarch"
-          TAG="${IMAGE_NAME}:${VARIANT}"
+      - name: Restore pacman & yay cache
+        id: pacman-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            /var/cache/pacman/pkg
+            /etc/pacman.d/gnupg
+            ~/.cache/yay
+          key: |
+            ${{ runner.os }}-pacman-yay-${{ hashFiles('dot_config/yay/extra-packages') }}
+          restore-keys: |
+            ${{ runner.os }}-pacman-yay-
 
-          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+      - name: Restore mise cache
+        id: mise-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.local/share/mise
+            ~/.cache/mise
+          key: |
+            ${{ runner.os }}-mise-${{ hashFiles('dot_config/mise/config.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-mise-
 
-      - name: Build arch image
+      - name: pacman key init & system update
         run: |
-          docker build -t ${{ steps.image_tag.outputs.TAG }} images/arch
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Sy --noconfirm
 
-      - name: Run arch container
+      - name: Apply chezmoi
         run: |
-          # Change owner of workspace to ubuntu user
-          sudo chown -R 1000:1000 ${{ github.workspace }}
-          docker run -t --rm  -v ${{ github.workspace }}:/home/user -w /home/user ${{ steps.image_tag.outputs.TAG }} zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+          zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
