@@ -18,12 +18,12 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Sy --noconfirm base-devel git sudo curl gnupg zsh
+          pacman -Sy --noconfirm base-devel git sudo curl gnupg zsh util-linux
 
       - name: Create builder user
         run: |
           useradd --uid 1000 --create-home builder
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/builder
+          echo 'builder ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/builder
           chown -R builder:builder "$GITHUB_WORKSPACE"
 
       - name: Restore caches
@@ -40,7 +40,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-dotfiles-
 
+      - name: Fix cache permissions (builder)
+        run: sudo chown -R builder:builder /home/builder/.cache /home/builder/.local/share || true
+
       - name: Apply chezmoi (builder)
+        shell: 'script -q -e -c "bash {0}"'
         run: |
           sudo --preserve-env=GITHUB_TOKEN -Hu builder \
-            zsh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply -S .
+            zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
