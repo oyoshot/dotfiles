@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-dotfiles-
 
       - name: Fix cache permissions (builder)
-        run: sudo chown -R builder:builder /home/builder/.cache /home/builder/.local/share || true
+        run: sudo chown -R builder:builder /home/builder/.cache /home/builder/.local || true
 
       - name: Apply chezmoi (builder)
         shell: 'script -q -e -c "bash {0}"'
