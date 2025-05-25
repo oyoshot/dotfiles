@@ -28,22 +28,39 @@ jobs:
           echo 'builder ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/builder
           chown -R builder:builder "$GITHUB_WORKSPACE"
 
-      - name: Restore caches
+      - name: Prepare builder home
+        run: sudo -u builder install -d \
+          /home/builder/.cache \
+          /home/builder/.local
+
+      - name: Restore pacman cache
         uses: actions/cache@v3
         with:
           path: |
             /var/cache/pacman/pkg
             /etc/pacman.d/gnupg
-            /home/builder/.cache/yay
+          key: ${{ runner.os }}-pacman-${{ hashFiles('dot_config/yay/extra-packages') }}
+          restore-keys: ${{ runner.os }}-pacman-
+
+      - name: Restore yay cache
+        uses: actions/cache@v3
+        with:
+          path: /home/builder/.cache/yay
+          key: ${{ runner.os }}-yay-${{ hashFiles('dot_config/yay/extra-packages') }}
+          restore-keys: ${{ runner.os }}-yay-
+
+      - name: Restore mise cache
+        uses: actions/cache@v3
+        with:
+          path: |
             /home/builder/.local/share/mise
             /home/builder/.cache/mise
-          key: |
-            ${{ runner.os }}-dotfiles-${{ hashFiles('dot_config/yay/extra-packages', 'dot_config/mise/config.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-dotfiles-
+            /home/builder/.local/state/mise
+          key: ${{ runner.os }}-mise-${{ hashFiles('dot_config/mise/config.toml') }}
+          restore-keys: ${{ runner.os }}-mise-
 
       - name: Fix cache permissions (builder)
-        run: sudo chown -R builder:builder /home/builder/.cache /home/builder/.local || true
+        run: sudo chown -R builder:builder /home/builder || true
 
       - name: Apply chezmoi (builder)
         shell: 'script -q -e -c "bash {0}"'
