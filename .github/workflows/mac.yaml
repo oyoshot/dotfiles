@@ -7,31 +7,29 @@ jobs:
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # 自動更新抑制
-      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_BUNDLE_BREW_SKIP: "awscli"
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache Homebrew downloads
+      - name: Cache Homebrew
         uses: actions/cache@v3
         with:
           key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
           restore-keys: macos-brew-
-          path: ~/Library/Caches/Homebrew
+          path: |
+            ~/Library/Caches/Homebrew
 
-      - name: Cache Homebrew Cellar & Opt
+      - name: Cache mise
         uses: actions/cache@v3
         with:
-          key: macos-brew-cellar-${{ hashFiles('dot_config/homebrew/Brewfile') }}
-          restore-keys: macos-brew-cellar-
+          key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}
+          restore-keys: macos-mise-
           path: |
-            /usr/local/Homebrew/Cellar
-            /usr/local/Homebrew/opt
-
-      - name: Update Homebrew once
-        run: brew update --preinstall --quiet
+            ~/.cache/mise
+            ~/.local/share/mise
 
       - name: Install dotfiles
         run: |
+          brew upgrade
           /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
