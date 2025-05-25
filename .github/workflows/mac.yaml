@@ -35,5 +35,4 @@ jobs:
 
       - name: Install dotfiles
         run: |
-          brew upgrade
           /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
