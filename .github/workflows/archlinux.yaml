@@ -1,9 +1,9 @@
 name: Arch Linux
 on: pull_request
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     container:
       image: archlinux:latest
