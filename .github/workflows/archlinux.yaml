@@ -18,7 +18,9 @@ jobs:
         run: |
           pacman-key --init
           pacman-key --populate archlinux
-          pacman -Sy --noconfirm base-devel git sudo curl gnupg zsh util-linux
+          pacman -Sy --noconfirm archlinux-keyring
+          pacman -Syu --noconfirm
+          pacman -S --needed --noconfirm base-devel git zsh sudo util-linux
 
       - name: Create builder user
         run: |
