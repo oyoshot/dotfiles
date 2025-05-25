@@ -1,47 +1,21 @@
 name: Mac
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
   pull_request:
-
-  schedule:
-    - cron: "17 19 * * 6"
 
 jobs:
   dotfiles:
     runs-on: macos-latest
-    timeout-minutes: 180
+    timeout-minutes: 60
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      HOMEBREW_BUNDLE_BREW_SKIP: "awscli"
+      HOMEBREW_BUNDLE_BREW_SKIP: awscli
       HOMEBREW_NO_AUTO_UPDATE: 1
       HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Cache Homebrew (bottles, cellars)
-        uses: actions/cache@v3
-        with:
-          key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
-          restore-keys: macos-brew-
-          path: |
-            ~/Library/Caches/Homebrew
-            /opt/homebrew/Cellar
-
-      - name: Cache mise
-        uses: actions/cache@v3
-        with:
-          key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}
-          restore-keys: macos-mise-
-          path: |
-            ~/.cache/mise
-            ~/.local/share/mise
-
-      - name: Install dotfiles
-        run: |
-          /bin/zsh -c "$(curl -fsSL chezmoi.io/get)" -- init --apply -S .
+      - uses: ./.github/actions/mac
