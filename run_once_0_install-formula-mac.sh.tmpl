@@ -6,6 +6,6 @@ set -euo pipefail
 if ! type xcode-select > /dev/null 2>&1; then
   xcode-select --install
 fi
-brew bundle --file .config/homebrew/Brewfile
+brew bundle --file ~/.config/homebrew/Brewfile
 brew autoremove
 {{ end }}
