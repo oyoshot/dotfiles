@@ -1,5 +1,5 @@
 ansible
-aws-cli
+aws-cli-v2
 aws-session-manager-plugin
 base-devel
 bash
