@@ -15,13 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache Homebrew
+      - name: Cache Homebrew (bottles, cellars)
         uses: actions/cache@v3
         with:
           key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}
           restore-keys: macos-brew-
           path: |
             ~/Library/Caches/Homebrew
+            /opt/homebrew/Cellar
 
       - name: Cache mise
         uses: actions/cache@v3
