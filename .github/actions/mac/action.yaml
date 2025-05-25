@@ -1,0 +1,36 @@
+name: Mac
+description: Restore caches, run chezmoi
+
+inputs:
+  brewfile-path:
+    default: dot_config/homebrew/Brewfile
+    description: "aaa"
+  mise-config-path:
+    default: dot_config/mise/config.toml
+    description: "aaa"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@v3
+      id: brew
+      with:
+        key: macos-brew-${{ hashFiles(inputs.brewfile-path) }}
+        restore-keys: macos-brew-
+        path: |
+          ~/Library/Caches/Homebrew
+          /opt/homebrew/Cellar
+
+    - uses: actions/cache@v3
+      id: mise
+      with:
+        key: macos-mise-${{ hashFiles(inputs.mise-config-path) }}
+        restore-keys: macos-mise-
+        path: |
+          ~/.cache/mise
+          ~/.local/share/mise
+
+    - name: Install dotfiles with chezmoi
+      shell: bash
+      run: |
+        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S ${{ github.workspace }}

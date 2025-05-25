@@ -1,0 +1,38 @@
+name: Build-Weekly-Cache-macOS
+
+on:
+  schedule:
+    - cron: "17 10 * * 6"
+
+  push:
+    branches:
+      - main
+
+jobs:
+  warm-cache:
+    runs-on: macos-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}-${{ github.run_id }}
+          path: |
+            ~/Library/Caches/Homebrew
+            /opt/homebrew/Cellar
+
+      - name: Brew bundle (no-upgrade)
+        run: |
+          brew bundle --file ~/.config/homebrew/Brewfile --no-upgrade
+
+      - uses: actions/cache@v3
+        with:
+          key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}-${{ github.run_id }}
+          path: |
+            ~/.cache/mise
+            ~/.local/share/mise
+
+      - name: Warm mise
+        run: |
+          mise install -y
