@@ -1,16 +1,16 @@
 #!/bin/zsh
 set -euo pipefail
 
-# Install Rust
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
-export CARGO_TARGET_DIR="$XDG_DATA_HOME/cargo/target"
+export CARGO_TARGET_DIR="$CARGO_HOME/target"
 
-if ! type rustup > /dev/null 2>&1; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+if [[ ! -f "$CARGO_HOME/env" ]]; then
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --no-modify-path
 fi
 
-. "$CARGO_HOME/env"
+source "$CARGO_HOME/env"
 
 rustup default stable \
 && rustup component add rust-analyzer \
