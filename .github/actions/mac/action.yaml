@@ -18,7 +18,6 @@ runs:
         key: macos-brew-${{ hashFiles(inputs.brewfile-path) }}
         restore-keys: macos-brew-
         path: |
-
           ~/Library/Caches/Homebrew
           /opt/homebrew/Cellar
 
