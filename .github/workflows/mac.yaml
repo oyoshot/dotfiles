@@ -1,5 +1,14 @@
 name: Mac
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  schedule:
+    - cron: "17 19 * * 6"
+
 jobs:
   dotfiles:
     runs-on: macos-latest

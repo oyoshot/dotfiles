@@ -1,5 +1,14 @@
 name: Arch Linux
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  schedule:
+    - cron: "17 19 * * 6"
+
 jobs:
   build:
     runs-on: ubuntu-latest
