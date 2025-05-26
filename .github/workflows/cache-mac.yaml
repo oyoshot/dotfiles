@@ -1,4 +1,4 @@
-name: Build-Weekly-Cache-macOS
+name: Clean Build Mac
 on:
   schedule:
     - cron: "17 10 * * 6"
