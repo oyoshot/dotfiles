@@ -1,4 +1,4 @@
-name: Clean Build & Warm Cache
+name: Mac - Clean Build and Warm Cache
 on:
   schedule:
     - cron: "17 10 * * 6"
