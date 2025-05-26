@@ -3,10 +3,10 @@ description: Restore Homebrew & mise caches, then apply dotfiles with chezmoi
 
 inputs:
   brewfile-path:
-    description: ""
+    description: "Homebrew のパッケージファイルへのパス"
     default: dot_config/homebrew/Brewfile
   mise-config-path:
-    description: ""
+    description: "mise の構成ファイルへのパス"
     default: dot_config/mise/config.toml
   force-refresh:
     description: "true でキャッシュを無視し必ず保存し直す"
@@ -19,7 +19,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: macos-brew-v2-${{ hashFiles('${{ inputs.brewfile-path }}') }}
+        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}
         restore-keys: macos-brew-v2-
         path: |
           ~/Library/Caches/Homebrew
@@ -29,7 +29,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
+        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}
         restore-keys: macos-mise-v2-
         path: |
           ~/.cache/mise
@@ -55,5 +55,4 @@ runs:
         key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
         path: |
           ~/.cache/mise
-
           ~/.local/share/mise
