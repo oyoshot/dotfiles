@@ -44,7 +44,7 @@ runs:
     - if: inputs.force-refresh == 'true' || steps.brew-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
-        key: macos-brew-v2-${{ hashFiles('${{ inputs.brewfile-path }}') }}
+        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}
         path: |
           ~/Library/Caches/Homebrew
           /opt/homebrew/Cellar
@@ -52,7 +52,7 @@ runs:
     - if: inputs.force-refresh == 'true' || steps.mise-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
-        key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
+        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}
         path: |
           ~/.cache/mise
           ~/.local/share/mise
