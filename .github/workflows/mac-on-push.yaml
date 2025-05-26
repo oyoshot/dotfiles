@@ -5,4 +5,4 @@ on:
 
 jobs:
   mac:
-    uses: ./.github/workflows/mac-build.yml
+    uses: ./.github/workflows/mac-build.yaml
