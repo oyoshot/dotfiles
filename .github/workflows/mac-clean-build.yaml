@@ -1,9 +1,10 @@
 name: Mac - Clean Build and Warm Cache
 on:
-  schedule:
-    - cron: "17 10 * * 6"
   push:
     branches: [main]
+
+  schedule:
+    - cron: "17 10 * * 6"
 
 jobs:
   warm:
