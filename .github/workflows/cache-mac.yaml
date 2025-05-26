@@ -10,6 +10,7 @@ jobs:
   warm-cache:
     runs-on: macos-latest
     timeout-minutes: 180
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HOMEBREW_NO_AUTO_UPDATE: 1
