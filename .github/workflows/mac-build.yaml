@@ -1,0 +1,27 @@
+name: Mac Build
+on:
+  workflow_call:
+    inputs:
+      force-refresh:
+        type: boolean
+        default: false
+
+jobs:
+  mac:
+    runs-on: macos-latest
+    timeout-minutes: 180
+    concurrency:
+      group: mac-${{ github.ref }}
+      cancel-in-progress: true
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_BUNDLE_NO_UPGRADE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mac-setup
+        with:
+          force-refresh: ${{ inputs.force-refresh }}

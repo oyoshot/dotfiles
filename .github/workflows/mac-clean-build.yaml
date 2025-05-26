@@ -1,42 +1,12 @@
-name: Clean Build Mac
+name: Clean Build & Warm Cache
 on:
   schedule:
     - cron: "17 10 * * 6"
-
   push:
     branches: [main]
 
 jobs:
-  warm-cache:
-    runs-on: macos-latest
-    timeout-minutes: 180
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      HOMEBREW_BUNDLE_NO_UPGRADE: 1
-      HOMEBREW_NO_INSTALL_CLEANUP: 1
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Apply dotfiles with chezmoi
-        run: |
-          /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S ${{ github.workspace }}
-
-      - uses: actions/cache@v3
-        with:
-          key: macos-brew-${{ hashFiles('dot_config/homebrew/Brewfile') }}-${{ github.run_id }}
-          path: |
-            ~/Library/Caches/Homebrew
-            /opt/homebrew/Cellar
-
-      - name: Brew bundle (no-upgrade)
-        run: brew bundle --file dot_config/homebrew/Brewfile --no-upgrade
-
-      - uses: actions/cache@v3
-        with:
-          key: macos-mise-${{ hashFiles('dot_config/mise/config.toml') }}-${{ github.run_id }}
-          path: |
-            ~/.cache/mise
-            ~/.local/share/mise
+  warm:
+    uses: ./.github/workflows/mac-build.yml
+    with:
+      force-refresh: true

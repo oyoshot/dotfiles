@@ -1,36 +1,59 @@
 name: Mac
-description: Restore caches, run chezmoi
+description: Restore Homebrew & mise caches, then apply dotfiles with chezmoi
 
 inputs:
   brewfile-path:
+    description: ""
     default: dot_config/homebrew/Brewfile
-    description: "aaa"
   mise-config-path:
+    description: ""
     default: dot_config/mise/config.toml
-    description: "aaa"
+  force-refresh:
+    description: "true でキャッシュを無視し必ず保存し直す"
+    default: "false"
 
 runs:
   using: composite
   steps:
-    - uses: actions/cache@v3
-      id: brew
+    - id: brew-restore
+      if: inputs.force-refresh != 'true'
+      uses: actions/cache/restore@v4
       with:
-        key: macos-brew-${{ hashFiles(inputs.brewfile-path) }}
-        restore-keys: macos-brew-
+        key: macos-brew-v2-${{ hashFiles('${{ inputs.brewfile-path }}') }}
+        restore-keys: macos-brew-v2-
         path: |
           ~/Library/Caches/Homebrew
           /opt/homebrew/Cellar
 
-    - uses: actions/cache@v3
-      id: mise
+    - id: mise-restore
+      if: inputs.force-refresh != 'true'
+      uses: actions/cache/restore@v4
       with:
-        key: macos-mise-${{ hashFiles(inputs.mise-config-path) }}
-        restore-keys: macos-mise-
+        key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
+        restore-keys: macos-mise-v2-
         path: |
           ~/.cache/mise
           ~/.local/share/mise
 
-    - name: Install dotfiles with chezmoi
+    - name: Apply dotfiles with chezmoi
       shell: bash
       run: |
-        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S ${{ github.workspace }}
+        set -euo pipefail
+        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply --no-diff -S "${{ github.workspace }}"
+
+    - if: inputs.force-refresh == 'true' || steps.brew-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        key: macos-brew-v2-${{ hashFiles('${{ inputs.brewfile-path }}') }}
+        path: |
+          ~/Library/Caches/Homebrew
+          /opt/homebrew/Cellar
+
+    - if: inputs.force-refresh == 'true' || steps.mise-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
+        path: |
+          ~/.cache/mise
+
+          ~/.local/share/mise
