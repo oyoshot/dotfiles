@@ -55,5 +55,4 @@ runs:
         key: macos-mise-v2-${{ hashFiles('${{ inputs.mise-config-path }}') }}
         path: |
           ~/.cache/mise
-
           ~/.local/share/mise
