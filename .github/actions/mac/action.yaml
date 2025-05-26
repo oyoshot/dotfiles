@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply --no-diff -S "${{ github.workspace }}"
+        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S "${{ github.workspace }}"
 
     - if: inputs.force-refresh == 'true' || steps.brew-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
