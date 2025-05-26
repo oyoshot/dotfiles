@@ -1,4 +1,4 @@
-name: Mac (feature branches)
+name: Mac - Feature Branches
 on:
   push:
     branches-ignore: [main]
