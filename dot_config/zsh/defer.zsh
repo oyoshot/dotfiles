@@ -148,7 +148,7 @@ if (( ${+commands[eza]} )); then
     alias lla='ls -la --header --git --group'
 fi
 
-(( ${+commands[bat]} )) && alias cat='bat --theme ansi'
+(( ${+commands[bat]} )) && alias b='bat --theme ansi'
 
 (( ${+commands[memo]} )) && alias m='memo'
 
