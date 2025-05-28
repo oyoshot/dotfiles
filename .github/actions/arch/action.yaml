@@ -72,10 +72,10 @@ runs:
       run: sudo chown -R builder:builder /home/builder || true
 
     - name: Apply chezmoi (builder)
-      shell: bash
+      shell: 'script -q -e -c "bash {0}"'
       run: |
         sudo --preserve-env=GITHUB_TOKEN -Hu builder \
-          zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S .
+          zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
 
     - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
