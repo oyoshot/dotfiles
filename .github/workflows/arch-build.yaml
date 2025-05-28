@@ -1,0 +1,27 @@
+name: Arch Linux - Build
+
+on:
+  workflow_call:
+    inputs:
+      force-refresh:
+        type: boolean
+        default: false
+
+jobs:
+  arch:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    timeout-minutes: 180
+    concurrency:
+      group: arch-${{ github.ref }}
+      cancel-in-progress: true
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: ./.github/actions/arch
+        with:
+          force-refresh: ${{ inputs.force-refresh }}

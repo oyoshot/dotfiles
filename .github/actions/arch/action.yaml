@@ -1,0 +1,104 @@
+name: Arch Linux
+description: Bootstrap Arch 環境、キャッシュ復元／保存、dotfiles 適用
+
+inputs:
+  arch-extra-packages-path:
+    description: "yay でインストールするパッケージ一覧ファイルへのパス"
+    default: dot_config/yay/extra-packages
+  mise-config-path:
+    description: "mise の構成ファイルへのパス"
+    default: dot_config/mise/config.toml
+  force-refresh:
+    description: "true でキャッシュを無視し、常に最新状態から始める"
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - id: pacman-restore
+      if: inputs.force-refresh != 'true'
+      uses: actions/cache/restore@v4
+      with:
+        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        restore-keys: arch-pacman-v1-
+        path: |
+          /var/cache/pacman/pkg
+          /etc/pacman.d/gnupg
+
+    - id: yay-restore
+      if: inputs.force-refresh != 'true'
+      uses: actions/cache/restore@v4
+      with:
+        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        restore-keys: arch-yay-v1-
+        path: /home/builder/.cache/yay
+
+    - id: mise-restore
+      if: inputs.force-refresh != 'true'
+      uses: actions/cache/restore@v4
+      with:
+        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
+        restore-keys: arch-mise-v1-
+        path: |
+          /home/builder/.local/share/mise
+          /home/builder/.cache/mise
+          /home/builder/.local/state/mise
+
+    - name: System bootstrap (root)
+      shell: bash
+      run: |
+        pacman-key --init
+        pacman-key --populate archlinux
+        pacman -Sy --noconfirm archlinux-keyring
+        pacman -Syu --noconfirm
+        pacman -S --needed --noconfirm base-devel git zsh sudo util-linux
+
+    - name: Create builder user
+      shell: bash
+      run: |
+        useradd --uid 1000 --create-home builder
+        echo 'builder ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/builder
+        chown -R builder:builder "$GITHUB_WORKSPACE"
+
+    - name: Prepare builder home
+      shell: bash
+      run: |
+        sudo -u builder install -d \
+          /home/builder/.cache \
+          /home/builder/.local
+
+    - name: Fix cache permissions (builder)
+      shell: bash
+      run: sudo chown -R builder:builder /home/builder || true
+
+    - name: Apply chezmoi (builder)
+      shell: bash
+      run: |
+        sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+          zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S .
+
+    - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        path: |
+          /var/cache/pacman/pkg
+          /etc/pacman.d/gnupg
+
+    - if: inputs.force-refresh == 'true' || steps.yay-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        path: /home/builder/.cache/yay
+
+    - if: inputs.force-refresh == 'true' || steps.mise-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
+        path: |
+          /home/builder/.local/share/mise
+          /home/builder/.cache/mise
+          /home/builder/.local/state/mise
