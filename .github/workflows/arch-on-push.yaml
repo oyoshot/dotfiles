@@ -1,0 +1,8 @@
+name: Arch Linux - Feature Branches
+on:
+  push:
+    branches-ignore: [main]
+
+jobs:
+  mac:
+    uses: ./.github/workflows/arch-build.yaml
