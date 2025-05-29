@@ -24,6 +24,16 @@ setopt extended_glob # 高機能なワイルドカード展開を使用する
 bindkey "^[[1~" beginning-of-line
 bindkey "^[[4~" end-of-line
 
+# vi
+bindkey -v
+
+KEYTIMEOUT=20            # 0.02 s
+bindkey -M viins 'jj' vi-cmd-mode
+
+bindkey -M viins '^?' backward-delete-char   # DEL (0x7F)
+bindkey -M viins '^H' backward-delete-char   # ^H  (0x08)
+[[ -n ${terminfo[kbs]} ]] && bindkey -M viins "${terminfo[kbs]}" backward-delete-char
+
 # Rust
 export RUST_BACKTRACE=1
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
