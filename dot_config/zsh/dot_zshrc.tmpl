@@ -34,6 +34,10 @@ bindkey -M viins '^?' backward-delete-char   # DEL (0x7F)
 bindkey -M viins '^H' backward-delete-char   # ^H  (0x08)
 [[ -n ${terminfo[kbs]} ]] && bindkey -M viins "${terminfo[kbs]}" backward-delete-char
 
+bindkey -M vicmd ' ' vi-forward-char
+bindkey -M vicmd ' h' vi-first-non-blank       # Space + h
+bindkey -M vicmd ' l' vi-end-of-line           # Space + l
+
 # Rust
 export RUST_BACKTRACE=1
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
