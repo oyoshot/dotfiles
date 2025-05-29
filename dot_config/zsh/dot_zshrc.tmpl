@@ -38,6 +38,14 @@ bindkey -M vicmd ' ' vi-forward-char
 bindkey -M vicmd ' h' vi-first-non-blank       # Space + h
 bindkey -M vicmd ' l' vi-end-of-line           # Space + l
 
+select_entire_buffer() {
+  zle beginning-of-line   # gg
+  zle set-mark-command    # V  (リージョン開始)
+  zle end-of-line         # G
+}
+zle -N select_entire_buffer
+bindkey -M vicmd ' a' select_entire_buffer   # Space + a
+
 # Rust
 export RUST_BACKTRACE=1
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
