@@ -74,6 +74,7 @@ runs:
     - name: Apply chezmoi (builder)
       shell: 'script -q -e -c "bash {0}"'
       run: |
+        set -euo pipefail
         sudo --preserve-env=GITHUB_TOKEN -Hu builder \
           zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
 
