@@ -19,7 +19,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ github.run_id }}
         restore-keys: arch-pacman-v1-
         path: |
           /var/cache/pacman/pkg
@@ -29,7 +29,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ github.run_id }}
         restore-keys: arch-yay-v1-
         path: /home/builder/.cache/yay
 
@@ -37,7 +37,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
+        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}-${{ github.run_id }}
         restore-keys: arch-mise-v1-
         path: |
           /home/builder/.local/share/mise
