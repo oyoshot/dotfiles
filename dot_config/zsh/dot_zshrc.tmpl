@@ -41,12 +41,12 @@ bindkey -M vicmd 'gg' beginning-of-buffer-or-history
 bindkey -M vicmd 'G' end-of-buffer-or-history
 
 select_entire_buffer() {
-  zle beginning-of-line   # gg
-  zle set-mark-command    # V  (リージョン開始)
-  zle end-of-line         # G
+  zle beginning-of-buffer-or-history
+  zle set-mark-command
+  zle end-of-buffer-or-history
 }
 zle -N select_entire_buffer
-bindkey -M vicmd ' a' select_entire_buffer   # Space + a
+bindkey -M vicmd ' a' select_entire_buffer
 
 # Rust
 export RUST_BACKTRACE=1
