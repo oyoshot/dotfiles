@@ -37,6 +37,9 @@ bindkey -M vicmd ' ' vi-forward-char
 bindkey -M vicmd ' h' vi-first-non-blank       # Space + h
 bindkey -M vicmd ' l' vi-end-of-line           # Space + l
 
+bindkey -M vicmd 'gg' beginning-of-buffer-or-history
+bindkey -M vicmd 'G' end-of-buffer-or-history
+
 select_entire_buffer() {
   zle beginning-of-line   # gg
   zle set-mark-command    # V  (リージョン開始)
