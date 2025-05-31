@@ -1,6 +1,3 @@
-local tsdk_path = require("mason-registry").get_package("vtsls"):get_install_path()
-	.. "/node_modules/@vtsls/language-server/node_modules/typescript/lib"
-
 ---@type vim.lsp.Config
 return {
 	init_options = {
