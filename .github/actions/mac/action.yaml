@@ -19,7 +19,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}
+        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}-${{ github.run_id }}
         restore-keys: macos-brew-v2-
         path: |
           ~/Library/Caches/Homebrew
@@ -29,7 +29,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}
+        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}-${{ github.run_id }}
         restore-keys: macos-mise-v2-
         path: |
           ~/.cache/mise
