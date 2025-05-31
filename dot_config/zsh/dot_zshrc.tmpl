@@ -29,21 +29,24 @@ bindkey -v
 
 bindkey -M viins 'jj' vi-cmd-mode
 
-bindkey -M viins '^?' backward-delete-char   # DEL (0x7F)
-bindkey -M viins '^H' backward-delete-char   # ^H  (0x08)
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^H' backward-delete-char
 [[ -n ${terminfo[kbs]} ]] && bindkey -M viins "${terminfo[kbs]}" backward-delete-char
 
 bindkey -M vicmd ' ' vi-forward-char
-bindkey -M vicmd ' h' vi-first-non-blank       # Space + h
-bindkey -M vicmd ' l' vi-end-of-line           # Space + l
+bindkey -M vicmd ' h' vi-first-non-blank
+bindkey -M vicmd ' l' vi-end-of-line
+
+bindkey -M vicmd 'gg' beginning-of-buffer-or-history
+bindkey -M vicmd 'G' end-of-buffer-or-history
 
 select_entire_buffer() {
-  zle beginning-of-line   # gg
-  zle set-mark-command    # V  (リージョン開始)
-  zle end-of-line         # G
+  zle beginning-of-buffer-or-history
+  zle set-mark-command
+  zle end-of-buffer-or-history
 }
 zle -N select_entire_buffer
-bindkey -M vicmd ' a' select_entire_buffer   # Space + a
+bindkey -M vicmd ' a' select_entire_buffer
 
 # Rust
 export RUST_BACKTRACE=1
