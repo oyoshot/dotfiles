@@ -1,6 +1,6 @@
 ---@type vim.lsp.Config
 return {
-	root_makers = { "deno.json", "deno.jsonc", "deps.ts" },
+	root_markers = { "deno.json", "deno.jsonc", "deps.ts" },
 	workspace_required = true,
 	settings = {
 		deno = {

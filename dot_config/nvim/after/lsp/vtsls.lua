@@ -1,6 +1,6 @@
 ---@type vim.lsp.Config
 return {
-	root_makers = { "package.json", "tsconfig.json" },
+	root_markers = { "package.json", "tsconfig.json" },
 	workspace_required = true,
 	settings = {
 		typescript = {
