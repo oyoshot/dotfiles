@@ -61,6 +61,7 @@ fi
 # Deno
 export DENO_INSTALL="$XDG_DATA_HOME/deno"
 export DENO_INSTALL_ROOT="$DENO_INSTALL"
+export DENO_JOBS=$(( $(getconf _NPROCESSORS_ONLN) + 1 ))
 
 # Python
 export RYE_HOME="$XDG_CONFIG_HOME/rye"
