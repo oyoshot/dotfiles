@@ -15,17 +15,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Free Disk Space (Ubuntu)
-      uses: jlumbroso/free-disk-space@main
-      with:
-        tool-cache: true
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
-
     - id: pacman-restore
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4

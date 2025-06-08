@@ -1,5 +1,4 @@
-name: Arch Linux - Build
-
+name: Arch Linux – Build
 on:
   workflow_call:
     inputs:
@@ -8,23 +7,33 @@ on:
         default: false
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free disk space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
   arch:
+    needs: cleanup
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
-
     timeout-minutes: 180
     concurrency:
       group: arch-${{ github.ref }}
       cancel-in-progress: true
-
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/arch
         with:
           force-refresh: ${{ inputs.force-refresh }}
