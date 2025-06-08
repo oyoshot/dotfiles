@@ -78,6 +78,13 @@ runs:
         sudo --preserve-env=GITHUB_TOKEN -Hu builder \
           zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
 
+    - name: Trim package caches (root)
+      shell: bash
+      run: |
+        paccache -rk1
+        yes | sudo -u builder yay -Scc
+        du -sh /var/cache/pacman/pkg || true
+
     - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
@@ -100,3 +107,11 @@ runs:
           /home/builder/.local/share/mise
           /home/builder/.cache/mise
           /home/builder/.local/state/mise
+
+    - name: Free runner disk (root)
+      shell: bash
+      run: |
+        rm -rf /var/cache/pacman/pkg
+        rm -rf /home/builder/.cache/yay
+        mise prune -y || true
+        df -h
