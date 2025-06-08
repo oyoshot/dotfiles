@@ -81,9 +81,10 @@ runs:
     - name: Trim package caches (root)
       shell: bash
       run: |
-        paccache -rk1
-        yes | sudo -u builder yay -Scc
-        du -sh /var/cache/pacman/pkg || true
+        set -euo pipefail
+        paccache -rk1 || true
+        sudo -u builder yay -Scc --noconfirm
+        du -sh /var/cache/pacman/pkg /home/builder/.cache/yay || true
 
     - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
