@@ -24,14 +24,19 @@ jobs:
   arch:
     needs: cleanup
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
     timeout-minutes: 180
+
     concurrency:
       group: arch-${{ github.ref }}
       cancel-in-progress: true
+
+    container:
+      image: archlinux:latest
+      options: |
+        --storage-opt size=20G
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/arch
