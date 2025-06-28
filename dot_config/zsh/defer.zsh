@@ -222,3 +222,16 @@ fi
 autoload -Uz anyframe-init && anyframe-init
 
 autoload -Uz compinit && compinit
+
+if (( ${+TMUX} && $+commands[tmux] )); then
+  VISUAL='tmux display-popup -E -h 80% -w 90% nvim'
+else
+  VISUAL='nvim'
+fi
+export VISUAL FCEDIT=$VISUAL
+
+autoload -Uz edit-command-line
+zle      -N  edit-command-line
+
+bindkey -M vicmd 'jj' edit-command-line
+bindkey -M viins 'jj' edit-command-line
