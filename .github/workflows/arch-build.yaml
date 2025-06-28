@@ -24,14 +24,23 @@ jobs:
   arch:
     needs: cleanup
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
     timeout-minutes: 180
+
     concurrency:
       group: arch-${{ github.ref }}
       cancel-in-progress: true
+
+    container:
+      image: archlinux:latest
+      volumes:
+        - pac-pkg:/var/cache/pacman/pkg
+        - yay-pkg:/home/builder/.cache/yay
+        - mise-pkg:/home/builder/.local/share/mise
+        - mise-state:/home/builder/.local/state/mise
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/arch
