@@ -22,7 +22,10 @@ jobs:
         - /mnt/yay-pkg:/home/builder/.cache/yay
         - /mnt/mise-pkg:/home/builder/.local/share/mise
         - /mnt/mise-state:/home/builder/.local/state/mise
-      options: --tmpfs /tmp --tmpfs /var/tmp --shm-size 2g
+      options: >-
+        --tmpfs /tmp:exec,mode=1777
+        --tmpfs /var/tmp:exec,mode=1777
+        --shm-size 2g
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
