@@ -117,6 +117,7 @@ return {
 				--{ name = "copilot" },
 				-- { name = "codeium" },
 				-- { name = "cmp_tabnine" },
+				{ name = "skkeleton" },
 			},
 
 			experimental = {
@@ -139,6 +140,7 @@ return {
 		{ "kdheepak/cmp-latex-symbols", lazy = true },
 		{ "ray-x/cmp-treesitter", lazy = true },
 		{ "onsails/lspkind.nvim", lazy = true },
+		{ "uga-rosa/cmp-skkeleton", lazy = true },
 
 		{
 			"L3MON4D3/LuaSnip",
