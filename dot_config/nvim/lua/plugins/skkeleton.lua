@@ -39,6 +39,11 @@ return {
 						},
 						userDictionary = vim.fn.stdpath("data") .. "/skk/user_jisyo",
 					})
+
+					vim.fn["skkeleton#register_kanatable"]("rom", {
+						jj = "escape",
+						ll = "disable",
+					})
 				end,
 			})
 		end,
