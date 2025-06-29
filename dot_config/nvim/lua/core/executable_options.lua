@@ -39,9 +39,9 @@ vim.wo.signcolumn = "yes"
 vim.o.ambiwidth = "single"
 
 -- Decrease update time
--- vim.opt.updatetime = 250
--- vim.opt.timeout = true
--- vim.opt.timeoutlen = 300
+vim.opt.updatetime = 250
+vim.opt.timeout = true
+vim.opt.timeoutlen = 500
 
 -- NOTE: You should make sure your terminal supports this
 -- vim.o.winblend = 20
