@@ -9,7 +9,6 @@ return {
 	{ "ymrl/SKK-JISYO.emoji-ja", name = "skk-emoji-ja", lazy = true },
 
 	{
-
 		"vim-skk/skkeleton",
 
 		dependencies = {
@@ -20,6 +19,11 @@ return {
 		},
 
 		event = { "InsertEnter" },
+
+		build = function()
+			local dir = vim.fn.stdpath("data") .. "/skk"
+			vim.fn.mkdir(dir, "p")
+		end,
 
 		init = function()
 			vim.api.nvim_create_autocmd("User", {
