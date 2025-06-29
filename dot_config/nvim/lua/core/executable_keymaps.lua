@@ -17,8 +17,8 @@ local opts = { noremap = true }
 --   command_mode = "c",
 
 -- for US keyboard
-vim.keymap.set("n", ";", ":", opts)
-vim.keymap.set("n", ":", ";", opts)
+vim.keymap.set({ "n", "x", "s" }, ":", ";", opts)
+vim.keymap.set({ "n", "x", "s" }, ";", ":", opts)
 
 -- Move to the end of the line
 vim.keymap.set("n", "<Leader>h", "^", opts)
