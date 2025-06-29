@@ -51,4 +51,11 @@ return {
 			vim.keymap.set({ "i", "c" }, "<C-j>", "<Plug>(skkeleton-toggle)")
 		end,
 	},
+
+	{
+		"delphinus/skkeleton_indicator.nvim",
+		event = { "InsertEnter" },
+		lazy = true,
+		opts = {},
+	},
 }

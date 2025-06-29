@@ -58,6 +58,7 @@
   "skk-emoji-ja": { "branch": "master", "commit": "5b4df40f8ac71760816f1b2929f493505b463bd1" },
   "skk-jisyo": { "branch": "master", "commit": "9f4a59fc86129aedf57b0647b2317c70073fa919" },
   "skkeleton": { "branch": "main", "commit": "3e019b331fbf9bd1d4539e7bd650a1c543125cee" },
+  "skkeleton_indicator.nvim": { "branch": "v2", "commit": "f08532787cf842b996c8a5065be7e85cd3376c1f" },
   "sqlite.lua": { "branch": "master", "commit": "50092d60feb242602d7578398c6eb53b4a8ffe7b" },
   "ssr.nvim": { "branch": "main", "commit": "7c95cfa5836508f08ae833a4b31d2ed265560f64" },
   "telescope-all-recent.nvim": { "branch": "main", "commit": "e437f60ea468268e49ffdc0c9ed7c5ba384e63cf" },
