@@ -102,17 +102,6 @@ return {
 			require("mason")
 			vim.lsp.enable(require("mason-lspconfig").get_installed_servers())
 
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "sh", "zsh" },
-				callback = function()
-					vim.lsp.start({
-						name = "bash-language-server",
-						cmd = { "bash-language-server", "start" },
-					})
-					-- 頑張って shfmt するかもしれない
-				end,
-			})
-
 			--NOTE: Sources found installed in mason will automatically be setup for null-ls.
 			-- See mason-null-ls.nvim's documentation for more details:
 			-- https://github.com/jay-babu/mason-null-ls.nvim#setup
