@@ -42,7 +42,6 @@ return {
 
 					vim.fn["skkeleton#register_kanatable"]("rom", {
 						jj = "escape",
-						ll = "disable",
 					})
 				end,
 			})
