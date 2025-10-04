@@ -26,8 +26,8 @@ terraform = ["1.0.11", "1.5.7", "latest"]
 uv = "latest"
 zig = "latest"
 
-shfmt = "latest"
 shellcheck = "latest"
+shfmt = "latest"
 tflint = "latest"
 tfsec = "latest"
 
@@ -46,13 +46,17 @@ tfsec = "latest"
 "cargo:cargo-sort" = "latest"
 "cargo:cargo-udeps" = "latest"
 "cargo:cargo-update" = "latest"
-"cargo:stylua" = "latest"
 "cargo:https://github.com/Feel-ix-343/markdown-oxide.git" = { version = "latest", locked = true }
+"cargo:stylua" = "latest"
 
 "go:github.com/mattn/memo" = "latest"
 "go:github.com/rhysd/vim-startuptime" = "latest"
 
+"npm:@fsouza/prettierd" = "latest"
+"npm:@vtsls/language-server" = "latest"
 "npm:atcoder-cli" = "latest"
+"npm:bash-language-server" = "latest"
+"npm:cspell" = "latest"
 "npm:md-to-pdf" = "latest"
 "npm:neovim" = "latest"
 "npm:textlint" = "latest"
@@ -61,10 +65,7 @@ tfsec = "latest"
 "npm:textlint-rule-preset-jtf-style" = "latest"
 "npm:textlint-rule-prh" = "latest"
 "npm:textlint-rule-terminology" = "latest"
-"npm:bash-language-server" = "latest"
-"npm:@fsouza/prettierd" = "latest"
-"npm:cspell" = "latest"
-"npm:@vtsls/language-server" = "latest"
-
 
 "pipx:poetry" = "latest"
+"pipx:pyright" = "latest"
+"pipx:ruff" = "latest"
