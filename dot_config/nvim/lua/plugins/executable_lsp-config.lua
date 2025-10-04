@@ -1,173 +1,100 @@
 return {
-	-- Mason
+	"neovim/nvim-lspconfig",
+	event = "BufReadPre",
+	config = function()
+		vim.lsp.config("*", {
+			capabilities = require("cmp_nvim_lsp").default_capabilities(),
+		})
+		vim.lsp.inlay_hint.enable(true)
 
-	{ "williamboman/mason.nvim", lazy = true },
-	{ "williamboman/mason-lspconfig.nvim", lazy = true },
-
-	-- null-ls
-
-	{ "jay-babu/mason-null-ls.nvim", lazy = true },
-	{ "nvimtools/none-ls.nvim", lazy = true },
-
-	-- LSP
-
-	{
-		"neovim/nvim-lspconfig",
-		lazy = true,
-		event = { "CursorHold", "CursorHoldI" },
-		cmd = { "LspInfo", "LspInstall", "LspStart" },
-		init = function()
-			-- Reserve a space in the gutter
-			-- This will avoid an annoying layout shift in the screen
-			vim.opt.signcolumn = "yes"
-		end,
-		config = function()
-			vim.lsp.config("*", {
-				capabilities = require("cmp_nvim_lsp").default_capabilities(),
-			})
-			vim.lsp.inlay_hint.enable(true)
-
-			local lsp_format_on_save = function(bufnr)
-				vim.api.nvim_create_autocmd("BufWritePre", {
-					group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
-					buffer = bufnr,
-					callback = function()
-						vim.lsp.buf.format({
-							async = true,
-							filter = function(c)
-								local disabled_format_clients = { "lua_ls" }
-								return not vim.tbl_contains(disabled_format_clients, c.name)
-							end,
-						})
-					end,
-				})
-			end
-
-			-- LspAttach is where you enable features that only work
-			-- if there is a language server active in the file
-			vim.api.nvim_create_autocmd("LspAttach", {
-				desc = "LSP actions",
-				callback = function(event)
-					-- local opts = { buffer = event.buf }
-					-- vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-					-- vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-					-- vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-					-- vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-					-- vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-					-- vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-					-- vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-					-- vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-					-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-					-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-
-					vim.g.markdown_fenced_language = {
-						"ts=typescript",
-					}
-					lsp_format_on_save(bufnr)
-				end,
-			})
-
-			-- NOTE: It's important that you set up the plugins in the following order:
-			-- 1. mason.nvim
-			-- 2. mason-lspconfig.nvim
-			-- 3. Setup servers via lspconfig
-
-			require("mason").setup({})
-
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					--"gopls",
-					"marksman",
-					"lua_ls",
-					"terraformls",
-					"tflint",
-					-- "tsserver",
-					"yamlls",
-					--"dagger",
-					-- "rust_analyzer",
-					"jdtls",
-					"clangd",
-					"solargraph",
-					"bashls",
-					"ruff",
-					"pyright",
-					--"pylsp",
-					"typos_lsp",
-					"denols",
-					"vtsls",
-					"astro",
-				},
-			})
-
-			require("mason")
-			vim.lsp.enable(require("mason-lspconfig").get_installed_servers())
-
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "sh", "zsh" },
+		local lsp_format_on_save = function(bufnr)
+			vim.api.nvim_create_autocmd("BufWritePre", {
+				group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
+				buffer = bufnr,
 				callback = function()
-					vim.lsp.start({
-						name = "bash-language-server",
-						cmd = { "bash-language-server", "start" },
+					vim.lsp.buf.format({
+						async = true,
+						filter = function(c)
+							local disabled_format_clients = { "lua_ls" }
+							return not vim.tbl_contains(disabled_format_clients, c.name)
+						end,
 					})
-					-- 頑張って shfmt するかもしれない
 				end,
 			})
+		end
 
-			--NOTE: Sources found installed in mason will automatically be setup for null-ls.
-			-- See mason-null-ls.nvim's documentation for more details:
-			-- https://github.com/jay-babu/mason-null-ls.nvim#setup
+		-- LspAttach is where you enable features that only work
+		-- if there is a language server active in the file
+		vim.api.nvim_create_autocmd("LspAttach", {
+			desc = "LSP actions",
+			callback = function(event)
+				vim.g.markdown_fenced_language = {
+					"ts=typescript",
+				}
+				lsp_format_on_save(bufnr)
+			end,
+		})
 
-			local null_ls = require("null-ls")
-			null_ls.setup({
-				sources = {
-					null_ls.builtins.diagnostics.fish,
-					null_ls.builtins.formatting.fish_indent,
-					null_ls.builtins.formatting.prettierd.with({
-						filetypes = {
-							-- "javascript",
-							-- "javascriptreact",
-							-- "typescript",
-							-- "typescriptreact",
-							"vue",
-							"css",
-							"scss",
-							"less",
-							"html",
-							"json",
-							"jsonc",
-							"yaml",
-							"markdown",
-							"markdown.mdx",
-							"graphql",
-							"handlebars",
-							"svelte",
-							-- "astro",
-							"htmlangular",
-						},
-					}),
-					-- null_ls.builtins.formatting.shfmt.with({
-					--     filetypes = { "sh", "zsh" },
-					-- }),
-					null_ls.builtins.diagnostics.textlint,
-					null_ls.builtins.diagnostics.tfsec,
-				},
-			})
+		pcall(require, "lspconfig")
 
-			local mason_null_ls = require("mason-null-ls")
-			mason_null_ls.setup({
-				ensure_installed = {
-					"hadolint",
-					"terraform_fmt",
-					"terraform_validate",
-					"stylua",
-					--"gofumpt",
-					"golangci_lint",
-					--"isort",
-				},
-				--automatic_installation = true,
-				automatic_installation = { exclude = { "textlint" } },
-				handlers = {},
-			})
-		end,
-	},
+		local cfg = vim.fn.stdpath("config")
+		local globs = {
+			cfg .. "/lua/lsp/*.lua",
+			cfg .. "/lsp/*.lua",
+		}
+
+		local files = {}
+
+		for _, pat in ipairs(globs) do
+			for _, f in ipairs(vim.fn.glob(vim.fs.normalize(pat), true, true)) do
+				table.insert(files, f)
+			end
+		end
+
+		local names = vim.iter(files)
+			:map(function(p)
+				return p:match("([^/]+)%.lua$")
+			end)
+			:filter(function(n)
+				return n and n ~= "init"
+			end)
+			:totable()
+
+		pcall(function()
+			local common = require("lsp.common")
+			if type(common) == "table" then
+				vim.lsp.config("*", common)
+			end
+		end)
+
+		if #names > 0 and vim.lsp.enable then
+			local ok = pcall(vim.lsp.enable, names) -- 0.11 は配列OK
+			if not ok then
+				for _, n in ipairs(names) do
+					pcall(vim.lsp.enable, n)
+				end
+			end
+		end
+
+		local function is_deno_project(bufnr)
+			return vim.fs.root(bufnr or 0, { "deno.json", "deno.jsonc" }) ~= nil
+		end
+
+		vim.api.nvim_create_autocmd({ "LspAttach", "BufEnter" }, {
+			desc = "In Deno projects, only denols may live",
+			callback = function(ev)
+				local bufnr = ev and ev.buf or 0
+				if not is_deno_project(bufnr) then
+					return
+				end
+
+				-- stop any non-deno LSP attached to this buffer
+				for _, c in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+					if c.name ~= "denols" then
+						c.stop(true)
+					end
+				end
+			end,
+		})
+	end,
 }
