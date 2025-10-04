@@ -19,7 +19,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ github.run_id }}
+        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
         restore-keys: arch-pacman-v1-
         path: |
           /var/cache/pacman/pkg
@@ -29,7 +29,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ github.run_id }}
+        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
         restore-keys: arch-yay-v1-
         path: /home/builder/.cache/yay
 
@@ -37,7 +37,7 @@ runs:
       if: inputs.force-refresh != 'true'
       uses: actions/cache/restore@v4
       with:
-        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}-${{ github.run_id }}
+        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
         restore-keys: arch-mise-v1-
         path: |
           /home/builder/.local/share/mise
@@ -47,10 +47,8 @@ runs:
     - name: System bootstrap (root)
       shell: bash
       run: |
-        pacman-key --init
-        pacman-key --populate archlinux
+        pacman-key --init && pacman-key --populate archlinux
         pacman -Sy --noconfirm archlinux-keyring
-        pacman -Syu --noconfirm
         pacman -S --needed --noconfirm base-devel git zsh sudo util-linux
 
     - name: Create builder user
@@ -77,6 +75,13 @@ runs:
         set -euo pipefail
         sudo --preserve-env=GITHUB_TOKEN -Hu builder \
           zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
+
+    - name: Trim caches (builder)
+      shell: bash
+      run: |
+        sudo -u builder paccache -rk0
+        sudo -u builder paccache -ruk0
+        sudo -u builder yay -Sc --noconfirm || true
 
     - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4

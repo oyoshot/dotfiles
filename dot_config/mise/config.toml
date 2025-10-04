@@ -66,4 +66,5 @@ tfsec = "latest"
 "npm:cspell" = "latest"
 "npm:@vtsls/language-server" = "latest"
 
+
 "pipx:poetry" = "latest"

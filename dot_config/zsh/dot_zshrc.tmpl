@@ -21,32 +21,19 @@ setopt hist_ignore_space # スペースから始まるコマンド行はヒス�
 setopt hist_reduce_blanks # ヒストリに保存するときに余分なスペースを削除する
 setopt extended_glob # 高機能なワイルドカード展開を使用する
 
-bindkey "^[[1~" beginning-of-line
-bindkey "^[[4~" end-of-line
+bindkey '^[[1~' beginning-of-line # HOME
+bindkey '^[[2~' overwrite-mode # INS
+# bindkey '^[[2~' bracketed-paste  # シンプルにクリップボード貼り付けにしてしまうzsh 5.9 以降
+bindkey '^[[3~' delete-char # DEL
+bindkey '^[[4~' end-of-line # END
+bindkey '^[[5~' history-beginning-search-backward # PageUp
+bindkey '^[[6~' history-beginning-search-forward # PageDown
 
-# vi
-bindkey -v
+bindkey '^[[1;5A' up-line-or-history # Ctrl+Up
+bindkey '^[[1;5B' down-line-or-history # Ctrl+Down
+bindkey '^[[1;5C' forward-word # Ctrl+Right
+bindkey '^[[1;5D' backward-word # Ctrl+Left
 
-bindkey -M viins 'jj' vi-cmd-mode
-
-bindkey -M viins '^?' backward-delete-char
-bindkey -M viins '^H' backward-delete-char
-[[ -n ${terminfo[kbs]} ]] && bindkey -M viins "${terminfo[kbs]}" backward-delete-char
-
-bindkey -M vicmd ' ' vi-forward-char
-bindkey -M vicmd ' h' vi-first-non-blank
-bindkey -M vicmd ' l' vi-end-of-line
-
-bindkey -M vicmd 'gg' beginning-of-buffer-or-history
-bindkey -M vicmd 'G' end-of-buffer-or-history
-
-select_entire_buffer() {
-  zle beginning-of-buffer-or-history
-  zle set-mark-command
-  zle end-of-buffer-or-history
-}
-zle -N select_entire_buffer
-bindkey -M vicmd ' a' select_entire_buffer
 
 # Rust
 export RUST_BACKTRACE=1
@@ -61,6 +48,7 @@ fi
 # Deno
 export DENO_INSTALL="$XDG_DATA_HOME/deno"
 export DENO_INSTALL_ROOT="$DENO_INSTALL"
+export DENO_JOBS=$(( $(getconf _NPROCESSORS_ONLN) + 1 ))
 
 # Python
 export RYE_HOME="$XDG_CONFIG_HOME/rye"
