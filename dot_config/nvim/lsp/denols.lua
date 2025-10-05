@@ -1,17 +1,14 @@
 ---@type vim.lsp.Config
 return {
-	root_markers = { "deno.json", "deno.jsonc", "deps.ts" },
-	workspace_required = true,
+	root_dir = function(bufnr, on_dir)
+		local root = vim.fs.root(bufnr, { "deno.json", "deno.jsonc" })
+		if not root then
+			return
+		end
+		on_dir(root)
+	end,
+	single_file_support = false,
 	settings = {
-		deno = {
-			inlayHints = {
-				parameterNames = { enabled = "all", suppressWhenArgumentMatchesName = true },
-				parameterTypes = { enabled = true },
-				variableTypes = { enabled = true, suppressWhenTypeMatchesName = true },
-				propertyDeclarationTypes = { enabled = true },
-				functionLikeReturnTypes = { enable = true },
-				enumMemberValues = { enabled = true },
-			},
-		},
+		deno = { enable = true },
 	},
 }
