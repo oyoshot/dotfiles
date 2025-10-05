@@ -58,6 +58,7 @@ tfsec = "latest"
 "npm:@vtsls/language-server" = "latest"
 "npm:atcoder-cli" = "latest"
 "npm:bash-language-server" = "latest"
+"npm:claude" = "latest"
 "npm:cspell" = "latest"
 "npm:md-to-pdf" = "latest"
 
