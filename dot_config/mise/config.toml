@@ -1,7 +1,9 @@
 [settings]
 experimental = true
 idiomatic_version_file_enable_tools = ["terraform"]
-python_default_packages_file = "~/.config/mise/default-python-packages"
+
+[settings.npm]
+bun = true
 
 [tools]
 bun = "latest"
@@ -58,13 +60,6 @@ tfsec = "latest"
 "npm:bash-language-server" = "latest"
 "npm:cspell" = "latest"
 "npm:md-to-pdf" = "latest"
-"npm:neovim" = "latest"
-"npm:textlint" = "latest"
-"npm:textlint-rule-preset-ja-spacing" = "latest"
-"npm:textlint-rule-preset-ja-technical-writing" = "latest"
-"npm:textlint-rule-preset-jtf-style" = "latest"
-"npm:textlint-rule-prh" = "latest"
-"npm:textlint-rule-terminology" = "latest"
 
 "pipx:poetry" = "latest"
 "pipx:pyright" = "latest"

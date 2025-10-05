@@ -1,0 +1,9 @@
+@textlint/textlint-plugin-markdown
+neovim
+prh
+textlint
+textlint-rule-preset-ja-spacing
+textlint-rule-preset-ja-technical-writing
+textlint-rule-preset-jtf-style
+textlint-rule-prh
+textlint-rule-terminology

@@ -6,16 +6,6 @@ export GO111MODULE="on"
 # less
 export LESSHISTFILE='-'
 
-# Node.js
-export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
-export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
-
-# npm
-export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
-export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
-export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
-export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
-
 # irb
 export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
 
@@ -214,8 +204,20 @@ fi
 # Mise
 if command -v mise >/dev/null; then
   export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN) + 1 ))
+  export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
+
   eval "$(mise activate zsh)"
 fi
+
+# Node.js
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
+export NODE_PATH="$(npm root -g)"
+
+# npm
+export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
+export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
+export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
 
 # Cargo
 . "$CARGO_HOME/env"
