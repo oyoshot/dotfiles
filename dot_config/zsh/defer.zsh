@@ -138,6 +138,9 @@ zle -N _ghq-fzf
 
 ## エイリアス
 
+alias remove='rm'
+alias rm='trash-put'
+
 (( ${+commands[nvim]} )) && alias v='nvim'
 
 if (( ${+commands[eza]} )); then
