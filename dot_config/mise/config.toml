@@ -24,14 +24,14 @@ python = "3.13"
 ruby = "latest"
 rye = "latest"
 scala = "latest"
-terraform = ["1.0.11", "1.5.7", "latest"]
-uv = "latest"
-zig = "latest"
-
 shellcheck = "latest"
 shfmt = "latest"
+terraform = ["1.0.11", "1.5.7", "latest"]
+terraform-ls = "latest"
 tflint = "latest"
 tfsec = "latest"
+uv = "latest"
+zig = "latest"
 
 "cargo:cargo-audit" = "latest"
 "cargo:cargo-chef" = "latest"
