@@ -1,5 +1,15 @@
 #!/bin/zsh
 
+# Deno
+_cpu_count() {
+  if command -v getconf >/dev/null; then getconf _NPROCESSORS_ONLN
+  elif command -v nproc   >/dev/null; then nproc
+  elif [[ "$OSTYPE" == darwin* ]];  then sysctl -n hw.ncpu
+  else echo 1; fi
+}
+
+export DENO_JOBS=$(( $(_cpu_count) + 1 ))
+
 # Go
 export GO111MODULE="on"
 
@@ -208,16 +218,6 @@ if command -v mise >/dev/null; then
 
   eval "$(mise activate zsh)"
 fi
-
-# Node.js
-export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
-export NODE_PATH="$(npm root -g)"
-
-# npm
-export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
-export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
-export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
-export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
 
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
