@@ -23,7 +23,6 @@ logrotate
 luarocks
 man-db
 man-pages
-man-pages-ja
 mise
 mold
 nfs-utils
