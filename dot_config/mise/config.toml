@@ -55,6 +55,8 @@ zig = "latest"
 "go:github.com/rhysd/vim-startuptime" = "latest"
 
 "npm:@anthropic-ai/claude-code" = "latest"
+"npm:@astrojs/language-server" = "latest"
+"npm:@astrojs/ts-plugin" = "latest"
 "npm:@fsouza/prettierd" = "latest"
 "npm:@vtsls/language-server" = "latest"
 "npm:atcoder-cli" = "latest"
