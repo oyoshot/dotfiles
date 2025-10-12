@@ -19,7 +19,6 @@ git-delta
 gnupg
 hyperfine
 jdk-openjdk
-logrotate
 luarocks
 man-db
 man-pages
