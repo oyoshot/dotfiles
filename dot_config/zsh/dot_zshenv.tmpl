@@ -8,8 +8,6 @@ case ${UID} in
     ;;
 esac
 
-export PATH
-
 # ignore /etc/zprofile, /etc/zshrc, /etc/zlogin, and /etc/zlogout
 # ref. http://zsh.sourceforge.net/Doc/Release/Files.html
 # ref. http://zsh.sourceforge.net/Doc/Release/Options.html#index-GLOBALRCS
@@ -22,18 +20,6 @@ if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
 
-path=(
-  ${HOME}/.local/bin (N-/)
-  /usr/local/bin (N-/)
-  /usr/local/sbin (N-/)
-  /usr/bin (N-/)
-  /usr/sbin (N-/)
-  /bin (N-/)
-  /sbin (N-/)
-  /Library/Apple/usr/bin (N-/)
-  ${path}
-)
-
 # XDG
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -42,6 +28,32 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 # zsh
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+typeset -gU path
+path=(
+  $HOME/.local/bin(N-/)
+  /opt/homebrew/bin(N-/) # macOS/Apple Silicon
+  /usr/local/bin(N-/) # macOS/Intel
+  /usr/local/bin(N-/)
+  /usr/local/sbin(N-/)
+  /usr/bin(N-/)
+  /usr/sbin(N-/)
+  /bin(N-/)
+  /sbin(N-/)
+  /Library/Apple/usr/bin(N-/)
+  $path
+)
+export PATH
+
+path=(
+  $XDG_DATA_HOME/mise/shims(N-/)
+  $CARGO_HOME/bin (N-/)
+  $DENO_INSTALL/bin (N-/)
+  $GEM_HOME/bin (N-/)
+  $GHRED_DATA_HOME/bin (N-/)
+  $path
+)
+export PATH
 
 {{ if (eq .chezmoi.os "darwin") -}}
 # Homebrew

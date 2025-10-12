@@ -219,9 +219,6 @@ export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
 export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
 export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
 
-# Cargo
-. "$CARGO_HOME/env"
-
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 
