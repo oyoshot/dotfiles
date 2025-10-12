@@ -1,3 +1,8 @@
+local function is_deno(ctx)
+	local util = require("conform.util")
+	return util.root_file({ "deno.json", "deno.jsonc" })(ctx)
+end
+
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
@@ -15,5 +20,17 @@ return {
 			end
 			return { lsp_fallback = true, timeout_ms = 500 }
 		end,
+		formatters = {
+			prettierd = {
+				condition = function(ctx)
+					return not is_deno(ctx)
+				end,
+			},
+			prettier = {
+				condition = function(ctx)
+					return not is_deno(ctx)
+				end,
+			},
+		},
 	},
 }
