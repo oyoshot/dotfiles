@@ -28,6 +28,7 @@ Library
 
 {{ if (or (ne .chezmoi.os "linux") (ne .chezmoi.osRelease.id "arch")) }}
 .config/yay
+.config/systemd
 {{ end }}
 
 {{ if eq .chezmoi.os "windows" }}
