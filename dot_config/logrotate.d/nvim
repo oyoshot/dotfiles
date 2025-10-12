@@ -1,0 +1,10 @@
+~/.local/state/nvim/lsp.log {
+  size 16M
+  rotate 7
+  compress
+  copytruncate
+  missingok
+  notifempty
+  dateext
+  dateformat -%Y%m%d-%H%M%S
+}

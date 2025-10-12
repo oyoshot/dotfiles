@@ -1,0 +1,6 @@
+[Unit]
+Description=Logrotate for Neovim LSP
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env logrotate -s %h/.cache/logrotate.status %h/.config/logrotate/logrotate.conf
