@@ -61,17 +61,35 @@ zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
 zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME/op/plugins.sh"'
 
-# 遅延ロードしない方が安全
-
-# Starship
-(( ${+commands[starship]} )) && eval "$(starship init zsh)"
-
 # Mise
-if (( $+commands[mise] )); then
+autoload -Uz add-zsh-hook
+typeset -g __MISE_ACTIVATED=0
+
+__mise_activate_once() {
+  (( __MISE_ACTIVATED )) && return 0
+  __MISE_ACTIVATED=1
+
   export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1) + 1 ))
   export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
   eval "$(mise activate zsh)"
+}
+
+if (( $+commands[mise] )); then
+  if [[ -o interactive ]]; then
+    zsh-defer __mise_activate_once
+    __mise_preexec_once() {
+      __mise_activate_once
+      add-zsh-hook -d preexec __mise_preexec_once 2>/dev/null || true
+    }
+    add-zsh-hook preexec __mise_preexec_once
+  else
+    __mise_activate_once
+  fi
 fi
+
+# 遅延ロードしない方が安全
+# Starship
+(( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
 # WSL
 if [[ -n "$WSL_DISTRO_NAME" || $(< /proc/version 2>/dev/null) == *Microsoft* ]]; then
