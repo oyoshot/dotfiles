@@ -86,10 +86,14 @@ path=(
 )
 export PATH
 
-if command -v nvim >/dev/null 2>&1; then
-  EDITOR=nvim
+if (( $+commands[nvim] )); then
+  typeset -gx EDITOR=nvim
+elif (( $+commands[vim] )); then
+  typeset -gx EDITOR=vim
 else
-  EDITOR=vim
+  typeset -gx EDITOR=vi
 fi
-VISUAL="$EDITOR"
-export EDITOR VISUAL
+
+typeset -gx VISUAL=$EDITOR
+typeset -gx GIT_EDITOR=$EDITOR
+typeset -gx SUDO_EDITOR=$EDITOR
