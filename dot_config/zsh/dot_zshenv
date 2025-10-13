@@ -1,7 +1,17 @@
-# locale
+# locale: rootのみ C。通常はUTF-8
 export LANG=ja_JP.UTF-8
 (( ${+UID} && UID == 0 )) && LANG=C
 
+# XDG
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# zsh
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# PATH
 typeset -gU path
 path=(
   $HOME/.local/bin(N-/)
@@ -12,19 +22,16 @@ path=(
   /usr/sbin(N-/)
   /bin(N-/)
   /sbin(N-/)
+
   /Library/Apple/usr/bin(N-/)
+  $XDG_DATA_HOME/mise/shims(N-/)
+  $XDG_DATA_HOME/cargo/bin(N-/)
+  $XDG_DATA_HOME/deno/bin(N-/)
+  $XDG_DATA_HOME/gem/bin(N-/)
+  $XDG_DATA_HOME/gh-red/bin(N-/)
   $path
 )
 export PATH
-
-# XDG
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-# zsh
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
 # Rust
 export RUST_BACKTRACE=1
@@ -41,10 +48,9 @@ export RYE_HOME="$XDG_CONFIG_HOME/rye"
 export IPYTHONDIR="$XDG_CONFIG_HOME/jupyter"
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 
-# Rubygems
+# Ruby
 export GEM_HOME="$XDG_DATA_HOME/gem"
 export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem"
-
 export BUNDLE_USER_HOME="$XDG_CONFIG_HOME/bundle"
 export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
 export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle/plugin"
@@ -75,16 +81,6 @@ export NPM_CONFIG_DIR="$XDG_CONFIG_HOME/npm"
 export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
 export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
 export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_DIR/npmrc"
-
-path=(
-  $XDG_DATA_HOME/mise/shims(N-/)
-  $CARGO_HOME/bin(N-/)
-  $DENO_INSTALL/bin(N-/)
-  $GEM_HOME/bin(N-/)
-  $GHRED_DATA_HOME/bin(N-/)
-  $path
-)
-export PATH
 
 if (( $+commands[nvim] )); then
   typeset -gx EDITOR=nvim
