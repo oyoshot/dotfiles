@@ -64,14 +64,10 @@ zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
-# load user .zshrc configuration file
-if [ -f "${ZDOTDIR}/zshrc.local" ]; then
-  source "${ZDOTDIR}/zshrc.local"
-elif [ -f "${XDG_CONFIG_HOME}/zsh/zshrc.local" ]; then
-  source "${XDG_CONFIG_HOME}/zsh/zshrc.local"
-elif [ -f "${HOME}/zshrc.local" ]; then
-  source "${HOME}/zshrc.local"
-fi
+# load override
+for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
+  [[ -r $cand ]] && source "$cand" && break
+done
 
 {{ if eq .chezmoi.os "linux" }}
 {{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
