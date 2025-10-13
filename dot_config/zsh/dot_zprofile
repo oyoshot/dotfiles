@@ -1,0 +1,6 @@
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+
+  export HOMEBREW_BUNDLE_FILE_GLOBAL="${XDG_CONFIG_HOME}/homebrew/Brewfile"
+  export HOMEBREW_BUNDLE_FILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
+fi
