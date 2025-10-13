@@ -73,12 +73,13 @@ if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
 fi
 
-# load override
-for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
-  [[ -r $cand ]] && source "$cand" && break
-done
-
+# WSL
 if [[ -n "$WSL_DISTRO_NAME" || $(< /proc/version 2>/dev/null) == *Microsoft* ]]; then
   export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
   #ln -sf /mnt/c/Users/$(whoami)/AppData/Local/ssh-agent.sock ~/.ssh/agent.sock
 fi
+
+# load override
+for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
+  [[ -r $cand ]] && source "$cand" && break
+done
