@@ -211,14 +211,6 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 (( ${+commands[fzf]} )) && source <(fzf --zsh)
 
-# Mise
-if command -v mise >/dev/null; then
-  export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN) + 1 ))
-  export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
-
-  eval "$(mise activate zsh)"
-fi
-
 # anyframe
 autoload -Uz anyframe-init && anyframe-init
 

@@ -61,8 +61,17 @@ zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
 zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME/op/plugins.sh"'
 
+# 遅延ロードしない方が安全
+
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
+
+# Mise
+if (( $+commands[mise] )); then
+  export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1) + 1 ))
+  export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
+  eval "$(mise activate zsh)"
+fi
 
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
