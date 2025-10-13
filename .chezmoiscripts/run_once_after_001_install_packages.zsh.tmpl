@@ -1,9 +1,5 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 set -euo pipefail
-
-export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
-export CARGO_HOME="$XDG_DATA_HOME/cargo"
-export CARGO_TARGET_DIR="$CARGO_HOME/target"
 
 if [[ ! -f "$CARGO_HOME/env" ]]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
