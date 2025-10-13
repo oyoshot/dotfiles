@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -euo pipefail
 
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
