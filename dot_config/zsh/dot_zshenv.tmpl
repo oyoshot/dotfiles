@@ -86,8 +86,10 @@ path=(
 )
 export PATH
 
-{{ if lookPath "nvim" -}}
-export EDITOR="nvim"
-{{ else -}}
-export EDITOR=vim
-{{ end -}}
+if command -v nvim >/dev/null 2>&1; then
+  EDITOR=nvim
+else
+  EDITOR=vim
+fi
+VISUAL="$EDITOR"
+export EDITOR VISUAL
