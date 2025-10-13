@@ -86,13 +86,6 @@ path=(
 )
 export PATH
 
-{{ if (eq .chezmoi.os "darwin") -}}
-# Homebrew
-{{ output "brew" "shellenv" }}
-export HOMEBREW_BUNDLE_FILE_GLOBAL="$XDG_CONFIG_HOME/homebrew/Brewfile"
-export HOMEBREW_BUNDLE_FILE="$XDG_CONFIG_HOME/homebrew/Brewfile"
-{{ end -}}
-
 {{ if lookPath "nvim" -}}
 export EDITOR="nvim"
 {{ else -}}
