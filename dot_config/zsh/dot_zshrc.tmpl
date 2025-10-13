@@ -46,7 +46,7 @@ fpath=(
   $fpath
 )
 
-# zsh-defer
+# defer loader
 source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
 
 # load configs
@@ -59,7 +59,7 @@ zsh-defer source $ZDOTDIR/plugins/syntax-highlighting/zsh-syntax-highlighting.zs
 zsh-defer source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
-zsh-defer source $XDG_CONFIG_HOME/op/plugins.sh
+zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME/op/plugins.sh"'
 
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
