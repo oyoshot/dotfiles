@@ -3,6 +3,7 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
+		"ravitemer/mcphub.nvim",
 	},
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
@@ -15,6 +16,11 @@ return {
 			"<leader>ac",
 			":CodeCompanionChat copilot<CR>",
 			desc = "Chat with Copilot",
+		},
+		{
+			"<leader>am",
+			":MCPHub<CR>",
+			desc = "Open MCP Hub UI",
 		},
 	},
 	opts = {
@@ -35,5 +41,16 @@ return {
 		-- 	chat = { adapter = "openai" },
 		-- 	inline = { adapter = "openai" },
 		-- },
+		extensions = {
+			mcphub = {
+				callback = "mcphub.extensions.codecompanion",
+				opts = {
+					make_tools = true,
+					make_vars = true,
+					make_slash_commands = true,
+					show_server_tools_in_chat = true,
+				},
+			},
+		},
 	},
 }
