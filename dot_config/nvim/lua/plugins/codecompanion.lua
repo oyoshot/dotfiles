@@ -7,24 +7,13 @@ return {
 	},
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
-		{
-			"<leader>ao",
-			":CodeCompanionChat openai<CR>",
-			desc = "Chat with OpenAI",
-		},
-		{
-			"<leader>ac",
-			":CodeCompanionChat copilot<CR>",
-			desc = "Chat with Copilot",
-		},
-		{
-			"<leader>am",
-			":MCPHub<CR>",
-			desc = "Open MCP Hub UI",
-		},
+		{ "<leader>ao", ":CodeCompanionChat openai<CR>", desc = "Chat with OpenAI" },
+		{ "<leader>ac", ":CodeCompanionChat copilot<CR>", desc = "Chat with Copilot" },
+		{ "<leader>am", ":MCPHub<CR>", desc = "Open MCP Hub UI" },
 	},
 	opts = {
 		opts = { language = "Japanese" },
+
 		adapters = {
 			http = {
 				openai = function()
@@ -37,10 +26,30 @@ return {
 				end,
 			},
 		},
-		-- strategies = {
-		-- 	chat = { adapter = "openai" },
-		-- 	inline = { adapter = "openai" },
-		-- },
+
+		prompt_library = {
+			["Review (Web)"] = {
+				strategy = "chat",
+				description = "Web検索してコードレビュー",
+				opts = {
+					is_slash_cmd = true,
+					short_name = "review",
+				},
+				prompts = {
+					{
+						role = "user",
+						content = table.concat({
+							"#{buffer}",
+							"",
+							"このコードをレビューしてください。まずローカル文脈のみで指摘を出し、",
+							"判断がつかない箇所は直ちに @{ddg__search} または @{search_web} を実行して公式情報を確認し、",
+							"最後に根拠URLを箇条書きで列挙してください。ツール実行の承認が必要なら実行して構いません。",
+						}, "\n"),
+					},
+				},
+			},
+		},
+
 		extensions = {
 			mcphub = {
 				callback = "mcphub.extensions.codecompanion",
@@ -48,7 +57,7 @@ return {
 					make_tools = true,
 					make_vars = true,
 					make_slash_commands = true,
-					show_server_tools_in_chat = true,
+					show_result_in_chat = true,
 				},
 			},
 		},
