@@ -1,30 +1,39 @@
 return {
 	"olimorris/codecompanion.nvim",
-	event = { "CursorHold", "CursorHoldI" },
-	dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter" },
-	opts = {
-		opts = {
-			language = "Japanese",
-		},
-		strategies = {
-			chat = { adapter = "copilot" },
-			inline = { adapter = "copilot" },
-		},
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		"nvim-treesitter/nvim-treesitter",
 	},
+	event = { "CursorHold", "CursorHoldI" },
 	keys = {
 		{
-			"<leader>ac",
-			function()
-				require("codecompanion").chat()
-			end,
-			desc = "CodeCompanion: Chat",
+			"<leader>ao",
+			":CodeCompanionChat openai<CR>",
+			desc = "Chat with OpenAI",
 		},
 		{
-			"<leader>at",
-			function()
-				require("codecompanion").toggle()
-			end,
-			desc = "CodeCompanion: Toggle chat",
+			"<leader>ac",
+			":CodeCompanionChat copilot<CR>",
+			desc = "Chat with Copilot",
 		},
+	},
+	opts = {
+		opts = { language = "Japanese" },
+		adapters = {
+			http = {
+				openai = function()
+					return require("codecompanion.adapters").extend("openai", {
+						env = { OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") },
+					})
+				end,
+				copilot = function()
+					return require("codecompanion.adapters").extend("copilot", {})
+				end,
+			},
+		},
+		-- strategies = {
+		-- 	chat = { adapter = "openai" },
+		-- 	inline = { adapter = "openai" },
+		-- },
 	},
 }
