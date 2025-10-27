@@ -48,6 +48,38 @@ return {
 					},
 				},
 			},
+
+			["Docs (inline)"] = {
+				strategy = "inline",
+				description = "選択範囲に言語ごとのドキュメントコメントを挿入/更新",
+				opts = {
+					is_slash_cmd = true,
+					short_name = "docs",
+					requires_selection = true,
+					auto_submit = true,
+				},
+				prompts = {
+					{
+						role = "user",
+						content = table.concat({
+							"#{visual}",
+							"",
+							"上のコード片の直前（または既存コメントの該当位置）に、言語/フレームワークの慣習に沿った",
+							"ドキュメントコメント（docstring/JSDoc/GoDoc/Doxygen/EmmyLua など）を追加または更新してください。",
+							"",
+							"ルール:",
+							"- 言語を自動判定し、適切なスタイルで記述（例: Python→Google/NumPy docstring, TS/JS→JSDoc, Go→GoDoc, Rust→///, C/C++→Doxygen, Lua→---@param/@return）。",
+							"- 引数・戻り値・例外・前提条件・副作用・使用例（該当時）を簡潔に。",
+							"- 既存のコメントがあれば重複を避けて統合し、質を上げる。",
+							"- コード本体の挙動は変更しない（コメント追加/更新のみ）。",
+							"- 日本語でわかりやすく。API名など英語のままが自然な箇所は英語のまま。",
+							"- 70〜100桁程度で適宜改行。",
+							"",
+							"最終出力は、編集後の完全なコードのみを返してください（説明文や余計なテキストは不要）。",
+						}, "\n"),
+					},
+				},
+			},
 		},
 
 		extensions = {
