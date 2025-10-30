@@ -217,7 +217,7 @@ autoload -Uz anyframe-init && anyframe-init
 autoload -Uz compinit && compinit
 
 if (( ${+TMUX} && $+commands[tmux] )); then
-  VISUAL='tmux display-popup -E -h 80% -w 90% nvim'
+  VISUAL='tmux display-popup -E -h 80% -w 90% -d '#{pane_current_path}' nvim'
 else
   VISUAL='nvim'
 fi
