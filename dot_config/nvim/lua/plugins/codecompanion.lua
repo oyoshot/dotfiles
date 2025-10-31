@@ -4,7 +4,11 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		"ravitemer/mcphub.nvim",
+		"folke/noice.nvim",
 	},
+	init = function()
+		require("plugins.extensions.codecompanion-noice").init()
+	end,
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
 		{ "<leader>ao", ":CodeCompanionChat openai<CR>", desc = "Chat with OpenAI" },
