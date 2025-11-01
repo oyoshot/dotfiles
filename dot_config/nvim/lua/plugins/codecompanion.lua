@@ -5,6 +5,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		"ravitemer/mcphub.nvim",
 		"folke/noice.nvim",
+		"zbirenbaum/copilot.lua",
 	},
 	init = function()
 		require("plugins.extensions.codecompanion-noice").init()
