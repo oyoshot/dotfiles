@@ -1,8 +1,5 @@
 #!/bin/zsh
 
-export NOTES_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/notes"
-mkdir -p "$NOTES_DIR"/{inbox,notes,log,snippets,templates} 2>/dev/null || true
-
 # Deno
 _cpu_count() {
   if command -v getconf >/dev/null; then getconf _NPROCESSORS_ONLN
