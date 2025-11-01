@@ -31,8 +31,29 @@ return {
 				},
 			},
 
+			completion = {
+				autocomplete = { require("cmp.types").cmp.TriggerEvent.TextChanged },
+				keyword_length = 1,
+			},
+
 			sorting = {
 				priority_weight = 2,
+				comparators = (function()
+					local cmp_compare = require("cmp.config.compare")
+					local copilot_compare = require("copilot_cmp.comparators")
+					return {
+						copilot_compare.prioritize, -- Copilotの候補を最優先に
+						copilot_compare.score, -- Copilotスコアも反映
+						cmp_compare.offset,
+						cmp_compare.exact,
+						cmp_compare.score,
+						cmp_compare.recently_used,
+						cmp_compare.kind,
+						cmp_compare.sort_text,
+						cmp_compare.length,
+						cmp_compare.order,
+					}
+				end)(),
 			},
 
 			formatting = {
@@ -97,6 +118,7 @@ return {
 
 			-- You should specify your *installed* sources.
 			sources = {
+				{ name = "copilot", group_index = 2 },
 				{ name = "nvim_lsp", max_item_count = 350 },
 				{ name = "nvim_lua" },
 				{ name = "luasnip" },
@@ -114,7 +136,6 @@ return {
 					},
 				},
 				{ name = "latex_symbols" },
-				--{ name = "copilot" },
 				-- { name = "codeium" },
 				-- { name = "cmp_tabnine" },
 				{ name = "skkeleton" },

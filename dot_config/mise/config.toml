@@ -65,6 +65,7 @@ zig = "latest"
 "npm:bash-language-server" = "latest"
 "npm:claude" = "latest"
 "npm:cspell" = "latest"
+"npm:mcp-hub" = "latest"
 "npm:md-to-pdf" = "latest"
 
 "pipx:poetry" = "latest"
