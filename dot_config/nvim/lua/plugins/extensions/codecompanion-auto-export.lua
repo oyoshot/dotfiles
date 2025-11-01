@@ -15,6 +15,7 @@ local function export_dir()
 	if nd and nd ~= "" then
 		nd = vim.fn.expand(nd)
 		local dir = vim.fs.joinpath(nd, unpack(M.subdir))
+
 		ensure_dir(dir)
 		return dir
 	end
@@ -27,23 +28,20 @@ local function export_dir()
 end
 
 local function slug(s)
-	s = (s or "chat"):gsub('[/\\:?*"<>|]', " "):gsub("%s+", "-"):gsub("%.-$", "")
+	s = (s or "chat"):gsub('[/\\:?*"<>|]', " "):gsub("%s+", "-")
 	if s == "" then
 		s = "chat"
 	end
 	return s
 end
 
-local function filename(chat, bufnr)
-	local base = ("%s_%s.md"):format(slug(chat.title or "chat"), tostring(chat.id or bufnr))
-	return vim.fs.joinpath(export_dir(), base)
-end
-
 local function write_markdown(bufnr)
-	local ok, chat = pcall(function()
-		return require("codecompanion").buf_get_chat(bufnr)
-	end)
-	if not ok or not chat then
+	local ok, cc = pcall(require, "codecompanion")
+	if not ok then
+		return
+	end
+	local chat = cc.buf_get_chat(bufnr)
+	if not chat then
 		return
 	end
 
@@ -56,121 +54,59 @@ local function write_markdown(bufnr)
 		"---",
 		"",
 	}
-	local all = {}
-	vim.list_extend(all, header)
-	vim.list_extend(all, lines)
 
-	local path = filename(chat, bufnr)
-	vim.fn.writefile(all, path)
-	vim.schedule(function()
-		vim.notify("[cc-auto-export] wrote " .. path, vim.log.levels.DEBUG)
-	end)
-end
+	local out = {}
+	vim.list_extend(out, header)
+	vim.list_extend(out, lines)
 
-local state = {} -- bufnr -> {timer}
-local function ensure_timer(bufnr)
-	if state[bufnr] and not state[bufnr].closed then
-		return state[bufnr].timer
-	end
-	local uv = vim.uv or vim.loop
-	local t = uv.new_timer()
-	state[bufnr] = { timer = t, closed = false }
-	return t
-end
-
-local function schedule(bufnr)
-	local t = ensure_timer(bufnr)
-	t:stop()
-	t:start(M.debounce_ms, 0, function()
-		t:stop()
-		vim.schedule(function()
-			if vim.api.nvim_buf_is_loaded(bufnr) then
-				write_markdown(bufnr)
-			end
-		end)
-	end)
-end
-
-local function detach(bufnr)
-	local s = state[bufnr]
-	if s and not s.closed then
-		s.closed = true
-		if s.timer then
-			local ok = pcall(function()
-				s.timer:stop()
-				s.timer:close()
-			end)
-			if not ok then -- ignore
-			end
-		end
-		state[bufnr] = nil
-	end
+	local name = ("%s_%s.md"):format(slug(chat.title or "chat"), tostring(chat.id or bufnr))
+	local path = vim.fs.joinpath(export_dir(), name)
+	vim.fn.writefile(out, path)
 end
 
 function M.setup()
-	local aug = vim.api.nvim_create_augroup("CCAutoExport", { clear = true })
+	local main = vim.api.nvim_create_augroup("CCAutoExportMain", { clear = true })
 
-	vim.api.nvim_create_autocmd({ "BufEnter" }, {
-		group = aug,
+	vim.api.nvim_create_autocmd("FileType", {
+		group = main,
+		pattern = { "codecompanion", "codecompanion-chat" },
 		callback = function(args)
-			local ok, chat = pcall(function()
-				return require("codecompanion").buf_get_chat(args.buf)
-			end)
-			if not ok or not chat then
-				return
+			local bufnr = args.buf
+			local g = vim.api.nvim_create_augroup("CCAutoExport_" .. bufnr, { clear = true })
+			local timer_id
+			local function schedule()
+				if timer_id then
+					vim.fn.timer_stop(timer_id)
+				end
+				timer_id = vim.fn.timer_start(M.debounce_ms, function()
+					vim.schedule(function()
+						if vim.api.nvim_buf_is_loaded(bufnr) then
+							write_markdown(bufnr)
+						end
+					end)
+				end)
 			end
 
-			write_markdown(args.buf)
-			vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertLeave" }, {
-				group = aug,
-				buffer = args.buf,
-				callback = function()
-					schedule(args.buf)
-				end,
-			})
-			vim.api.nvim_create_autocmd({ "BufLeave", "BufWipeout", "BufUnload" }, {
-				group = aug,
-				buffer = args.buf,
+			write_markdown(bufnr)
 
+			vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertLeave" }, {
+				group = g,
+				buffer = bufnr,
+				callback = schedule,
+			})
+
+			vim.api.nvim_create_autocmd({ "BufLeave", "BufWipeout", "BufUnload" }, {
+				group = g,
+				buffer = bufnr,
 				callback = function()
-					write_markdown(args.buf)
-					detach(args.buf)
+					write_markdown(bufnr)
+					if timer_id then
+						vim.fn.timer_stop(timer_id)
+					end
 				end,
 			})
 		end,
 	})
-
-	vim.api.nvim_create_user_command("CCExportSnapshot", function(opts)
-		local ok, chat = pcall(function()
-			return require("codecompanion").buf_get_chat(0)
-		end)
-
-		if not ok or not chat then
-			vim.notify("[cc-auto-export] ここはチャットバッファではありません", vim.log.levels.ERROR)
-			return
-		end
-		local ts = os.date("!%Y%m%dT%H%M%SZ")
-
-		local base = ("%s_%s_%s.md"):format(
-			slug(chat.title or "chat"),
-			tostring(chat.id or vim.api.nvim_get_current_buf()),
-			ts
-		)
-		local path = vim.fs.joinpath(export_dir(), base)
-		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-		local content = {
-			"---",
-			M.tagline,
-			"title: " .. (chat.title or "CodeCompanion Chat"),
-			"created: " .. os.date("!%Y-%m-%dT%H:%M:%SZ"),
-			"---",
-			"",
-		}
-		vim.list_extend(content, lines)
-		vim.fn.writefile(content, path)
-
-		vim.notify("[cc-auto-export] snapshot -> " .. path, vim.log.levels.INFO)
-	end, { nargs = "?" })
 end
 
 return M
