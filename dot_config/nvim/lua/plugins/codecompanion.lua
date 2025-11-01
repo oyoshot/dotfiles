@@ -6,6 +6,9 @@ return {
 		"ravitemer/mcphub.nvim",
 		"folke/noice.nvim",
 		"zbirenbaum/copilot.lua",
+
+		"ravitemer/codecompanion-history.nvim",
+		"nvim-telescope/telescope.nvim",
 	},
 	init = function()
 		require("plugins.extensions.codecompanion-noice").init()
@@ -16,6 +19,7 @@ return {
 		{ "<leader>ac", ":CodeCompanionChat copilot<CR>", desc = "Chat with Copilot" },
 		{ "<leader>am", ":MCPHub<CR>", desc = "Open MCP Hub UI" },
 	},
+
 	opts = {
 		opts = { language = "Japanese" },
 
@@ -32,7 +36,6 @@ return {
 				roles = {
 					llm = function(adapter)
 						local name = adapter.formatted_name or adapter.name or "LLM"
-
 						local model = adapter.parameters and adapter.parameters.model
 						if not model and adapter.schema and adapter.schema.model then
 							local def = adapter.schema.model.default
@@ -44,18 +47,11 @@ return {
 					user = "💬 Me",
 				},
 			},
-
 			inline = {
 				keymaps = {
-					accept_changes = {
-						modes = { n = "y" },
-					},
-					reject_changes = {
-						modes = { n = "n" },
-					},
-					always_accept = {
-						modes = { n = "a" },
-					},
+					accept_changes = { modes = { n = "y" } },
+					reject_changes = { modes = { n = "n" } },
+					always_accept = { modes = { n = "a" } },
 				},
 			},
 		},
@@ -74,13 +70,11 @@ return {
 		},
 
 		prompt_library = {
+
 			["Review (Web)"] = {
 				strategy = "chat",
 				description = "Web検索してコードレビュー",
-				opts = {
-					is_slash_cmd = true,
-					short_name = "review",
-				},
+				opts = { is_slash_cmd = true, short_name = "review" },
 				prompts = {
 					{
 						role = "user",
@@ -104,6 +98,17 @@ return {
 					make_vars = true,
 					make_slash_commands = true,
 					show_result_in_chat = true,
+				},
+			},
+
+			history = {
+				enabled = true,
+				opts = {
+					auto_save = true,
+					picker = "telescope",
+					keymap = "<leader>h",
+					save_chat_keymap = "sc",
+					expiration_days = 0,
 				},
 			},
 		},
