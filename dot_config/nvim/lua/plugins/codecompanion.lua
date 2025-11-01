@@ -26,6 +26,22 @@ return {
 			},
 		},
 
+		strategies = {
+			inline = {
+				keymaps = {
+					accept_changes = {
+						modes = { n = "y" },
+					},
+					reject_changes = {
+						modes = { n = "n" },
+					},
+					always_accept = {
+						modes = { n = "a" },
+					},
+				},
+			},
+		},
+
 		adapters = {
 			http = {
 				openai = function()
