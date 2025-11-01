@@ -27,22 +27,19 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		"ravitemer/mcphub.nvim",
-		"folke/noice.nvim",
 		"zbirenbaum/copilot.lua",
+
+		"folke/noice.nvim",
 
 		"ravitemer/codecompanion-history.nvim",
 		"nvim-telescope/telescope.nvim",
 	},
-	init = function()
-		require("plugins.extensions.codecompanion-noice").init()
-	end,
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
 		{ "<leader>ao", ":CodeCompanionChat openai<CR>", desc = "Chat with OpenAI" },
 		{ "<leader>ac", ":CodeCompanionChat copilot<CR>", desc = "Chat with Copilot" },
 		{ "<leader>am", ":MCPHub<CR>", desc = "Open MCP Hub UI" },
 	},
-
 	opts = {
 		opts = { language = "Japanese" },
 
@@ -140,6 +137,7 @@ return {
 	config = function(_, opts)
 		require("codecompanion").setup(opts)
 
+		require("plugins.extensions.codecompanion-noice").init()
 		require("plugins.extensions.codecompanion-auto-export").setup()
 	end,
 }
