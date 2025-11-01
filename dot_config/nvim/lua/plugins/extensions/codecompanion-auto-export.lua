@@ -159,13 +159,11 @@ function M.setup()
 		local path = vim.fs.joinpath(export_dir(), base)
 		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 		local content = {
-
 			"---",
 			M.tagline,
 			"title: " .. (chat.title or "CodeCompanion Chat"),
 			"created: " .. os.date("!%Y-%m-%dT%H:%M:%SZ"),
 			"---",
-
 			"",
 		}
 		vim.list_extend(content, lines)
