@@ -35,6 +35,7 @@ return {
 	},
 	init = function()
 		require("plugins.extensions.codecompanion-noice").init()
+		require("plugins.extensions.codecompanion-auto-export").setup()
 	end,
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
