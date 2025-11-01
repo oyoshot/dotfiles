@@ -27,6 +27,23 @@ return {
 		},
 
 		strategies = {
+			chat = {
+				roles = {
+					llm = function(adapter)
+						local name = adapter.formatted_name or adapter.name or "LLM"
+
+						local model = adapter.parameters and adapter.parameters.model
+						if not model and adapter.schema and adapter.schema.model then
+							local def = adapter.schema.model.default
+							model = type(def) == "function" and def(adapter) or def
+						end
+
+						return ("🤖 CodeCompanion (%s: %s)"):format(name, model or "?")
+					end,
+					user = "💬 Me",
+				},
+			},
+
 			inline = {
 				keymaps = {
 					accept_changes = {
