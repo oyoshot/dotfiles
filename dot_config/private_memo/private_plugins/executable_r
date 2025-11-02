@@ -1,55 +1,78 @@
 #!/usr/bin/env bash
-# memo r: recursively pick ONE memo and open with `memo edit`
+# memo r: recursively pick ONE memo and open with `$EDITOR`
 set -euo pipefail
 
 if [[ "${1:-}" == "-usage" ]]; then
-    echo "r: Recursively list memos under memodir with compact UI and open one with \`memo edit\`."
+    cat <<'USAGE'
+Recursively list *.md under memo dir with compact UI and open one with `$EDITOR`
+
+Environment:
+  MEMO_DIR or NOTES_DIR   Root directory (default: $HOME/notes)
+
+Requires:
+  fd, fzf or fzf-tmux, memo (https://github.com/mattn/memo)
+USAGE
     exit 0
 fi
 
 notes-fzf() {
     command -v fd >/dev/null 2>&1 || {
-        echo "fd is not installed."
+        echo "fd is not installed." >&2
         return 1
     }
-    command -v fzf-tmux >/dev/null 2>&1 || {
-        echo "fzf-tmux is not installed."
+    command -v memo >/dev/null 2>&1 || {
+        echo "memo is not installed." >&2
         return 1
     }
 
-    local root="${NOTES_DIR:-$HOME/notes}"
-    local selected
+    local -a _fzf_cmd
+    if command -v fzf-tmux >/dev/null 2>&1; then
+        _fzf_cmd=(fzf-tmux -p "90%,90%")
+    elif command -v fzf >/dev/null 2>&1; then
+        _fzf_cmd=(fzf)
+    else
+        echo "fzf/fzf-tmux is not installed." >&2
+        return 1
+    fi
 
+    local root="${MEMO_DIR:-${NOTES_DIR:-$HOME/notes}}"
+    [[ -d "$root" ]] || {
+        echo "root not found: $root" >&2
+        return 1
+    }
+
+    # stat (Linux/macOS)
     if stat -c %Y "$HOME" >/dev/null 2>&1; then
         get_mtime() { stat -c %Y "$1"; }
     elif stat -f %m "$HOME" >/dev/null 2>&1; then
         get_mtime() { stat -f %m "$1"; }
     else
-        echo "stat command not compatible."
+        echo "stat command not compatible." >&2
         return 1
     fi
 
-    selected=$(
-        fd -e md . "$root" |
-            while read -r path; do
-                mtime=$(get_mtime "$path")
+    local selected
+    selected="$(
+        fd -t f -e md . "$root" -0 |
+            while IFS= read -r -d '' path; do
+                mtime="$(get_mtime "$path")" || mtime=0
                 name="${path##*/}"
-                printf '%s\t%s\t%s\n' "$mtime" "$name" "$path"
-            done | sort -r | cut -f2-3 |
-            fzf-tmux -p 90%,90% \
+                printf '%s\t%s\t%s\0' "$mtime" "$name" "$path"
+            done |
+            sort -z -t $'\t' -k1,1nr |
+            cut -z -f2-3 |
+            "${_fzf_cmd[@]}" --read0 \
                 --ansi \
                 --reverse \
                 --delimiter=$'\t' \
                 --with-nth=1 \
                 --preview-window="right,65%" \
-                --preview='cat {2}' \
-                --bind 'enter:accept'
-    )
+                --preview=$'if command -v bat >/dev/null 2>&1; then\n  bat --style=plain --color=always {2}\nelse\n  cat {2}\nfi'
+    )"
 
-    if [[ -n "$selected" ]]; then
-        local filepath="${selected#*$'\t'}"
-        "${EDITOR:-vim}" "$filepath"
-    fi
+    [[ -n "$selected" ]] || return 0
+    local filepath="${selected#*$'\t'}"
+    "${EDITOR:-vim}" "$filepath"
 }
 
 notes-fzf
