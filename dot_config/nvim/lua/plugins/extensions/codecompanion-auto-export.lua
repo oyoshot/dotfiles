@@ -27,16 +27,87 @@ local function export_dir()
 	return fb
 end
 
+local PY_NFKC_OK
+
+local function nfkc_with_python(s)
+	if PY_NFKC_OK == false then
+		return s
+	end
+	if PY_NFKC_OK == nil and vim.fn.executable("python3") ~= 1 then
+		PY_NFKC_OK = false
+		return s
+	end
+	local cmd = {
+		"python3",
+		"-c",
+		[[
+import sys, unicodedata
+s = sys.stdin.buffer.read().decode("utf-8","surrogatepass")
+sys.stdout.write(unicodedata.normalize("NFKC", s))
+]],
+	}
+	local out = vim.fn.system(cmd, s)
+	if vim.v.shell_error == 0 and type(out) == "string" then
+		PY_NFKC_OK = true
+		return out
+	else
+		PY_NFKC_OK = false
+		return s
+	end
+end
+
+local function normalize_unicode(s)
+	if not s or s == "" then
+		return s
+	end
+
+	s = nfkc_with_python(s)
+
+	-- U+00A0 NBSP
+	s = s:gsub("\194\160", " ")
+	-- U+1680 OGHAM SPACE MARK
+	s = s:gsub("\225\154\128", " ")
+	-- U+2000..U+200A
+	s = s:gsub("\226\128[\128-\138]", " ")
+	-- U+2028 LINE SEPARATOR, U+2029 PARAGRAPH SEPARATOR
+	s = s:gsub("\226\128\168", " ")
+	s = s:gsub("\226\128\169", " ")
+	-- U+202F NARROW NBSP
+	s = s:gsub("\226\128\175", " ")
+	-- U+205F MMSP
+	s = s:gsub("\226\129\159", " ")
+	-- U+3000 IDEOGRAPHIC SPACE（全角スペース）
+	s = s:gsub("　", " ")
+
+	s = s:gsub("\226\128[\139-\143]", "") -- U+200B..U+200F (ZWSP..RLM)
+	s = s:gsub("\226\128[\170-\174]", "") -- U+202A..U+202E (Bidi制御)
+	s = s:gsub("\226\129[\160-\164]", "") -- U+2060..U+2064 (WJ 等)
+
+	s = s:gsub("\226\129[\170-\175]", "") -- U+206A..U+206F (古い制御)
+	s = s:gsub("\239\187\191", "") -- U+FEFF (BOM)
+	s = s:gsub("\239\184[\128-\143]", "") -- U+FE00..U+FE0F (VS/Emoji VS)
+	s = s:gsub("\194\173", "") -- U+00AD (SOFT HYPHEN)
+
+	s = s:gsub("\205\143", "") -- U+034F (CGJ)
+	s = s:gsub("\216\156", "") -- U+061C (ALM)
+	s = s:gsub("\225\160\142", "") -- U+180E (MVS)
+
+	return s
+end
+
 local function clean_title(t)
 	if not t or t == "" then
 		return "Chat"
 	end
+
+	t = normalize_unicode(t)
 
 	t = t:gsub("```[%z\1-\255]-```", " ")
 	t = t:gsub("`([^`]*)`", "%1")
 	t = t:gsub("\\[rnt]", " ")
 	t = t:gsub("[%c]", " ")
 	t = t:gsub("^%s*#+%s*", "")
+
 	t = t:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
 	if t == "" then
 		t = "Chat"
@@ -73,6 +144,7 @@ local function title_from_first_user(chat)
 			return clean_title(m.content)
 		end
 	end
+
 	return nil
 end
 
@@ -83,6 +155,7 @@ local function resolve_title(chat, bufnr)
 		return t
 	end
 	local inferred = title_from_first_user(chat)
+
 	if inferred and inferred ~= "" then
 		return inferred
 	end
@@ -106,6 +179,7 @@ local function uniquify_path(dir, base)
 		if vim.fn.filereadable(p) == 0 then
 			return p
 		end
+
 		n = n + 1
 		if n > 999 then
 			return vim.fs.joinpath(dir, string.format("%s-%d.md", base, vim.loop.hrtime()))
@@ -121,6 +195,7 @@ end
 
 local function maybe_rename_file(bufnr, chat, current_path)
 	local dir = export_dir()
+
 	local expected_base = make_base(chat, bufnr)
 
 	local current_base = vim.fn.fnamemodify(current_path, ":t:r")
@@ -135,10 +210,10 @@ end
 
 local function write_markdown(bufnr)
 	local ok, cc = pcall(require, "codecompanion")
-
 	if not ok then
 		return
 	end
+
 	local chat = cc.buf_get_chat(bufnr)
 	if not chat then
 		return
@@ -195,6 +270,7 @@ function M.setup()
 			vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertLeave" }, {
 				group = g,
 				buffer = bufnr,
+
 				callback = schedule,
 			})
 
