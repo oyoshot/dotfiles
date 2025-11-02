@@ -4,3 +4,5 @@ if command -v brew >/dev/null 2>&1; then
   export HOMEBREW_BUNDLE_FILE_GLOBAL="${XDG_CONFIG_HOME}/homebrew/Brewfile"
   export HOMEBREW_BUNDLE_FILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
 fi
+
+[ -d "$NOTES_DIR" ] || mkdir -p "$NOTES_DIR"/{assets,images,pdf,resume,logs}

@@ -1,25 +1,45 @@
+local function llm_history_dir()
+	local nd = os.getenv("NOTES_DIR")
+	if nd and nd ~= "" then
+		nd = vim.fn.expand(nd)
+		local target = vim.fs.joinpath(nd, "llm")
+		if vim.fn.isdirectory(target) == 0 then
+			vim.fn.mkdir(target, "p")
+		end
+		return target
+	end
+	local fallback = vim.fs.joinpath(vim.fn.stdpath("data"), "llm")
+	vim.schedule(function()
+		vim.notify(
+			"[codecompanion-history] $NOTES_DIR が未設定のため " .. fallback .. " を使用します",
+			vim.log.levels.WARN
+		)
+	end)
+	if vim.fn.isdirectory(fallback) == 0 then
+		vim.fn.mkdir(fallback, "p")
+	end
+	return fallback
+end
+
 return {
 	"olimorris/codecompanion.nvim",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		"ravitemer/mcphub.nvim",
-		"folke/noice.nvim",
 		"zbirenbaum/copilot.lua",
+
+		"folke/noice.nvim",
 
 		"ravitemer/codecompanion-history.nvim",
 		"nvim-telescope/telescope.nvim",
 	},
-	init = function()
-		require("plugins.extensions.codecompanion-noice").init()
-	end,
 	event = { "CursorHold", "CursorHoldI" },
 	keys = {
 		{ "<leader>ao", ":CodeCompanionChat openai<CR>", desc = "Chat with OpenAI" },
 		{ "<leader>ac", ":CodeCompanionChat copilot<CR>", desc = "Chat with Copilot" },
 		{ "<leader>am", ":MCPHub<CR>", desc = "Open MCP Hub UI" },
 	},
-
 	opts = {
 		opts = { language = "Japanese" },
 
@@ -70,7 +90,6 @@ return {
 		},
 
 		prompt_library = {
-
 			["Review (Web)"] = {
 				strategy = "chat",
 				description = "Web検索してコードレビュー",
@@ -109,8 +128,16 @@ return {
 					keymap = "<leader>h",
 					save_chat_keymap = "sc",
 					expiration_days = 0,
+					dir_to_save = llm_history_dir(),
 				},
 			},
 		},
 	},
+
+	config = function(_, opts)
+		require("codecompanion").setup(opts)
+
+		require("plugins.extensions.codecompanion-noice").init()
+		require("plugins.extensions.codecompanion-auto-export").setup()
+	end,
 }
