@@ -1,57 +1,54 @@
-#!/bin/zsh
+#!/usr/bin/env bash
+# memo r: recursively pick ONE memo and open with `memo edit`
+set -euo pipefail
 
-usage() {
-    echo "memo r: recursively pick ONE memo and open with \`memo edit\`"
+if [[ "${1:-}" == "-usage" ]]; then
+    echo "r: Recursively list memos under memodir with compact UI and open one with \`memo edit\`."
     exit 0
-}
-
-for arg in "$@"; do
-    case $arg in
-    -usage)
-        usage
-        ;;
-    *)
-        echo "Invalid option: $arg" 1>&2
-        usage
-        ;;
-    esac
-done
+fi
 
 notes-fzf() {
+    command -v fd >/dev/null 2>&1 || {
+        echo "fd is not installed."
+        return 1
+    }
+    command -v fzf-tmux >/dev/null 2>&1 || {
+        echo "fzf-tmux is not installed."
+        return 1
+    }
+
     local root="${NOTES_DIR:-$HOME/notes}"
     local selected
 
+    if stat -c %Y "$HOME" >/dev/null 2>&1; then
+        get_mtime() { stat -c %Y "$1"; }
+    elif stat -f %m "$HOME" >/dev/null 2>&1; then
+        get_mtime() { stat -f %m "$1"; }
+    else
+        echo "stat command not compatible."
+        return 1
+    fi
+
     selected=$(
         fd -e md . "$root" |
-            awk -v home="$HOME" '
-        BEGIN { FS="/"; OFS="/" }
-        {
-            full=$0
-            display=$0
-            sub("^" home "/", "~", display)
-            n=split(display, seg, "/")
-            out=""
-            for (i=1; i<=n; i++) {
-                if (i==1 && seg[i]=="") { out="/"; continue }
-                if (seg[i]=="~") { out = (out=="" ? "~" : out "/" "~"); continue }
-                if (i>=n-1) { out = (out=="" ? seg[i] : out "/" seg[i]); continue }
-                short = (length(seg[i])<=3 ? seg[i] : substr(seg[i],1,1))
-                out = (out=="" ? short : out "/" short)
-            }
-            printf("%s\t%s\n", out, full)
-        }
-        ' |
+            while read -r path; do
+                mtime=$(get_mtime "$path")
+                name="${path##*/}"
+                printf '%s\t%s\t%s\n' "$mtime" "$name" "$path"
+            done | sort -r | cut -f2-3 |
             fzf-tmux -p 90%,90% \
                 --ansi \
-                --delimiter=$'\t' --with-nth=1 \
+                --reverse \
+                --delimiter=$'\t' \
+                --with-nth=1 \
                 --preview-window="right,65%" \
                 --preview='cat {2}' \
                 --bind 'enter:accept'
     )
 
     if [[ -n "$selected" ]]; then
-        local filepath="${selected##*$'\t'}"
-        $EDITOR "$filepath"
+        local filepath="${selected#*$'\t'}"
+        "${EDITOR:-vim}" "$filepath"
     fi
 }
 
