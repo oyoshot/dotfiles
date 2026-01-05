@@ -125,7 +125,7 @@ return {
 				opts = {
 					auto_save = true,
 					picker = "telescope",
-					keymap = "<leader>h",
+					keymap = "gh",
 					save_chat_keymap = "sc",
 					expiration_days = 0,
 					dir_to_save = llm_history_dir(),

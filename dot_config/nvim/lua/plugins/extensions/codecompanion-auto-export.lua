@@ -165,7 +165,7 @@ end
 local function make_base(chat, bufnr)
 	local date = os.date("!%Y-%m-%d")
 	local title = sanitize_title_for_filename(resolve_title(chat, bufnr))
-	return string.format("%s-%s@%s", date, title, short_id(chat, bufnr))
+	return string.format("_%s-%s@%s", date, title, short_id(chat, bufnr))
 end
 
 local function uniquify_path(dir, base)
