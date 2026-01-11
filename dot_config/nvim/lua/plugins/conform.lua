@@ -34,6 +34,13 @@ local function prettier_chain()
 	return { "prettierd", stop_after_first = true }
 end
 
+local function deno_or_prettier(bufnr)
+	if is_deno_project(bufnr) then
+		return { "deno_fmt" }
+	end
+	return prettier_chain()
+end
+
 vim.api.nvim_create_autocmd("BufWritePost", {
 	pattern = { "deno.json", "deno.jsonc" },
 	callback = function()
@@ -46,23 +53,15 @@ return {
 	event = { "BufReadPre", "BufNewFile" },
 	opts = {
 		formatters_by_ft = {
-			lua = { "stylua" },
-
-			markdown = function(bufnr)
-				if is_deno_project(bufnr) then
-					return { "deno_fmt" }
-				end
-				return prettier_chain()
-			end,
-
-			json = function(bufnr)
-				if is_deno_project(bufnr) then
-					return { "deno_fmt" }
-				end
-				return prettier_chain()
-			end,
-
+			html = prettier_chain(),
+			javascript = deno_or_prettier,
+			javascriptreact = deno_or_prettier,
+			json = prettier_chain(),
+			markdown = prettier_chain(),
+			typescript = deno_or_prettier,
+			typescriptreact = deno_or_prettier,
 			yaml = prettier_chain(),
+			lua = { "stylua" },
 			zsh = { "shfmt" },
 		},
 

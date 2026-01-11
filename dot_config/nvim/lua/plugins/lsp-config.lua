@@ -15,7 +15,7 @@ return {
 					vim.lsp.buf.format({
 						async = true,
 						filter = function(c)
-							local disabled_format_clients = { "lua_ls" }
+							local disabled_format_clients = { "lua_ls", "vtsls" }
 							return not vim.tbl_contains(disabled_format_clients, c.name)
 						end,
 					})
@@ -31,7 +31,7 @@ return {
 				vim.g.markdown_fenced_language = {
 					"ts=typescript",
 				}
-				lsp_format_on_save(bufnr)
+				lsp_format_on_save(event.buf)
 			end,
 		})
 
