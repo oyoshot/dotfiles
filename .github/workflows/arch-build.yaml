@@ -31,6 +31,9 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - name: Free disk space on host toolcache
+        shell: bash
+        run: rm -rf /__t/*
       - uses: actions/checkout@v3
       - uses: ./.github/actions/arch
         with:
