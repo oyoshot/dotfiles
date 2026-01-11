@@ -67,6 +67,7 @@ zig = "latest"
 "npm:cspell" = "latest"
 "npm:mcp-hub" = "latest"
 "npm:md-to-pdf" = "latest"
+"npm:prettier" = "latest"
 
 "pipx:poetry" = "latest"
 "pipx:pyright" = "latest"
