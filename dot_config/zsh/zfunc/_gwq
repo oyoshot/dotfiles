@@ -1,1 +1,2 @@
+#compdef gwq
 source <(gwq completion zsh)

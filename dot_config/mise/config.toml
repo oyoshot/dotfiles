@@ -51,6 +51,7 @@ zig = "latest"
 "cargo:cargo-update" = "latest"
 "cargo:https://github.com/Feel-ix-343/markdown-oxide.git" = { version = "latest", locked = true }
 "cargo:stylua" = "latest"
+"cargo:usage-cli" = "latest"
 
 "go:github.com/d-kuro/gwq/cmd/gwq" = "latest"
 "go:github.com/mattn/memo" = "latest"

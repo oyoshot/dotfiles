@@ -76,7 +76,6 @@ __mise_activate_once() {
 
 if (( $+commands[mise] )); then
   if [[ -o interactive ]]; then
-    zsh-defer __mise_activate_once
     __mise_preexec_once() {
       __mise_activate_once
       add-zsh-hook -d preexec __mise_preexec_once 2>/dev/null || true
