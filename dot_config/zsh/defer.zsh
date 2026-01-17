@@ -69,10 +69,19 @@ function g() {
 }
 
 function gg() {
- local root=$(ghq root)
- local r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
- local repository="$root/$r"
- [ -n "$repository" ] && builtin cd "$repository"
+    local root
+    root=$(ghq root) || return $?
+    local r
+    r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
+    local fzf_status=$?
+    if [[ $fzf_status -ne 0 ]]; then
+     return $fzf_status
+    fi
+    if [[ -z "$r" ]]; then
+     return 1
+    fi
+    local repository="$root/$r"
+    builtin cd "$repository"
 }
 
 function awsc() {
