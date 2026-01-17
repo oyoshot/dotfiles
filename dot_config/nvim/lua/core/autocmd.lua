@@ -26,6 +26,26 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 	end,
 })
 
+-- Node/JS/TS: align indent with Prettier's default (2 spaces)
+vim.api.nvim_create_autocmd({ "FileType" }, {
+	pattern = {
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"json",
+		"jsonc",
+		"yaml",
+		"markdown",
+	},
+	callback = function()
+		vim.bo.expandtab = true
+		vim.bo.tabstop = 2
+		vim.bo.shiftwidth = 2
+		vim.bo.softtabstop = 2
+	end,
+})
+
 -- Set up hover on mouse move
 -- vim.cmd([[
 --  augroup LspHover
