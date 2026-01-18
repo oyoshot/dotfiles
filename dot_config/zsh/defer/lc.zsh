@@ -2,25 +2,25 @@
 
 # 使い方:
 #
-#   gcm                      # デフォルト: provider=codex, lang=en
-#   gcm codex                # provider 指定
-#   gcm claude ja            # provider + lang 指定
-#   gcm ja                   # lang だけ指定（provider は env/既定）
+#   lc                      # デフォルト: provider=codex, lang=en
+#   lc codex                # provider 指定
+#   lc claude ja            # provider + lang 指定
+#   lc ja                   # lang だけ指定（provider は env/既定）
 #
 # 環境変数:
-#   GCM_PROVIDER=codex|claude
-#   GCM_LANG=en|ja
-#   GCM_DRY_RUN=1            # 生成だけ表示
+#   LC_PROVIDER=codex|claude
+#   LC_LANG=en|ja
+#   LC_DRY_RUN=1            # 生成だけ表示
 #
 # 例:
-#   export GCM_PROVIDER=codex
-#   export GCM_LANG=ja
-#   gcm
+#   export LC_PROVIDER=codex
+#   export LC_LANG=ja
+#   lc
 #
-#   gcm claude en
-#   GCM_DRY_RUN=1 gcm codex ja
+#   lc claude en
+#   LC_DRY_RUN=1 lc codex ja
 
-_gcm_prompt() {
+_lc_prompt() {
     local lang="${1:-en}"
     local lang_name="English"
     local extra=""
@@ -50,12 +50,12 @@ Now generate the commit message for the following staged diff.
 EOF
 }
 
-_gcm_codex() {
+_lc_codex() {
     local tmp="$1"
     local lang="$2"
 
     {
-        _gcm_prompt "$lang"
+        _lc_prompt "$lang"
         echo
         git diff --staged
     } | codex exec \
@@ -67,12 +67,12 @@ _gcm_codex() {
         >/dev/null 2>&1
 }
 
-_gcm_claude() {
+_lc_claude() {
     local tmp="$1"
     local lang="$2"
 
     {
-        _gcm_prompt "$lang"
+        _lc_prompt "$lang"
         echo
         git diff --staged
     } | claude -p \
@@ -80,7 +80,7 @@ _gcm_claude() {
         >"$tmp"
 }
 
-gcm() {
+lc() {
     # staged 差分が無いなら終了
     if git diff --staged --quiet; then
         echo "No staged changes."
@@ -116,15 +116,15 @@ gcm() {
         ;;
     esac
 
-    provider="${provider:-${GCM_PROVIDER:-claude}}"
-    lang="${lang:-${GCM_LANG:-en}}"
+    provider="${provider:-${LC_PROVIDER:-claude}}"
+    lang="${lang:-${LC_LANG:-en}}"
 
     local tmp
     tmp="$(mktemp)"
 
     case "$provider" in
-    codex) _gcm_codex "$tmp" "$lang" || true ;;
-    claude) _gcm_claude "$tmp" "$lang" || true ;;
+    codex) _lc_codex "$tmp" "$lang" || true ;;
+    claude) _lc_claude "$tmp" "$lang" || true ;;
     *)
         echo "Unknown provider: $provider (use: codex|claude)"
         rm -f "$tmp"
@@ -145,7 +145,7 @@ gcm() {
         return 1
     fi
 
-    if [ -n "${GCM_DRY_RUN:-}" ]; then
+    if [ -n "${LC_DRY_RUN:-}" ]; then
         cat "$tmp"
         rm -f "$tmp"
         return 0
