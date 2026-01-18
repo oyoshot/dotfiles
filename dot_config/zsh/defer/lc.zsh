@@ -8,8 +8,8 @@
 #
 # Environment variables:
 #   LC_PROVIDER=codex|claude
-#   LC_LANG=en|ja
-#   LC_DRY_RUN=1            # show generated message only
+#   LC_LANG=en|ja|<lang>     # any language name or instruction
+#   LC_DRY_RUN=1             # show generated message only
 #
 # Examples:
 #   export LC_PROVIDER=codex
@@ -20,19 +20,21 @@
 
 _lc_prompt() {
     local lang="${1:-en}"
-    local lang_name="English"
-    local extra=""
+    local lang_name="$lang"
 
     case "$lang" in
     ja)
         lang_name="Japanese"
-        extra=$'IMPORTANT: Do NOT use English anywhere. Output Japanese only.\n'
+        ;;
+    en)
+        lang_name="English"
         ;;
     esac
 
     cat <<EOF
 You are generating a Git commit message that MUST follow the Conventional Commits specification.
-${extra}
+
+IMPORTANT: Do NOT use any other language. Output ${lang_name} only.
 
 Rules:
 - Output ONLY the raw commit message. No markdown, no code blocks, no explanations.
@@ -87,7 +89,7 @@ lc() {
 
     # Parse args:
     #  - provider: codex|claude
-    #  - lang: ja|en
+    #  - lang: en|ja or any custom language name
 
     local a1="${1:-}"
     local a2="${2:-}"
@@ -97,20 +99,22 @@ lc() {
 
     case "$a1" in
     codex | claude) provider="$a1" ;;
-    ja | en) lang="$a1" ;;
     "") : ;;
-    *)
-        echo "Unknown arg: $a1 (use: codex|claude|ja|en)"
-        return 2
-        ;;
+    *) lang="$a1" ;;
     esac
 
     case "$a2" in
-    ja | en) lang="$a2" ;;
     "") : ;;
-    *)
-        echo "Unknown lang: $a2 (use: ja|en)"
+    codex | claude)
+        echo "Unknown arg: $a2 (provider must be first)"
         return 2
+        ;;
+    *)
+        if [ -z "$provider" ]; then
+            echo "Too many args. Usage: lc [codex|claude] [lang]"
+            return 2
+        fi
+        lang="$a2"
         ;;
     esac
 
