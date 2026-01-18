@@ -33,5 +33,17 @@ if [ -n "$new_path" ]; then
   fi
 fi
 
+if command -v wl-paste >/dev/null 2>&1; then
+  exec wl-paste "$@"
+fi
+
+if command -v xsel >/dev/null 2>&1; then
+  exec xsel --output --clipboard "$@"
+fi
+
+if command -v xclip >/dev/null 2>&1; then
+  exec xclip -o -selection clipboard "$@"
+fi
+
 echo "pbpaste: no clipboard utility found" >&2
 exit 127
