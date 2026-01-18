@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+set -euf
+
+if grep -qiE "(Microsoft|WSL)" /proc/version 2>/dev/null; then
+  if command -v win32yank.exe >/dev/null 2>&1; then
+    exec win32yank.exe -o --lf
+  fi
+fi
+
+self_path="$(command -v pbpaste 2>/dev/null || true)"
+self_dir=""
+if [ -n "$self_path" ]; then
+  self_dir="$(dirname "$self_path")"
+fi
+
+new_path=""
+IFS=:
+for p in $PATH; do
+  if [ -n "$self_dir" ] && [ "$p" = "$self_dir" ]; then
+    continue
+  fi
+  if [ -z "$new_path" ]; then
+    new_path="$p"
+  else
+    new_path="$new_path:$p"
+  fi
+done
+unset IFS
+
+if [ -n "$new_path" ]; then
+  if pbpaste_path="$(PATH="$new_path" command -v pbpaste 2>/dev/null)"; then
+    exec "$pbpaste_path" "$@"
+  fi
+fi
+
+if command -v wl-paste >/dev/null 2>&1; then
+  exec wl-paste "$@"
+fi
+
+if command -v xsel >/dev/null 2>&1; then
+  exec xsel --output --clipboard "$@"
+fi
+
+if command -v xclip >/dev/null 2>&1; then
+  exec xclip -o -selection clipboard "$@"
+fi
+
+echo "pbpaste: no clipboard utility found" >&2
+exit 127
