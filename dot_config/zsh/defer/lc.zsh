@@ -1,22 +1,20 @@
 #!/usr/bin/env zsh
 
-# 使い方:
+# Usage:
+#   lc                      # default: provider=claude, lang=en
+#   lc codex                # specify provider
+#   lc claude ja            # provider + lang
+#   lc ja                   # lang only (provider via env/default)
 #
-#   lc                      # デフォルト: provider=codex, lang=en
-#   lc codex                # provider 指定
-#   lc claude ja            # provider + lang 指定
-#   lc ja                   # lang だけ指定（provider は env/既定）
-#
-# 環境変数:
+# Environment variables:
 #   LC_PROVIDER=codex|claude
 #   LC_LANG=en|ja
-#   LC_DRY_RUN=1            # 生成だけ表示
+#   LC_DRY_RUN=1            # show generated message only
 #
-# 例:
+# Examples:
 #   export LC_PROVIDER=codex
 #   export LC_LANG=ja
 #   lc
-#
 #   lc claude en
 #   LC_DRY_RUN=1 lc codex ja
 
@@ -81,13 +79,13 @@ _lc_claude() {
 }
 
 lc() {
-    # staged 差分が無いなら終了
+    # Exit if there are no staged changes.
     if git diff --staged --quiet; then
         echo "No staged changes."
         return 1
     fi
 
-    # 引数の解釈:
+    # Parse args:
     #  - provider: codex|claude
     #  - lang: ja|en
 
