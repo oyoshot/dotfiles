@@ -61,10 +61,3 @@
   type = "file"
   url = "https://raw.githubusercontent.com/prh/rules/master/media/WEB+DB_PRESS.yml"
   refreshPeriod = "168h"
-
-[".local/bin/win32yank.exe"]
-  type = "archive-file"
-  url = "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip"
-  path = "win32yank.exe"
-  executable = true
-  refreshPeriod = "168h"
