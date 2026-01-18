@@ -65,7 +65,10 @@ _lc_codex() {
 
     _lc_require_cmd codex
 
-    {
+    local err
+    err="$(mktemp)"
+
+    if ! {
         _lc_prompt "$lang"
         echo
         git diff --staged
@@ -75,7 +78,12 @@ _lc_codex() {
         -c 'approval_policy="never"' \
         -o "$tmp" \
         - \
-        >/dev/null
+        >/dev/null 2>"$err"; then
+        cat "$err" >&2
+        rm -f "$err"
+        return 1
+    fi
+    rm -f "$err"
 }
 
 _lc_claude() {
@@ -136,7 +144,7 @@ lc() {
 
     local tmp
     tmp="$(mktemp)"
-    trap 'rm -f "$tmp"' EXIT
+    trap 'if [ -n "${tmp-}" ]; then rm -f "$tmp"; fi' EXIT
 
     case "$provider" in
     codex) _lc_codex "$tmp" "$lang" ;;
