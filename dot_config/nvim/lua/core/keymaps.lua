@@ -34,6 +34,11 @@ vim.keymap.set("n", "sj", "<C-w>j", opts)
 vim.keymap.set("n", "sk", "<C-w>k", opts)
 vim.keymap.set("n", "sl", "<C-w>l", opts)
 
+vim.keymap.set("t", "sh", "<C-\\><C-n><C-w>h", opts)
+vim.keymap.set("t", "sj", "<C-\\><C-n><C-w>j", opts)
+vim.keymap.set("t", "sk", "<C-\\><C-n><C-w>k", opts)
+vim.keymap.set("t", "sl", "<C-\\><C-n><C-w>l", opts)
+
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<S-Tab>", ":bprev<CR>", opts)
 
