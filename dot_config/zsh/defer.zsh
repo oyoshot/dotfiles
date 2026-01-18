@@ -182,12 +182,6 @@ alias sudo='sudo '
 alias -g L='| less'
 alias -g G='| grep'
 
-# WSL
-if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-  pbpaste() { win32yank.exe -o --lf; }
-  pbcopy() { win32yank.exe -i --crlf; }
-fi
-
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
