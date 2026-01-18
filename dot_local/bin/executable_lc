@@ -50,9 +50,20 @@ Now generate the commit message for the following staged diff.
 EOF
 }
 
+_lc_require_cmd() {
+    local cmd="$1"
+
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "Missing required command: $cmd" >&2
+        exit 127
+    fi
+}
+
 _lc_codex() {
     local tmp="$1"
     local lang="$2"
+
+    _lc_require_cmd codex
 
     {
         _lc_prompt "$lang"
@@ -63,12 +74,15 @@ _lc_codex() {
         --color never \
         -c 'approval_policy="never"' \
         -o "$tmp" \
-        -
+        - \
+        >/dev/null 2>&1
 }
 
 _lc_claude() {
     local tmp="$1"
     local lang="$2"
+
+    _lc_require_cmd claude
 
     {
         _lc_prompt "$lang"
