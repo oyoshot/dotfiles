@@ -75,7 +75,7 @@ _lc_codex() {
         -c 'approval_policy="never"' \
         -o "$tmp" \
         - \
-        >/dev/null 2>&1
+        >/dev/null
 }
 
 _lc_claude() {
