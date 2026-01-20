@@ -2,13 +2,22 @@ return {
 	"coder/claudecode.nvim",
 	dependencies = { "folke/snacks.nvim" },
 	lazy = true,
-	config = function()
-		require("claudecode").setup()
+	opts = {
+		terminal = {
+			snacks_win_opts = {
+				wo = {
+					winhighlight = "",
+				},
+			},
+		},
+	},
+	config = function(_, opts)
+		require("claudecode").setup(opts)
 
 		-- Send and focus command
-		vim.api.nvim_create_user_command("ClaudeCodeSendAndFocus", function(opts)
-			if opts.range > 0 then
-				vim.cmd(string.format("%d,%dClaudeCodeSend", opts.line1, opts.line2))
+		vim.api.nvim_create_user_command("ClaudeCodeSendAndFocus", function(cmd_opts)
+			if cmd_opts.range > 0 then
+				vim.cmd(string.format("%d,%dClaudeCodeSend", cmd_opts.line1, cmd_opts.line2))
 			else
 				vim.cmd("ClaudeCodeSend")
 			end
