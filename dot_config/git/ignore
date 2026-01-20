@@ -4,3 +4,5 @@ node_modules/
 *.iml
 .vscode/
 **/conf.d/local.conf
+
+**/.claude/settings.local.json
