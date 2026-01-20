@@ -34,11 +34,6 @@ vim.keymap.set("n", "sj", "<C-w>j", opts)
 vim.keymap.set("n", "sk", "<C-w>k", opts)
 vim.keymap.set("n", "sl", "<C-w>l", opts)
 
-vim.keymap.set("t", "sh", "<C-\\><C-n><C-w>h", opts)
-vim.keymap.set("t", "sj", "<C-\\><C-n><C-w>j", opts)
-vim.keymap.set("t", "sk", "<C-\\><C-n><C-w>k", opts)
-vim.keymap.set("t", "sl", "<C-\\><C-n><C-w>l", opts)
-
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<S-Tab>", ":bprev<CR>", opts)
 
@@ -56,6 +51,14 @@ vim.keymap.set("i", "<C-h>", "<Left>", opts)
 vim.keymap.set("i", "<C-j>", "<Down>", opts)
 vim.keymap.set("i", "<C-k>", "<Up>", opts)
 vim.keymap.set("i", "<C-l>", "<Right>", opts)
+
+-- Terminal Mode
+vim.keymap.set("t", "jj", "<C-\\><C-n>", opts)
+
+vim.keymap.set("t", "sh", "<C-\\><C-n><C-w>h", opts)
+vim.keymap.set("t", "sj", "<C-\\><C-n><C-w>j", opts)
+vim.keymap.set("t", "sk", "<C-\\><C-n><C-w>k", opts)
+vim.keymap.set("t", "sl", "<C-\\><C-n><C-w>l", opts)
 
 -- Visual Mode
 vim.keymap.set({ "v", "x" }, "v", "<ESC>", opts)
