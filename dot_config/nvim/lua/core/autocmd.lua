@@ -46,6 +46,14 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 	end,
 })
 
+-- Terminal: automatically enter insert mode
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "WinEnter", "FocusGained" }, {
+	pattern = "term://*",
+	callback = function()
+		vim.cmd("startinsert")
+	end,
+})
+
 -- Set up hover on mouse move
 -- vim.cmd([[
 --  augroup LspHover
