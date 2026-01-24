@@ -84,6 +84,10 @@ function gg() {
     builtin cd "$repository"
 }
 
+if (( ${+commands[git]} )); then
+  eval "$(git wt --init zsh)"
+fi
+
 function wtx() {
   local target
   target="$(
