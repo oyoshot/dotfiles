@@ -53,6 +53,3 @@ setw -g window-style fg=colour244  # 非アクティブペインの前景色
 set-option -g pane-active-border-style fg=colour10  # アクティブなペインの分割線の色
 
 set-option -g pane-border-style fg=colour244  # 非アクティブなペインの分割線の色
-
-## Customize the status line format
-set -g status-left "#[fg=green]*#W"
