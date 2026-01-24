@@ -84,6 +84,25 @@ function gg() {
     builtin cd "$repository"
 }
 
+if (( ${+commands[git]} )); then
+  eval "$(git wt --init zsh)"
+fi
+
+function git-wtx() {
+  local target
+  target="$(
+    git wt |
+      tail -n +2 |
+      fzf --tmux 90% --ansi --exit-0 --layout=reverse --info=hidden --no-multi \
+        --preview-window='right,40%' \
+        --bind='tab:down,shift-tab:up,btab:up' \
+        --preview='echo {} | awk '\''{print $NF}'\'' | xargs git show --color=always' |
+      awk '{print $(NF-1)}'
+  )" || return $?
+  [[ -n "$target" ]] || return 1
+  git wt "$target"
+}
+
 function awsc() {
   local src=$(aws-vault list --profiles | fzf --tmux 90%)
   echo "

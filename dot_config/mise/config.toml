@@ -56,6 +56,7 @@ zig = "latest"
 "cargo:usage-cli" = "latest"
 
 "go:github.com/d-kuro/gwq/cmd/gwq" = "latest"
+"go:github.com/k1LoW/git-wt" = "latest"
 "go:github.com/mattn/memo" = "latest"
 "go:github.com/rhysd/vim-startuptime" = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
