@@ -1,3 +1,4 @@
+# TPM/Plugins
 # tpm本体はchezmoiが管理しているので不要
 # set -g @plugin 'tmux-plugins/tpm'
 
@@ -7,14 +8,17 @@ set -g @plugin 'tmux-plugins/tmux-battery'
 set -g @plugin 'yardnsm/tmux-1password'
 set -g @plugin 'tmux-plugins/tmux-yank'
 
+# Continuum/Resurrect
 set -g @continuum-restore 'on'
 set -g @continuum-boot 'on'
 set -g @continuum-boot-options 'kitty'
 
+# Battery/Theme
 set -g @batt_icon_status_discharging ''
 set -g @batt_icon_status_charging ''
 set -g @batt_icon_status_charged ''
 
+# Status line
 set -g status-left "#[fg=#d6deeb, bg=#111111]###S#[fg=#111111,bg=#d6deeb] "
 
 set -g status-right "#[fg=#8f43f3,bg=#d6deeb]"
@@ -28,7 +32,7 @@ set -g status-right-length 150
 #set -g status-position top
 set -g status-justify left
 
-
+# Window list
 set -g window-status-format " "
 set -ga window-status-format "#{?#{==:#{active_window_index},#{e|-|:#I,1}},,#[fg=#3261ab] #[default]}"
 set -ga window-status-format "#I: #{?#{m:#W,zsh},#(basename #{pane_current_path}),[#W]}"
@@ -46,6 +50,7 @@ set -g window-status-bell-style default
 
 set -g window-status-activity-style default
 
+# Pane/window styles
 setw -g window-active-style fg=white  # アクティブペインの前景色
 
 setw -g window-style fg=colour244  # 非アクティブペインの前景色
