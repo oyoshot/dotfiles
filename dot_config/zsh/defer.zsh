@@ -88,7 +88,7 @@ if (( ${+commands[git]} )); then
   eval "$(git wt --init zsh)"
 fi
 
-function wtx() {
+function git-wtx() {
   local target
   target="$(
     git wt |
