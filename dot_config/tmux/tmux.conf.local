@@ -28,7 +28,6 @@ set -g status-right-length 150
 #set -g status-position top
 set -g status-justify left
 
-set -g status-interval 15
 
 set -g window-status-format " "
 set -ga window-status-format "#{?#{==:#{active_window_index},#{e|-|:#I,1}},,#[fg=#3261ab] #[default]}"
