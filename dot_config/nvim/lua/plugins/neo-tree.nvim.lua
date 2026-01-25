@@ -113,4 +113,22 @@ return {
 			trash_visual = cmd_trash_visual,
 		},
 	},
+
+	config = function(_, opts)
+		require("neo-tree").setup(opts)
+
+		local function apply()
+			local set = vim.api.nvim_set_hl
+			set(0, "NeoTreeNormal", { bg = "none" })
+			set(0, "NeoTreeNormalNC", { bg = "none" })
+			set(0, "NeoTreeEndOfBuffer", { bg = "none" })
+			set(0, "NeoTreeWinSeparator", { bg = "none" })
+		end
+		apply()
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.schedule(apply)
+			end,
+		})
+	end,
 }
