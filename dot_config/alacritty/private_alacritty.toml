@@ -1,6 +1,9 @@
 [env]
 TERM = "alacritty-direct"
 
+[colors]
+transparent_background_colors = true
+
 [colors.bright]
 black = "0x676767"
 blue = "0x6871FF"
