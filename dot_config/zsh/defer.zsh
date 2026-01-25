@@ -72,7 +72,7 @@ function gg() {
     local root
     root=$(ghq root) || return $?
     local r
-    r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --preview="git --git-dir '$root/{}/.git' log --color=always")
+    r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --layout=reverse --bind='tab:down,shift-tab:up,btab:up' --preview="git --git-dir '$root/{}/.git' log --color=always")
     local fzf_status=$?
     if [[ $fzf_status -ne 0 ]]; then
      return $fzf_status
