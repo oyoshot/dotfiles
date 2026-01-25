@@ -29,6 +29,17 @@ yellow = "0xF5B78A"
 background = "0x16171E"
 foreground = "0xD1D2D3"
 
+[colors]
+transparent_background_colors = true
+
+[window]
+dynamic_padding = true
+opacity = 0.85
+
+[window.padding]
+x = 8
+y = 4
+
 [cursor]
 thickness = 0.18
 
@@ -108,13 +119,3 @@ save_to_clipboard = true
 [terminal.shell]
 args = ["-l", "-c", "/opt/homebrew/bin/tmux a -t 0 || /opt/homebrew/bin/tmux -u"]
 program = "/bin/zsh"
-
-[window]
-dynamic_padding = true
-opacity = 0.85
-
-[window.padding]
-x = 8
-y = 4
-
-[terminal]
