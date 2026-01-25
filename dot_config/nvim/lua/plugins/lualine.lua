@@ -8,11 +8,11 @@ return {
 	lazy = true,
 	event = { "BufReadPost", "BufAdd", "BufNewFile" },
 	config = function()
-		local catppuccin = require("lualine.themes.catppuccin")
+		local catppuccined = require("lualine.themes.catppuccin")
 
 		local palette = require("catppuccin.palettes").get_palette()
 		local segment = { fg = palette.subtext1, bg = palette.surface1 }
-		local muted = vim.deepcopy(catppuccin)
+		local muted = vim.deepcopy(catppuccined)
 		for _, mode in ipairs({ "normal", "insert", "visual", "replace", "command", "terminal", "inactive" }) do
 			muted[mode] = {
 				a = segment,
@@ -42,7 +42,7 @@ return {
 				},
 			})
 		end
-		setup_lualine(catppuccin)
+		setup_lualine(catppuccined)
 
 		local is_inactive = false
 		local function set_inactive(v)
@@ -51,7 +51,7 @@ return {
 			end
 			is_inactive = v
 			vim.schedule(function()
-				setup_lualine(v and muted or catppuccin)
+				setup_lualine(v and muted or catppuccined)
 			end)
 		end
 
