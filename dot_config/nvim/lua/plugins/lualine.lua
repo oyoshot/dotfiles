@@ -8,6 +8,7 @@ return {
 	lazy = true,
 	event = { "BufReadPost", "BufAdd", "BufNewFile" },
 	config = function()
+		local lualine = require("lualine")
 		local catppuccined = require("lualine.themes.catppuccin")
 
 		local palette = require("catppuccin.palettes").get_palette()
@@ -32,8 +33,13 @@ return {
 			end
 		end
 
+		local current = nil
 		local function setup_lualine(theme)
-			require("lualine").setup({
+			if current == theme then
+				return
+			end
+			current = theme
+			lualine.setup({
 				options = {
 					theme = theme,
 				},
@@ -41,6 +47,7 @@ return {
 					lualine_b = { { "diff", source = diff_source } },
 				},
 			})
+			lualine.refresh()
 		end
 		setup_lualine(catppuccined)
 
@@ -55,12 +62,15 @@ return {
 			end)
 		end
 
+		local group = vim.api.nvim_create_augroup("LualineFocusTheme", { clear = true })
 		vim.api.nvim_create_autocmd("FocusGained", {
+			group = group,
 			callback = function()
 				set_inactive(false)
 			end,
 		})
 		vim.api.nvim_create_autocmd("FocusLost", {
+			group = group,
 			callback = function()
 				set_inactive(true)
 			end,
