@@ -68,20 +68,28 @@ function g() {
     local root="$(git rev-parse --show-toplevel)" && builtin cd "$root"
 }
 
+function git-by-tmux-fzf() {
+  local root r
+  root=$(ghq root) || return $?
+
+  r=$(
+    ghq list | fzf --tmux 90% \
+      --preview-window="right,40%" \
+      --layout=reverse \
+      --bind='tab:down,shift-tab:up,btab:up' \
+      --preview="git -C '$root/{}' log --color=always"
+  )
+  local fzf_status=$?
+  (( fzf_status == 0 )) || return $fzf_status
+
+  [[ -n "$r" ]] || return 1
+  print -r -- "$root/$r"
+}
+
 function gg() {
-    local root
-    root=$(ghq root) || return $?
-    local r
-    r=$(ghq list | fzf --tmux 90% --preview-window="right,40%" --layout=reverse --bind='tab:down,shift-tab:up,btab:up' --preview="git --git-dir '$root/{}/.git' log --color=always")
-    local fzf_status=$?
-    if [[ $fzf_status -ne 0 ]]; then
-     return $fzf_status
-    fi
-    if [[ -z "$r" ]]; then
-     return 1
-    fi
-    local repository="$root/$r"
-    builtin cd "$repository"
+  local dir
+  dir="$(git-by-tmux-fzf)" || return $?
+  builtin cd -- "$dir"
 }
 
 if (( ${+commands[git]} )); then
