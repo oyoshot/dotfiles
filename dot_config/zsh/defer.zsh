@@ -87,9 +87,64 @@ function git-by-tmux-fzf() {
 }
 
 function gg() {
-  local dir
+  local mode="$1" dir
   dir="$(git-by-tmux-fzf)" || return $?
-  builtin cd -- "$dir"
+
+  if [[ -z "$mode" ]]; then
+    builtin cd -- "$dir"
+    return 0
+  fi
+
+  local url repo
+  url="$(git -C "$dir" remote get-url origin 2>/dev/null)" || url=""
+  if [[ -n "$url" ]]; then
+    repo="${url:t}"
+    repo="${repo%.git}"
+  else
+    repo="${dir:t}"
+  fi
+
+  local branch
+  branch="$(
+    git -C "$dir" symbolic-ref --quiet --short HEAD 2>/dev/null \
+    || git -C "$dir" rev-parse --short HEAD 2>/dev/null
+  )"
+  [[ -n "$branch" ]] || branch="unknown"
+
+  local win sess
+  win="${repo}:${branch}"
+  sess="${repo}__${branch}"
+  sess="${sess//[^A-Za-z0-9_-]/_}"
+
+  case "$mode" in
+    s|session)
+      if tmux has-session -t "$sess" 2>/dev/null; then
+        if [[ -n "$TMUX" ]]; then
+          tmux switch-client -t "$sess"
+        else
+          tmux attach-session -t "$sess"
+        fi
+      else
+        if [[ -n "$TMUX" ]]; then
+          tmux new-session -d -c "$dir" -s "$sess" -n "$win"
+          tmux switch-client -t "$sess"
+        else
+          tmux new-session -c "$dir" -s "$sess" -n "$win"
+        fi
+      fi
+      ;;
+    w|window)
+      if [[ -n "$TMUX" ]]; then
+        tmux new-window -c "$dir" -n "$win" ||
+      else
+        tmux new-session -c "$dir" -s "$sess" -n "$win"
+      fi
+      ;;
+    *)
+      print -u2 -- "usage: gg [s|w]   (no args: cd)"
+      return 2
+      ;;
+  esac
 }
 
 if (( ${+commands[git]} )); then
