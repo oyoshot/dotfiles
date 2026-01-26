@@ -90,12 +90,6 @@ fi
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
-# WSL
-if [[ -n "$WSL_DISTRO_NAME" ]]; then
-  export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
-  #ln -sf /mnt/c/Users/$(whoami)/AppData/Local/ssh-agent.sock ~/.ssh/agent.sock
-fi
-
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
   [[ -r $cand ]] && source "$cand" && break
