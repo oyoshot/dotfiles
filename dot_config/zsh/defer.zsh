@@ -111,33 +111,56 @@ function gg() {
   )"
   [[ -n "$branch" ]] || branch="unknown"
 
-  local win sess
+  local win
   win="${repo}:${branch}"
-  sess="${repo}__${branch}"
-  sess="${sess//[^A-Za-z0-9_-]/_}"
+
+  local owner=""
+  if [[ "$url" == (#b)(*)[:/]([^/:]##)/([^/ ]##)(.git|) ]]; then
+    owner="$match[2]"
+  fi
+
+  local suffix
+  if command -v shasum >/dev/null 2>&1; then
+    suffix="$(print -rn -- "$dir" | shasum | cut -c1-6)"
+  elif command -v sha1sum >/dev/null 2>&1; then
+    suffix="$(print -rn -- "$dir" | sha1sum | cut -c1-6)"
+  else
+    suffix="$(print -rn -- "$dir" | openssl dgst -sha1 | awk '{print $2}' | cut -c1-6)"
+  fi
+
+  local sess_key sess
+  if [[ -n "$owner" ]]; then
+    sess_key="${owner}_${repo}"
+  else
+    sess_key="${dir:h:t}_${repo}"
+  fi
+  sess="${sess_key//[^A-Za-z0-9_-]/_}_${suffix}"
+
+  local in_tmux=0
+  [[ -n "$TMUX" ]] && in_tmux=1
+
+  ensure_session() {
+    tmux has-session -t "$sess" 2>/dev/null && return 0
+    tmux new-session -d -c "$dir" -s "$sess" -n "$win"
+  }
+
+  goto_session() {
+    if (( in_tmux )); then
+      tmux switch-client -t "$sess"
+    else
+      tmux attach -t "$sess"
+    fi
+  }
 
   case "$mode" in
     s|session)
-      if tmux has-session -t "$sess" 2>/dev/null; then
-        if [[ -n "$TMUX" ]]; then
-          tmux switch-client -t "$sess"
-        else
-          tmux attach-session -t "$sess"
-        fi
-      else
-        if [[ -n "$TMUX" ]]; then
-          tmux new-session -d -c "$dir" -s "$sess" -n "$win"
-          tmux switch-client -t "$sess"
-        else
-          tmux new-session -c "$dir" -s "$sess" -n "$win"
-        fi
-      fi
+      ensure_session && goto_session
       ;;
     w|window)
-      if [[ -n "$TMUX" ]]; then
-        tmux new-window -c "$dir" -n "$win" ||
+      if (( in_tmux )); then
+        tmux new-window -c "$dir" -n "$win"
       else
-        tmux new-session -c "$dir" -s "$sess" -n "$win"
+        ensure_session && goto_session
       fi
       ;;
     *)
