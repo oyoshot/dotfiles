@@ -23,7 +23,9 @@ return {
 
 			window = {
 				completion = cmp.config.window.bordered({
+					border = border("CmpBorder"),
 					scrollbar = false,
+					winhighlight = "Normal:CmpPmenu,FloatBorder:CmpBorder,CursorLine:PmenuSel,Search:None",
 				}),
 				documentation = {
 					border = border("CmpDocBorder"),
