@@ -7,31 +7,15 @@ return {
 		})
 		vim.lsp.inlay_hint.enable(true)
 
-		local lsp_format_on_save = function(bufnr)
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
-				buffer = bufnr,
-				callback = function()
-					vim.lsp.buf.format({
-						async = true,
-						filter = function(c)
-							local disabled_format_clients = { "lua_ls", "vtsls" }
-							return not vim.tbl_contains(disabled_format_clients, c.name)
-						end,
-					})
-				end,
-			})
-		end
-
 		-- LspAttach is where you enable features that only work
 		-- if there is a language server active in the file
 		vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "LSP actions",
-			callback = function(event)
+			callback = function()
 				vim.g.markdown_fenced_language = {
 					"ts=typescript",
 				}
-				lsp_format_on_save(event.buf)
+				-- Note: format-on-save is handled by conform.nvim
 			end,
 		})
 
