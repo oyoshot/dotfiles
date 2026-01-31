@@ -97,6 +97,7 @@ _acm_claude() {
         echo
         git diff --staged
     } | claude -p \
+        --model haiku \
         --output-format text \
         >"$tmp"
 }
