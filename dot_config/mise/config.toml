@@ -36,6 +36,8 @@ tfsec = "latest"
 uv = "latest"
 zig = "latest"
 
+"aqua:aws/aws-cli" = { version = "latest", symlink_bins = true }
+
 "cargo:cargo-audit" = "latest"
 "cargo:cargo-chef" = "latest"
 "cargo:cargo-compete" = "latest"

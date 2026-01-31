@@ -230,12 +230,6 @@ function cdd() {
   [ -n "$directory" ] && cd $directory
 }
 
-if type yay > /dev/null 2>&1 && type mise > /dev/null 2>&1; then
-  function ya() {
-    mise deactivate && yay "$@" && eval "$(mise activate zsh)"
-  }
-fi
-
 ## キーバインド
 
 bindkey '^[' _ghq-fzf
