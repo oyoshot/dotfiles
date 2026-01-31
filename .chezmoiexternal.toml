@@ -68,3 +68,10 @@
   path = "win32yank.exe"
   executable = true
   refreshPeriod = "168h"
+
+[".config/alacritty/themes"]
+  type = "archive"
+  url = "https://github.com/alacritty/alacritty-theme/archive/master.tar.gz"
+  exact = true
+  stripComponents = 1
+  refreshPeriod = "168h"
