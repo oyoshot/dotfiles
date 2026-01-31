@@ -29,8 +29,8 @@ return {
 
 	keys = {
 		{ "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Claude toggle" },
-		{ "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Claude focus" },
-		{ "<leader>cs", ":ClaudeCodeSend<cr>", mode = { "n", "v" }, desc = "Claude send" },
+		{ "<leader>ccs", "<cmd>ClaudeCodeSendAndFocus<cr>", desc = "Claude send and focus" },
+		{ "<leader>ccs", ":'<,'>ClaudeCodeSendAndFocus<cr>", mode = "v", desc = "Claude send and focus" },
 	},
 
 	cmd = {
@@ -38,6 +38,7 @@ return {
 		"ClaudeCodeFocus",
 		"ClaudeCodeSelectModel",
 		"ClaudeCodeSend",
+		"ClaudeCodeSendAndFocus",
 		"ClaudeCodeAdd",
 		"ClaudeCodeDiffAccept",
 		"ClaudeCodeDiffDeny",
