@@ -2,7 +2,10 @@
 vim.diagnostic.config({
 	float = {
 		border = "rounded",
+		source = true,
 	},
+	severity_sort = true,
+	virtual_text = false,
 })
 
 -- Diagnostic keymaps
