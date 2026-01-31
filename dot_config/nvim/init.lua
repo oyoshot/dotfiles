@@ -11,4 +11,5 @@ else
 	require("core/autocmd")
 	require("core/lazyvim")
 	require("core/options")
+	require("core/diagnostics")
 end
