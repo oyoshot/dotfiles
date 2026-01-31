@@ -95,6 +95,7 @@ return {
 			},
 		},
 		filesystem = {
+			use_libuv_file_watcher = true,
 			filtered_items = {
 				-- visible = true,
 				hide_dotfiles = false,
@@ -129,6 +130,28 @@ return {
 			callback = function()
 				vim.schedule(apply)
 			end,
+		})
+
+		local function neotree_refresh()
+			if not package.loaded["neo-tree"] then
+				return
+			end
+
+			pcall(function()
+				require("neo-tree.sources.filesystem.commands").refresh(
+					require("neo-tree.sources.manager").get_state("filesystem")
+				)
+			end)
+
+			if package.loaded["neo-tree.sources.git_status"] then
+				pcall(function()
+					require("neo-tree.sources.git_status").refresh()
+				end)
+			end
+		end
+
+		vim.api.nvim_create_autocmd("FocusGained", {
+			callback = neotree_refresh,
 		})
 	end,
 }
