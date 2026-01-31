@@ -27,6 +27,12 @@ return {
 		end, { range = true })
 	end,
 
+	keys = {
+		{ "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Claude toggle" },
+		{ "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Claude focus" },
+		{ "<leader>cs", ":ClaudeCodeSend<cr>", mode = { "n", "v" }, desc = "Claude send" },
+	},
+
 	cmd = {
 		"ClaudeCode",
 		"ClaudeCodeFocus",
