@@ -66,10 +66,6 @@ local function cmd_trash(state)
 	do_trash(state)
 end
 
-local function cmd_trash_visual(state, selected_nodes)
-	do_trash(state, selected_nodes)
-end
-
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	branch = "v3.x",
@@ -111,7 +107,6 @@ return {
 		},
 		commands = {
 			trash = cmd_trash,
-			trash_visual = cmd_trash_visual,
 		},
 	},
 
