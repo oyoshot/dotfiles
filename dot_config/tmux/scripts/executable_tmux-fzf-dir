@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Usage: tmux-fzf-dir <source> <action>
+# source: zoxide | ghq
+# action: session | window | split-v | split-h
+
+set -euo pipefail
+
+source="${1:-}"
+action="${2:-}"
+
+if [[ -z "$source" || -z "$action" ]]; then
+  echo "Usage: tmux-fzf-dir <source> <action>" >&2
+  echo "  source: zoxide | ghq" >&2
+  echo "  action: session | window | split-v | split-h" >&2
+  exit 1
+fi
+
+# Get directory list command based on source
+case "$source" in
+  zoxide) list_cmd="zoxide query -l" ;;
+  ghq)    list_cmd="ghq list -p" ;;
+  *)
+    echo "Unknown source: $source" >&2
+    exit 1
+    ;;
+esac
+
+# Select directory with fzf
+dir=$(eval "$list_cmd" | fzf --bind="tab:down,shift-tab:up,btab:up" --reverse --preview "ls -la {}")
+
+# Exit if no directory selected
+[[ -z "$dir" ]] && exit 0
+
+# Execute action
+case "$action" in
+  session)
+    name=$(basename "$dir" | tr . _)
+    if tmux has-session -t "$name" 2>/dev/null; then
+      tmux switch-client -t "$name"
+    else
+      tmux new-session -d -s "$name" -c "$dir" && tmux switch-client -t "$name"
+    fi
+    ;;
+  window)
+    tmux new-window -c "$dir"
+    ;;
+  split-v)
+    tmux split-window -v -c "$dir"
+    ;;
+  split-h)
+    tmux split-window -h -c "$dir"
+    ;;
+  *)
+    echo "Unknown action: $action" >&2
+    exit 1
+    ;;
+esac
