@@ -69,7 +69,7 @@
   executable = true
   refreshPeriod = "168h"
 
-[".config/alacritty/themes"]
+[".config/alacritty/alacritty-theme"]
   type = "archive"
   url = "https://github.com/alacritty/alacritty-theme/archive/master.tar.gz"
   exact = true
