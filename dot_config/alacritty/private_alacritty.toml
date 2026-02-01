@@ -1,5 +1,11 @@
 [general]
-import = ["alacritty-theme/themes/iceberg.toml"]
+import = [
+    "alacritty-theme/themes/catppuccin_frappe.toml"
+]
+
+[colors.primary]
+background = "0x16171E"
+foreground = "0xD1D2D3"
 
 [colors]
 transparent_background_colors = true
