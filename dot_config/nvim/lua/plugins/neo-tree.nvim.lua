@@ -132,8 +132,18 @@ return {
 			end,
 		})
 
+		local function is_neotree_visible()
+			for _, win in ipairs(vim.api.nvim_list_wins()) do
+				local buf = vim.api.nvim_win_get_buf(win)
+				if vim.bo[buf].filetype == "neo-tree" then
+					return true
+				end
+			end
+			return false
+		end
+
 		local function neotree_refresh()
-			if not package.loaded["neo-tree"] then
+			if not is_neotree_visible() then
 				return
 			end
 
@@ -143,15 +153,15 @@ return {
 				)
 			end)
 
-			if package.loaded["neo-tree.sources.git_status"] then
-				pcall(function()
-					require("neo-tree.sources.git_status").refresh()
-				end)
-			end
+			pcall(function()
+				require("neo-tree.sources.git_status").refresh()
+			end)
 		end
 
 		vim.api.nvim_create_autocmd("FocusGained", {
-			callback = neotree_refresh,
+			callback = function()
+				vim.schedule(neotree_refresh)
+			end,
 		})
 	end,
 }
