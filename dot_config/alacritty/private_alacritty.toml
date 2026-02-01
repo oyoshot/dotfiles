@@ -1,9 +1,6 @@
 [general]
 import = ["alacritty-theme/themes/iceberg.toml"]
 
-[env]
-TERM = "alacritty-direct"
-
 [colors]
 transparent_background_colors = true
 
