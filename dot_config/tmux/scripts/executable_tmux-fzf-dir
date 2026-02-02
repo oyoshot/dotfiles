@@ -25,7 +25,8 @@ zoxide)
     dir=$(zoxide query -ls | fzf $fzf_opts --preview "ls -la {2..}" | awk '{print $2}')
     ;;
 ghq)
-    dir=$(ghq list -p | fzf $fzf_opts --preview "git -C {} log --oneline --graph --decorate --color=always -n 20")
+    short_path=$(ghq list | fzf $fzf_opts --preview "git -C \$(ghq list -p -e {}) log --oneline --graph --decorate --color=always -n 20")
+    [[ -n "$short_path" ]] && dir=$(ghq list -p -e "$short_path") || dir=""
     ;;
 *)
     echo "Unknown source: $source" >&2
