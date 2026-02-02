@@ -9,10 +9,10 @@ source="${1:-}"
 action="${2:-}"
 
 if [[ -z "$source" || -z "$action" ]]; then
-  echo "Usage: tmux-fzf-dir <source> <action>" >&2
-  echo "  source: zoxide | ghq" >&2
-  echo "  action: session | window | split-v | split-h" >&2
-  exit 1
+    echo "Usage: tmux-fzf-dir <source> <action>" >&2
+    echo "  source: zoxide | ghq" >&2
+    echo "  action: session | window | split-v | split-h" >&2
+    exit 1
 fi
 
 # Common fzf options
@@ -20,14 +20,14 @@ fzf_opts="--bind=tab:down,shift-tab:up,btab:up --reverse --preview-window=down:4
 
 # Select directory with fzf based on source
 case "$source" in
-  zoxide)
+zoxide)
     # Use zoxide score list with directory preview
     dir=$(zoxide query -ls | fzf $fzf_opts --preview "ls -la {2..}" | awk '{print $2}')
     ;;
-  ghq)
+ghq)
     dir=$(ghq list -p | fzf $fzf_opts --preview "ls -la {}")
     ;;
-  *)
+*)
     echo "Unknown source: $source" >&2
     exit 1
     ;;
@@ -38,24 +38,24 @@ esac
 
 # Execute action
 case "$action" in
-  session)
+session)
     name=$(basename "$dir" | tr . _)
     if tmux has-session -t "$name" 2>/dev/null; then
-      tmux switch-client -t "$name"
+        tmux switch-client -t "$name"
     else
-      tmux new-session -d -s "$name" -c "$dir" && tmux switch-client -t "$name"
+        tmux new-session -d -s "$name" -c "$dir" && tmux switch-client -t "$name"
     fi
     ;;
-  window)
+window)
     tmux new-window -c "$dir"
     ;;
-  split-v)
+split-v)
     tmux split-window -v -c "$dir"
     ;;
-  split-h)
+split-h)
     tmux split-window -h -c "$dir"
     ;;
-  *)
+*)
     echo "Unknown action: $action" >&2
     exit 1
     ;;
