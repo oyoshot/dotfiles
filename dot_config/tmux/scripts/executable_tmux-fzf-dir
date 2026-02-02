@@ -15,18 +15,23 @@ if [[ -z "$source" || -z "$action" ]]; then
   exit 1
 fi
 
-# Get directory list command based on source
+# Common fzf options
+fzf_opts="--bind=tab:down,shift-tab:up,btab:up --reverse --preview-window=down:40%"
+
+# Select directory with fzf based on source
 case "$source" in
-  zoxide) list_cmd="zoxide query -l" ;;
-  ghq)    list_cmd="ghq list -p" ;;
+  zoxide)
+    # Use zoxide score list with directory preview
+    dir=$(zoxide query -ls | fzf $fzf_opts --preview "ls -la {2..}" | awk '{print $2}')
+    ;;
+  ghq)
+    dir=$(ghq list -p | fzf $fzf_opts --preview "ls -la {}")
+    ;;
   *)
     echo "Unknown source: $source" >&2
     exit 1
     ;;
 esac
-
-# Select directory with fzf
-dir=$(eval "$list_cmd" | fzf --bind="tab:down,shift-tab:up,btab:up" --reverse --preview "ls -la {}")
 
 # Exit if no directory selected
 [[ -z "$dir" ]] && exit 0
