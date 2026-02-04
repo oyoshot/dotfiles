@@ -37,6 +37,19 @@ return {
 	config = function()
 		local lint = require("lint")
 
+		lint.linters.cspell = require("lint").linters.cspell
+		lint.linters.cspell.args = {
+			"lint",
+			"--no-color",
+			"--no-progress",
+			"--no-summary",
+			"--config",
+			vim.fn.expand("~/.config/cspell/cspell.json"),
+			function()
+				return "stdin://" .. vim.api.nvim_buf_get_name(0)
+			end,
+		}
+
 		lint.linters.textlint = {
 			cmd = "textlint",
 			prefer_local = "node_modules/.bin",
