@@ -74,7 +74,7 @@ if (( $+commands[gh] )); then
   }
 fi
 
-if (( $+commands[mise] )); then
+if (( $+commands[mise] )) && (( ! $+functions[mise] )); then
   mise() {
     __load_github_token_once
     command mise "$@"
