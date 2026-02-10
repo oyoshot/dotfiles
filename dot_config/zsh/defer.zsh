@@ -48,6 +48,46 @@ export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 #export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 #export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
 
+__load_github_token_once() {
+  if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+    [[ -n "${MISE_GITHUB_TOKEN:-}" ]] || export MISE_GITHUB_TOKEN="$GITHUB_TOKEN"
+    return 0
+  fi
+  if [[ -n "${MISE_GITHUB_TOKEN:-}" ]]; then
+    export GITHUB_TOKEN="$MISE_GITHUB_TOKEN"
+    return 0
+  fi
+  (( $+commands[gh] )) || return 0
+
+  local token
+  token="$(command gh auth token 2>/dev/null)" || return 0
+  [[ -n "$token" ]] || return 0
+
+  export GITHUB_TOKEN="$token"
+  export MISE_GITHUB_TOKEN="$token"
+}
+
+if (( $+commands[gh] )); then
+  gh() {
+    __load_github_token_once
+    command gh "$@"
+  }
+fi
+
+if (( $+commands[mise] )); then
+  mise() {
+    __load_github_token_once
+    command mise "$@"
+  }
+fi
+
+if (( $+commands[mcp-hub] )); then
+  mcp-hub() {
+    __load_github_token_once
+    command mcp-hub "$@"
+  }
+fi
+
 run_command() {
     command="$1"
     echo "Running: $command"

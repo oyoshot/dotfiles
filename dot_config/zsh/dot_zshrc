@@ -71,7 +71,15 @@ __mise_activate_once() {
 
   export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1) + 1 ))
   export MISE_NODE_DEFAULT_PACKAGES_FILE="$XDG_CONFIG_HOME/mise/default-npm-packages"
+  (( $+functions[__load_github_token_once] )) && __load_github_token_once
   eval "$(mise activate zsh)"
+  if (( $+functions[mise] )); then
+    functions[_mise_internal]="$functions[mise]"
+    mise() {
+      (( $+functions[__load_github_token_once] )) && __load_github_token_once
+      _mise_internal "$@"
+    }
+  fi
 }
 
 if (( $+commands[mise] )); then
