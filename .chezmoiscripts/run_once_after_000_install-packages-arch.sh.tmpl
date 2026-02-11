@@ -15,7 +15,12 @@ if ! type yay > /dev/null 2>&1; then
     rm -rf yay
 fi
 
-yay -S --needed --noconfirm - < "$CONFIG_DIR/yay/extra-packages"
-sudo pacman -Rs --noconfirm $(pacman -Qqdt) || :
+sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$CONFIG_DIR/yay/extra-packages" \
+    | xargs -r yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --answeredit None --removemake
+
+orphans="$(pacman -Qqdt || true)"
+if [ -n "$orphans" ]; then
+    sudo pacman -Rs --noconfirm $orphans
+fi
 {{ end }}
 {{ end }}

@@ -1,8 +1,0 @@
-name: Mac - Feature Branches
-on:
-  push:
-    branches-ignore: [main]
-
-jobs:
-  mac:
-    uses: ./.github/workflows/mac-build.yaml

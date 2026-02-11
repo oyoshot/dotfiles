@@ -1,44 +1,77 @@
-name: Arch Linux
-description: Bootstrap Arch 環境、キャッシュ復元／保存、dotfiles 適用
+name: Arch Linux Setup
+description: Bootstrap Arch environment, restore caches, install pinned chezmoi, and apply dotfiles
 
 inputs:
   arch-extra-packages-path:
-    description: "yay でインストールするパッケージ一覧ファイルへのパス"
+    description: "Path to Arch extra packages list"
     default: dot_config/yay/extra-packages
   mise-config-path:
-    description: "mise の構成ファイルへのパス"
+    description: "Path to mise config"
     default: dot_config/mise/config.toml
-  force-refresh:
-    description: "true でキャッシュを無視し、常に最新状態から始める"
+  cache-epoch:
+    description: "Cache generation identifier"
+    required: true
+  warm-mode:
+    description: "Whether this run is a warm-cache job"
     default: "false"
+  chezmoi-version:
+    description: "Pinned chezmoi version"
+    required: true
+  github-token:
+    description: "GitHub token passed only to chezmoi apply step"
+    default: ""
 
 runs:
   using: composite
   steps:
-    - id: pacman-restore
-      if: inputs.force-refresh != 'true'
-      uses: actions/cache/restore@v4
+    - name: Validate mounted cache volumes
+      shell: bash
+      run: |
+        set -euo pipefail
+        required_paths=(
+          /var/cache/pacman/pkg
+          /home/builder/.cache/yay
+          /home/builder/.local/share/mise
+          /home/builder/.local/state/mise
+        )
+        for p in "${required_paths[@]}"; do
+          if [[ ! -d "${p}" ]]; then
+            echo "Required cache mount is missing: ${p}" >&2
+            exit 1
+          fi
+          if ! awk -v mp="${p}" '$5 == mp { found=1 } END { exit !found }' /proc/self/mountinfo; then
+            echo "Required cache path is not a mounted filesystem: ${p}" >&2
+            exit 1
+          fi
+        done
+
+    - id: pacman-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
-        restore-keys: arch-pacman-v1-
+        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
+          arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-
         path: |
           /var/cache/pacman/pkg
           /etc/pacman.d/gnupg
 
-    - id: yay-restore
-      if: inputs.force-refresh != 'true'
-      uses: actions/cache/restore@v4
+    - id: yay-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
-        restore-keys: arch-yay-v1-
+        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
+          arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-
         path: /home/builder/.cache/yay
 
-    - id: mise-restore
-      if: inputs.force-refresh != 'true'
-      uses: actions/cache/restore@v4
+    - id: mise-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
-        restore-keys: arch-mise-v1-
+        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
+          arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-
         path: |
           /home/builder/.local/share/mise
           /home/builder/.cache/mise
@@ -47,20 +80,46 @@ runs:
     - name: System bootstrap (root)
       shell: bash
       run: |
-        pacman-key --init && pacman-key --populate archlinux
-        pacman -Sy --noconfirm archlinux-keyring
-        pacman -S --needed --noconfirm base-devel git zsh sudo util-linux
+        set -euo pipefail
+        pacman-key --init
+        pacman-key --populate archlinux
+        pacman -Syu --noconfirm archlinux-keyring
+        pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip pacman-contrib
+
+    - name: Install pinned chezmoi
+      shell: bash
+      run: |
+        set -euo pipefail
+        version="${{ inputs.chezmoi-version }}"
+        archive="chezmoi_${version}_linux_amd64.tar.gz"
+        checksums="chezmoi_${version}_checksums.txt"
+
+        tmpdir="$(mktemp -d)"
+        trap 'rm -rf "${tmpdir}"' EXIT
+
+        curl -fsSLo "${tmpdir}/${archive}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${archive}"
+        curl -fsSLo "${tmpdir}/${checksums}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${checksums}"
+
+        grep "  ${archive}$" "${tmpdir}/${checksums}" | (cd "${tmpdir}" && sha256sum -c -)
+        tar -xzf "${tmpdir}/${archive}" -C "${tmpdir}" chezmoi
+
+        install -m 0755 "${tmpdir}/chezmoi" /usr/local/bin/chezmoi
+        chezmoi --version
 
     - name: Create builder user
       shell: bash
       run: |
-        useradd --uid 1000 --create-home builder
+        set -euo pipefail
+        if ! id builder >/dev/null 2>&1; then
+          useradd --uid 1000 --create-home builder
+        fi
         echo 'builder ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/builder
         chown -R builder:builder "$GITHUB_WORKSPACE"
 
     - name: Prepare builder home
       shell: bash
       run: |
+        set -euo pipefail
         sudo -u builder install -d \
           /home/builder/.cache \
           /home/builder/.local
@@ -70,37 +129,44 @@ runs:
       run: sudo chown -R builder:builder /home/builder || true
 
     - name: Apply chezmoi (builder)
-      shell: 'script -q -e -c "bash {0}"'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         set -euo pipefail
-        sudo --preserve-env=GITHUB_TOKEN -Hu builder \
-          zsh -c "$(curl -fsLS https://chezmoi.io/get)" -- init --apply -S .
+        sudo -Hu builder env GITHUB_TOKEN="${GITHUB_TOKEN}" \
+          chezmoi init --apply -S "${GITHUB_WORKSPACE}"
 
-    - name: Trim caches (builder)
+    - name: Trim caches (warm mode)
+      if: inputs.warm-mode == 'true'
       shell: bash
       run: |
-        sudo -u builder paccache -rk0
-        sudo -u builder paccache -ruk0
-        sudo -u builder yay -Sc --noconfirm || true
+        set -euo pipefail
+        paccache --noconfirm -rk1
+        paccache --noconfirm -ruk0
+        sudo -u builder yay -Sc --noconfirm
 
-    - if: inputs.force-refresh == 'true' || steps.pacman-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+    - name: Save pacman cache
+      if: success() && github.event_name != 'pull_request'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-pacman-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: |
           /var/cache/pacman/pkg
           /etc/pacman.d/gnupg
 
-    - if: inputs.force-refresh == 'true' || steps.yay-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+    - name: Save yay cache
+      if: success() && github.event_name != 'pull_request'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-yay-v1-${{ hashFiles(inputs.arch-extra-packages-path) }}
+        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: /home/builder/.cache/yay
 
-    - if: inputs.force-refresh == 'true' || steps.mise-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+    - name: Save mise cache
+      if: success() && github.event_name != 'pull_request'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v1-${{ hashFiles(inputs.mise-config-path) }}
+        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: |
           /home/builder/.local/share/mise
           /home/builder/.cache/mise
