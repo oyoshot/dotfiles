@@ -16,7 +16,7 @@ inputs:
     default: "false"
   chezmoi-version:
     description: "Pinned chezmoi version"
-    default: "2.69.3"
+    required: true
   github-token:
     description: "GitHub token passed only to chezmoi apply step"
     default: ""
@@ -48,8 +48,9 @@ runs:
     - id: pacman-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         restore-keys: |
+          arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
           arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-
         path: |
           /var/cache/pacman/pkg
@@ -58,16 +59,18 @@ runs:
     - id: yay-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         restore-keys: |
+          arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
           arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-
         path: /home/builder/.cache/yay
 
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         restore-keys: |
+          arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
           arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-
         path: |
           /home/builder/.local/share/mise
@@ -144,26 +147,26 @@ runs:
         sudo -u builder yay -Sc --noconfirm || true
 
     - name: Save pacman cache
-      if: success()
+      if: success() && github.event_name != 'pull_request'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: |
           /var/cache/pacman/pkg
           /etc/pacman.d/gnupg
 
     - name: Save yay cache
-      if: success()
+      if: success() && github.event_name != 'pull_request'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: /home/builder/.cache/yay
 
     - name: Save mise cache
-      if: success()
+      if: success() && github.event_name != 'pull_request'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
         path: |
           /home/builder/.local/share/mise
           /home/builder/.cache/mise

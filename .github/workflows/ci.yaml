@@ -18,6 +18,9 @@ on:
         type: string
         default: ""
 
+env:
+  CHEZMOI_VERSION: 2.69.3
+
 jobs:
   build-mac:
     name: build (mac)
@@ -33,7 +36,6 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: 1
       HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
-      CHEZMOI_VERSION: 2.69.3
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - id: cache-epoch
@@ -74,8 +76,6 @@ jobs:
         --tmpfs /tmp:exec,mode=1777
         --tmpfs /var/tmp:exec,mode=1777
         --shm-size 2g
-    env:
-      CHEZMOI_VERSION: 2.69.3
     steps:
       - name: Free disk space on host toolcache
         shell: bash
@@ -112,7 +112,6 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: 1
       HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
-      CHEZMOI_VERSION: 2.69.3
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - id: cache-epoch
@@ -153,8 +152,6 @@ jobs:
         --tmpfs /tmp:exec,mode=1777
         --tmpfs /var/tmp:exec,mode=1777
         --shm-size 2g
-    env:
-      CHEZMOI_VERSION: 2.69.3
     steps:
       - name: Free disk space on host toolcache
         shell: bash
