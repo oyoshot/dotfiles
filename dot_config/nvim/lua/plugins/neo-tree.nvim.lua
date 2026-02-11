@@ -142,7 +142,7 @@ return {
 			return false
 		end
 
-		local function neotree_refresh()
+		local function refresh_filesystem_if_visible()
 			if not is_neotree_visible() then
 				return
 			end
@@ -153,15 +153,85 @@ return {
 				)
 			end)
 
+		end
+
+		local function refresh_git_if_visible()
+			if not is_neotree_visible() then
+				return
+			end
+
 			pcall(function()
-				require("neo-tree.sources.git_status").refresh()
+				local events = require("neo-tree.events")
+				events.fire_event(events.GIT_EVENT)
 			end)
 		end
 
-		vim.api.nvim_create_autocmd("FocusGained", {
+		local fs_refresh_timer = nil
+		local function refresh_filesystem_debounced(delay)
+			if fs_refresh_timer and not fs_refresh_timer:is_closing() then
+				fs_refresh_timer:stop()
+				fs_refresh_timer:close()
+			end
+			fs_refresh_timer = vim.defer_fn(function()
+				fs_refresh_timer = nil
+				refresh_filesystem_if_visible()
+			end, delay or 120)
+		end
+
+		local git_refresh_timer = nil
+		local function refresh_git_debounced(delay)
+			if git_refresh_timer and not git_refresh_timer:is_closing() then
+				git_refresh_timer:stop()
+				git_refresh_timer:close()
+			end
+			git_refresh_timer = vim.defer_fn(function()
+				git_refresh_timer = nil
+				refresh_git_if_visible()
+			end, delay or 120)
+		end
+
+		vim.api.nvim_create_autocmd({
+			"FocusGained",
+			"VimResume",
+			"BufWritePost",
+			"TermClose",
+			"ShellCmdPost",
+			"FileChangedShellPost",
+		}, {
 			callback = function()
-				vim.schedule(neotree_refresh)
+				refresh_filesystem_debounced(100)
+				refresh_git_debounced(100)
 			end,
 		})
+
+		local uv = vim.uv or vim.loop
+		local poll_timer = uv.new_timer()
+		if poll_timer then
+			-- tmux 別ペインなど Vim の autcmd が飛ばない更新を拾う
+			poll_timer:start(
+				1500,
+				1500,
+				vim.schedule_wrap(function()
+					refresh_git_debounced(80)
+				end)
+			)
+
+			vim.api.nvim_create_autocmd("VimLeavePre", {
+				callback = function()
+					if fs_refresh_timer and not fs_refresh_timer:is_closing() then
+						fs_refresh_timer:stop()
+						fs_refresh_timer:close()
+					end
+					if git_refresh_timer and not git_refresh_timer:is_closing() then
+						git_refresh_timer:stop()
+						git_refresh_timer:close()
+					end
+					if poll_timer and not poll_timer:is_closing() then
+						poll_timer:stop()
+						poll_timer:close()
+					end
+				end,
+			})
+		end
 	end,
 }
