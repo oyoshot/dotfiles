@@ -84,7 +84,7 @@ runs:
         pacman-key --init
         pacman-key --populate archlinux
         pacman -Syu --noconfirm archlinux-keyring
-        pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip
+        pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip pacman-contrib
 
     - name: Install pinned chezmoi
       shell: bash
@@ -137,14 +137,14 @@ runs:
         sudo -Hu builder env GITHUB_TOKEN="${GITHUB_TOKEN}" \
           chezmoi init --apply -S "${GITHUB_WORKSPACE}"
 
-    - name: Trim caches (builder)
+    - name: Trim caches (warm mode)
       if: inputs.warm-mode == 'true'
       shell: bash
       run: |
         set -euo pipefail
-        sudo -u builder paccache -rk1 || true
-        sudo -u builder sh -c 'yes | paccache -ruk0' || true
-        sudo -u builder yay -Sc --noconfirm || true
+        paccache --noconfirm -rk1
+        paccache --noconfirm -ruk0
+        sudo -u builder yay -Sc --noconfirm
 
     - name: Save pacman cache
       if: success() && github.event_name != 'pull_request'
