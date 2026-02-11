@@ -65,13 +65,6 @@ __load_github_token_once() {
   export MISE_GITHUB_TOKEN="$token"
 }
 
-if (( $+commands[mise] )) && (( ! $+functions[mise] )); then
-  mise() {
-    __load_github_token_once
-    command mise "$@"
-  }
-fi
-
 run_command() {
     command="$1"
     echo "Running: $command"
