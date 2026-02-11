@@ -154,14 +154,57 @@ return {
 			end)
 
 			pcall(function()
-				require("neo-tree.sources.git_status").refresh()
+				local events = require("neo-tree.events")
+				events.fire_event(events.GIT_EVENT)
 			end)
 		end
 
-		vim.api.nvim_create_autocmd("FocusGained", {
+		local refresh_timer = nil
+		local function neotree_refresh_debounced(delay)
+			if refresh_timer and not refresh_timer:is_closing() then
+				refresh_timer:stop()
+				refresh_timer:close()
+			end
+			refresh_timer = vim.defer_fn(function()
+				refresh_timer = nil
+				neotree_refresh()
+			end, delay or 120)
+		end
+
+		vim.api.nvim_create_autocmd({
+			"FocusGained",
+			"VimResume",
+			"BufWritePost",
+			"TermClose",
+			"ShellCmdPost",
+			"FileChangedShellPost",
+			"CursorHold",
+		}, {
 			callback = function()
-				vim.schedule(neotree_refresh)
+				neotree_refresh_debounced(100)
 			end,
 		})
+
+		local uv = vim.uv or vim.loop
+		local poll_timer = uv.new_timer()
+		if poll_timer then
+			-- tmux 別ペインなど Vim の autcmd が飛ばない更新を拾う
+			poll_timer:start(
+				1200,
+				1200,
+				vim.schedule_wrap(function()
+					neotree_refresh_debounced(80)
+				end)
+			)
+
+			vim.api.nvim_create_autocmd("VimLeavePre", {
+				callback = function()
+					if poll_timer and not poll_timer:is_closing() then
+						poll_timer:stop()
+						poll_timer:close()
+					end
+				end,
+			})
+		end
 	end,
 }
