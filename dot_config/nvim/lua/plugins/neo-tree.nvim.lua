@@ -142,7 +142,7 @@ return {
 			return false
 		end
 
-		local function neotree_refresh()
+		local function refresh_filesystem_if_visible()
 			if not is_neotree_visible() then
 				return
 			end
@@ -153,21 +153,40 @@ return {
 				)
 			end)
 
+		end
+
+		local function refresh_git_if_visible()
+			if not is_neotree_visible() then
+				return
+			end
+
 			pcall(function()
 				local events = require("neo-tree.events")
 				events.fire_event(events.GIT_EVENT)
 			end)
 		end
 
-		local refresh_timer = nil
-		local function neotree_refresh_debounced(delay)
-			if refresh_timer and not refresh_timer:is_closing() then
-				refresh_timer:stop()
-				refresh_timer:close()
+		local fs_refresh_timer = nil
+		local function refresh_filesystem_debounced(delay)
+			if fs_refresh_timer and not fs_refresh_timer:is_closing() then
+				fs_refresh_timer:stop()
+				fs_refresh_timer:close()
 			end
-			refresh_timer = vim.defer_fn(function()
-				refresh_timer = nil
-				neotree_refresh()
+			fs_refresh_timer = vim.defer_fn(function()
+				fs_refresh_timer = nil
+				refresh_filesystem_if_visible()
+			end, delay or 120)
+		end
+
+		local git_refresh_timer = nil
+		local function refresh_git_debounced(delay)
+			if git_refresh_timer and not git_refresh_timer:is_closing() then
+				git_refresh_timer:stop()
+				git_refresh_timer:close()
+			end
+			git_refresh_timer = vim.defer_fn(function()
+				git_refresh_timer = nil
+				refresh_git_if_visible()
 			end, delay or 120)
 		end
 
@@ -178,10 +197,10 @@ return {
 			"TermClose",
 			"ShellCmdPost",
 			"FileChangedShellPost",
-			"CursorHold",
 		}, {
 			callback = function()
-				neotree_refresh_debounced(100)
+				refresh_filesystem_debounced(100)
+				refresh_git_debounced(100)
 			end,
 		})
 
@@ -190,15 +209,23 @@ return {
 		if poll_timer then
 			-- tmux 別ペインなど Vim の autcmd が飛ばない更新を拾う
 			poll_timer:start(
-				1200,
-				1200,
+				1500,
+				1500,
 				vim.schedule_wrap(function()
-					neotree_refresh_debounced(80)
+					refresh_git_debounced(80)
 				end)
 			)
 
 			vim.api.nvim_create_autocmd("VimLeavePre", {
 				callback = function()
+					if fs_refresh_timer and not fs_refresh_timer:is_closing() then
+						fs_refresh_timer:stop()
+						fs_refresh_timer:close()
+					end
+					if git_refresh_timer and not git_refresh_timer:is_closing() then
+						git_refresh_timer:stop()
+						git_refresh_timer:close()
+					end
 					if poll_timer and not poll_timer:is_closing() then
 						poll_timer:stop()
 						poll_timer:close()
