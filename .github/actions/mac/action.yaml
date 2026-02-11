@@ -66,3 +66,13 @@ runs:
       run: |
         set -euo pipefail
         chezmoi init --apply -S "${{ github.workspace }}"
+
+    - name: Trim caches (warm mode)
+      if: inputs.warm-mode == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        brew cleanup -s || true
+        if command -v mise >/dev/null 2>&1; then
+          mise cache clear || true
+        fi

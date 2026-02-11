@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-mac-${{ github.ref_name }}
+      group: ci-build-mac-${{ github.ref_name }}
       cancel-in-progress: true
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-arch-${{ github.ref_name }}
+      group: ci-build-arch-${{ github.ref_name }}
       cancel-in-progress: true
     container:
       image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
@@ -106,7 +106,7 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-mac-${{ github.ref_name }}
+      group: ci-warm-mac-${{ github.ref_name }}
       cancel-in-progress: true
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -140,7 +140,7 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-arch-${{ github.ref_name }}
+      group: ci-warm-arch-${{ github.ref_name }}
       cancel-in-progress: true
     container:
       image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
