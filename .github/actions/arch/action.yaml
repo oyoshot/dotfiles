@@ -119,7 +119,7 @@ runs:
       run: sudo chown -R builder:builder /home/builder || true
 
     - name: Apply chezmoi (builder)
-      shell: bash
+      shell: 'script -q -e -c "bash {0}"'
       run: |
         set -euo pipefail
         sudo --preserve-env=GITHUB_TOKEN -Hu builder \
