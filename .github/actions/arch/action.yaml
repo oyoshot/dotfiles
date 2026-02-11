@@ -17,6 +17,9 @@ inputs:
   chezmoi-version:
     description: "Pinned chezmoi version"
     default: "2.69.3"
+  github-token:
+    description: "GitHub token passed only to chezmoi apply step"
+    default: ""
 
 runs:
   using: composite
@@ -120,9 +123,11 @@ runs:
 
     - name: Apply chezmoi (builder)
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         set -euo pipefail
-        sudo --preserve-env=GITHUB_TOKEN -Hu builder \
+        sudo -Hu builder env GITHUB_TOKEN="${GITHUB_TOKEN}" \
           chezmoi init --apply -S "${GITHUB_WORKSPACE}"
 
     - name: Trim caches (builder)

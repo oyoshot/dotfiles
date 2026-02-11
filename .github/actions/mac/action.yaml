@@ -63,6 +63,8 @@ runs:
 
     - name: Apply dotfiles with chezmoi
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         set -euo pipefail
         chezmoi init --apply -S "${{ github.workspace }}"

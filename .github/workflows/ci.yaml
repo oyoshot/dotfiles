@@ -30,7 +30,6 @@ jobs:
       group: ci-build-mac-${{ github.ref_name }}
       cancel-in-progress: true
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HOMEBREW_NO_AUTO_UPDATE: 1
       HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -52,6 +51,7 @@ jobs:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
           warm-mode: "false"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   build-arch:
     name: build (arch)
@@ -75,7 +75,6 @@ jobs:
         --tmpfs /var/tmp:exec,mode=1777
         --shm-size 2g
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CHEZMOI_VERSION: 2.69.3
     steps:
       - name: Free disk space on host toolcache
@@ -97,6 +96,7 @@ jobs:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
           warm-mode: "false"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   warm-cache-mac:
     name: warm-cache (mac)
@@ -109,7 +109,6 @@ jobs:
       group: ci-warm-mac-${{ github.ref_name }}
       cancel-in-progress: true
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HOMEBREW_NO_AUTO_UPDATE: 1
       HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -131,6 +130,7 @@ jobs:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
           warm-mode: "true"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   warm-cache-arch:
     name: warm-cache (arch)
@@ -154,7 +154,6 @@ jobs:
         --tmpfs /var/tmp:exec,mode=1777
         --shm-size 2g
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CHEZMOI_VERSION: 2.69.3
     steps:
       - name: Free disk space on host toolcache
@@ -176,3 +175,4 @@ jobs:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
           warm-mode: "true"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
