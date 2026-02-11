@@ -39,10 +39,14 @@ runs:
             echo "Required cache mount is missing: ${p}" >&2
             exit 1
           fi
+          if ! awk -v mp="${p}" '$5 == mp { found=1 } END { exit !found }' /proc/self/mountinfo; then
+            echo "Required cache path is not a mounted filesystem: ${p}" >&2
+            exit 1
+          fi
         done
 
-    - id: pacman-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+    - id: pacman-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
@@ -51,16 +55,16 @@ runs:
           /var/cache/pacman/pkg
           /etc/pacman.d/gnupg
 
-    - id: yay-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+    - id: yay-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
           arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-
         path: /home/builder/.cache/yay
 
-    - id: mise-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+    - id: mise-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
@@ -138,3 +142,29 @@ runs:
         sudo -u builder paccache -rk1 || true
         sudo -u builder sh -c 'yes | paccache -ruk0' || true
         sudo -u builder yay -Sc --noconfirm || true
+
+    - name: Save pacman cache
+      if: success()
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        key: arch-pacman-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        path: |
+          /var/cache/pacman/pkg
+          /etc/pacman.d/gnupg
+
+    - name: Save yay cache
+      if: success()
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        key: arch-yay-v3-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
+        path: /home/builder/.cache/yay
+
+    - name: Save mise cache
+      if: success()
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        key: arch-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        path: |
+          /home/builder/.local/share/mise
+          /home/builder/.cache/mise
+          /home/builder/.local/state/mise

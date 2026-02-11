@@ -17,12 +17,15 @@ inputs:
   chezmoi-version:
     description: "Pinned chezmoi version"
     default: "2.69.3"
+  github-token:
+    description: "GitHub token passed only to chezmoi apply step"
+    default: ""
 
 runs:
   using: composite
   steps:
-    - id: brew-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+    - id: brew-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
@@ -31,8 +34,8 @@ runs:
           ~/Library/Caches/Homebrew
           /opt/homebrew/Cellar
 
-    - id: mise-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+    - id: mise-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: macos-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
@@ -78,3 +81,21 @@ runs:
         if command -v mise >/dev/null 2>&1; then
           mise cache clear || true
         fi
+
+    - name: Save Homebrew cache
+      if: success()
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        key: macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
+        path: |
+          ~/Library/Caches/Homebrew
+          /opt/homebrew/Cellar
+
+    - name: Save mise cache
+      if: success()
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        key: macos-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        path: |
+          ~/.cache/mise
+          ~/.local/share/mise
