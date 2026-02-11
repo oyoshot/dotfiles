@@ -24,7 +24,7 @@ env:
 jobs:
   build-mac:
     name: build (mac)
-    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) }}
+    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: macos-14
     timeout-minutes: 180
     permissions:
@@ -57,7 +57,7 @@ jobs:
 
   build-arch:
     name: build (arch)
-    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) }}
+    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     permissions:
