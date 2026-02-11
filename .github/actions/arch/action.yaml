@@ -73,7 +73,7 @@ runs:
         set -euo pipefail
         pacman-key --init
         pacman-key --populate archlinux
-        pacman -Sy --noconfirm archlinux-keyring
+        pacman -Syu --noconfirm archlinux-keyring
         pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip
 
     - name: Install pinned chezmoi
