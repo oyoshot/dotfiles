@@ -1,58 +1,68 @@
-name: Mac
-description: Restore Homebrew & mise caches, then apply dotfiles with chezmoi
+name: Mac Setup
+description: Restore caches, install pinned chezmoi, and apply dotfiles
 
 inputs:
   brewfile-path:
-    description: "Homebrew のパッケージファイルへのパス"
+    description: "Path to Brewfile"
     default: dot_config/homebrew/Brewfile
   mise-config-path:
-    description: "mise の構成ファイルへのパス"
+    description: "Path to mise config"
     default: dot_config/mise/config.toml
-  force-refresh:
-    description: "true でキャッシュを無視し必ず保存し直す"
+  cache-epoch:
+    description: "Cache generation identifier"
+    required: true
+  warm-mode:
+    description: "Whether this run is a warm-cache job"
     default: "false"
+  chezmoi-version:
+    description: "Pinned chezmoi version"
+    default: "2.69.3"
 
 runs:
   using: composite
   steps:
-    - id: brew-restore
-      if: inputs.force-refresh != 'true'
-      uses: actions/cache/restore@v4
+    - id: brew-cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}-${{ github.run_id }}
-        restore-keys: macos-brew-v2-
+        key: macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-
         path: |
           ~/Library/Caches/Homebrew
           /opt/homebrew/Cellar
 
-    - id: mise-restore
-      if: inputs.force-refresh != 'true'
-      uses: actions/cache/restore@v4
+    - id: mise-cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}-${{ github.run_id }}
-        restore-keys: macos-mise-v2-
+        key: macos-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          macos-mise-v3-${{ hashFiles(inputs.mise-config-path) }}-
         path: |
           ~/.cache/mise
           ~/.local/share/mise
+
+    - name: Install pinned chezmoi
+      shell: bash
+      run: |
+        set -euo pipefail
+        version="${{ inputs.chezmoi-version }}"
+        archive="chezmoi_${version}_darwin_arm64.tar.gz"
+        checksums="chezmoi_${version}_checksums.txt"
+
+        tmpdir="$(mktemp -d)"
+        trap 'rm -rf "${tmpdir}"' EXIT
+
+        curl -fsSLo "${tmpdir}/${archive}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${archive}"
+        curl -fsSLo "${tmpdir}/${checksums}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${checksums}"
+
+        grep "  ${archive}$" "${tmpdir}/${checksums}" | (cd "${tmpdir}" && shasum -a 256 -c -)
+        tar -xzf "${tmpdir}/${archive}" -C "${tmpdir}" chezmoi
+
+        sudo install -m 0755 "${tmpdir}/chezmoi" /usr/local/bin/chezmoi
+        chezmoi --version
 
     - name: Apply dotfiles with chezmoi
       shell: bash
       run: |
         set -euo pipefail
-        /bin/zsh -c "$(curl -fsSL https://chezmoi.io/get)" -- init --apply -S "${{ github.workspace }}"
-
-    - if: inputs.force-refresh == 'true' || steps.brew-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        key: macos-brew-v2-${{ hashFiles(inputs.brewfile-path) }}
-        path: |
-          ~/Library/Caches/Homebrew
-          /opt/homebrew/Cellar
-
-    - if: inputs.force-refresh == 'true' || steps.mise-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        key: macos-mise-v2-${{ hashFiles(inputs.mise-config-path) }}
-        path: |
-          ~/.cache/mise
-          ~/.local/share/mise
+        chezmoi init --apply -S "${{ github.workspace }}"

@@ -1,0 +1,178 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 10 * * 6"
+  workflow_dispatch:
+    inputs:
+      refresh_cache:
+        description: "Run warm-cache jobs instead of regular build jobs"
+        required: false
+        type: boolean
+        default: false
+      cache_epoch_override:
+        description: "Optional cache epoch override (for example: 2026-W06-manual1)"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  build-mac:
+    name: build (mac)
+    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) }}
+    runs-on: macos-14
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-mac-${{ github.ref_name }}
+      cancel-in-progress: true
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_BUNDLE_NO_UPGRADE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      CHEZMOI_VERSION: 2.69.3
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: |
+          set -euo pipefail
+          epoch="$(date -u +%G-W%V)"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
+            epoch="${{ inputs.cache_epoch_override }}"
+          fi
+          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/mac
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "false"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+
+  build-arch:
+    name: build (arch)
+    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-arch-${{ github.ref_name }}
+      cancel-in-progress: true
+    container:
+      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
+      volumes:
+        - /mnt/pac-pkg:/var/cache/pacman/pkg
+        - /mnt/yay-pkg:/home/builder/.cache/yay
+        - /mnt/mise-pkg:/home/builder/.local/share/mise
+        - /mnt/mise-state:/home/builder/.local/state/mise
+      options: >-
+        --tmpfs /tmp:exec,mode=1777
+        --tmpfs /var/tmp:exec,mode=1777
+        --shm-size 2g
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CHEZMOI_VERSION: 2.69.3
+    steps:
+      - name: Free disk space on host toolcache
+        shell: bash
+        run: rm -rf /__t/*
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: |
+          set -euo pipefail
+          epoch="$(date -u +%G-W%V)"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
+            epoch="${{ inputs.cache_epoch_override }}"
+          fi
+          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/arch
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "false"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+
+  warm-cache-mac:
+    name: warm-cache (mac)
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}
+    runs-on: macos-14
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-mac-${{ github.ref_name }}
+      cancel-in-progress: true
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_BUNDLE_NO_UPGRADE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      CHEZMOI_VERSION: 2.69.3
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: |
+          set -euo pipefail
+          epoch="$(date -u +%G-W%V)"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
+            epoch="${{ inputs.cache_epoch_override }}"
+          fi
+          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/mac
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "true"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+
+  warm-cache-arch:
+    name: warm-cache (arch)
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-arch-${{ github.ref_name }}
+      cancel-in-progress: true
+    container:
+      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
+      volumes:
+        - /mnt/pac-pkg:/var/cache/pacman/pkg
+        - /mnt/yay-pkg:/home/builder/.cache/yay
+        - /mnt/mise-pkg:/home/builder/.local/share/mise
+        - /mnt/mise-state:/home/builder/.local/state/mise
+      options: >-
+        --tmpfs /tmp:exec,mode=1777
+        --tmpfs /var/tmp:exec,mode=1777
+        --shm-size 2g
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CHEZMOI_VERSION: 2.69.3
+    steps:
+      - name: Free disk space on host toolcache
+        shell: bash
+        run: rm -rf /__t/*
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: |
+          set -euo pipefail
+          epoch="$(date -u +%G-W%V)"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
+            epoch="${{ inputs.cache_epoch_override }}"
+          fi
+          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/arch
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "true"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
