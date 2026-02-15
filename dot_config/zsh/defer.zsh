@@ -188,6 +188,7 @@ function gg() {
 }
 
 if (( ${+commands[git]} )); then
+  alias g='git'
   eval "$(git wt --init zsh)"
 fi
 
