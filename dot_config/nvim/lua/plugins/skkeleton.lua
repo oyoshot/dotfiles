@@ -26,6 +26,10 @@ return {
 		end,
 
 		init = function()
+			-- Workaround: denops.vim healthcheck timer causes high CPU usage
+			-- https://github.com/vim-denops/denops.vim/issues/432
+			vim.g["denops#_internal#rpc#nvim#healthcheck_interval"] = 1000
+
 			vim.api.nvim_create_autocmd("User", {
 				pattern = "skkeleton-initialize-pre",
 
