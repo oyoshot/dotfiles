@@ -7,7 +7,6 @@ bun = true
 
 [tools]
 bun = "latest"
-claude = "latest"
 deno = "latest"
 elixir = "latest"
 erlang = "latest"
