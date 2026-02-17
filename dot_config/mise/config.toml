@@ -36,6 +36,7 @@ tfsec = "latest"
 uv = "latest"
 zig = "latest"
 
+"aqua:anthropics/claude-code" = { version = "latest" }
 "aqua:aws/aws-cli" = { version = "latest", symlink_bins = true }
 
 "cargo:cargo-audit" = "latest"
