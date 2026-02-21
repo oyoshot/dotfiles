@@ -5,6 +5,9 @@ return {
 
 	---@type UndoGlow.Config
 	opts = {
+		fallback_for_transparency = {
+			bg = "#1a1b26",
+		},
 		animation = {
 			enabled = true,
 			duration = 300,
