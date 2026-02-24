@@ -98,6 +98,14 @@ fi
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
+# Reload shell configs in-place
+reloadzsh() {
+  source ~/.zshenv
+  source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"
+}
+alias rz='reloadzsh'
+alias rezsh='exec zsh -l'
+
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
   [[ -r $cand ]] && source "$cand" && break

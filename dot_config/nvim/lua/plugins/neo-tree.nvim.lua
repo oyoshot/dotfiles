@@ -78,8 +78,6 @@ return {
 		-- not strictly required, but recommended
 		"nvim-tree/nvim-web-devicons",
 		"MunifTanjim/nui.nvim",
-		-- Optional image support in preview window: See `# Preview Mode` for more information
-		"3rd/image.nvim",
 	},
 	lazy = true,
 	keys = {

@@ -7,7 +7,6 @@ bun = true
 
 [tools]
 bun = "latest"
-claude = "latest"
 deno = "latest"
 elixir = "latest"
 erlang = "latest"
@@ -36,6 +35,7 @@ tfsec = "latest"
 uv = "latest"
 zig = "latest"
 
+"aqua:anthropics/claude-code" = { version = "latest" }
 "aqua:aws/aws-cli" = { version = "latest", symlink_bins = true }
 
 "cargo:cargo-audit" = "latest"
