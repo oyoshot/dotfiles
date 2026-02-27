@@ -1,0 +1,10 @@
+{
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "language": "japanese",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.config/claude/statusline.sh"
+  }
+}
