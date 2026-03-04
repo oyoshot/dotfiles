@@ -19,7 +19,7 @@ COST_FMT=$(printf "%.2f" "$COST")
 
 # コンテキスト使用率の警告表示
 if [ "$PCT" -ge 80 ]; then
-    CTX="[!] ${PCT}%"
+    CTX="⚠️ ${PCT}%"
 else
     CTX="${PCT}%"
 fi
