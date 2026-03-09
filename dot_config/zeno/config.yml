@@ -1,5 +1,13 @@
 snippets:
   # Git
+  - name: git
+    keyword: g
+    snippet: git
+
+  - name: git root
+    keyword: gr
+    snippet: cd $(git rev-parse --show-toplevel)
+
   - name: git status
     keyword: gs
     snippet: git status

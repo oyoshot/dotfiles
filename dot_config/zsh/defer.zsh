@@ -81,10 +81,6 @@ up() {
     run_command "rustup update" && run_command "cargo install-update -a"
 }
 
-function gr() {
-    local root="$(git rev-parse --show-toplevel)" && builtin cd "$root"
-}
-
 function git-by-tmux-fzf() {
   local root r
   root=$(ghq root) || return $?
@@ -188,7 +184,6 @@ function gg() {
 }
 
 if (( ${+commands[git]} )); then
-  alias g='git'
   eval "$(git wt --init zsh)"
 fi
 
