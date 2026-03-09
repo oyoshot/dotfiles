@@ -65,22 +65,6 @@ __load_github_token_once() {
   export MISE_GITHUB_TOKEN="$token"
 }
 
-run_command() {
-    command="$1"
-    echo "Running: $command"
-    eval "$command" &
-    pid=$!
-    while ps -p $pid > /dev/null; do
-        sleep 1
-    done
-}
-
-up() {
-    run_command "brew upgrade" && run_command "brew upgrade --cask --greedy" & run_command "mise up"
-    run_command "mas upgrade"
-    run_command "rustup update" && run_command "cargo install-update -a"
-}
-
 function git-by-tmux-fzf() {
   local root r
   root=$(ghq root) || return $?

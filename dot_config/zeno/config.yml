@@ -152,6 +152,11 @@ snippets:
     keyword: m
     snippet: memo
 
+  # up: OS別パッケージ更新 (darwin: brew/mas, linux: yay) + rustup + mise + nvim
+  - name: up
+    keyword: up
+    snippet: if [[ "$OSTYPE" == darwin* ]]; then brew upgrade && brew upgrade --cask --greedy && mas upgrade; else yay --noconfirm; fi && rustup update && mise cache clear && mise up && nvim --headless "+Lazy! update" +qa
+
   # zsh
   - name: source zsh
     keyword: sz
