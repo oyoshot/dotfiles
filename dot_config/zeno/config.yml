@@ -5,7 +5,7 @@ snippets:
     snippet: git
 
   - name: git root
-    keyword: gr
+    keyword: gcd
     snippet: cd $(git rev-parse --show-toplevel)
 
   - name: git status
@@ -53,7 +53,7 @@ snippets:
     snippet: git fetch
 
   - name: git rebase
-    keyword: grb
+    keyword: gr
     snippet: git rebase
 
   - name: git switch
