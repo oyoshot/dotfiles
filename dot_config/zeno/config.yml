@@ -54,6 +54,11 @@ snippets:
     keyword: tn
     snippet: tmux new -A -s $(whoami)
 
+  # Utils
+  - name: mkdir with parents
+    keyword: mkdir
+    snippet: mkdir -p
+
 completions:
   # Git branch completion
   - name: git branch
