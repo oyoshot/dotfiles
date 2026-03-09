@@ -79,6 +79,15 @@ snippets:
     keyword: m
     snippet: memo
 
+  # zsh
+  - name: source zsh
+    keyword: sz
+    snippet: source ~/.zshenv && source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"
+
+  - name: exec zsh
+    keyword: ez
+    snippet: exec zsh -l
+
   # eza (ls replacement)
   - name: ls
     keyword: ls
