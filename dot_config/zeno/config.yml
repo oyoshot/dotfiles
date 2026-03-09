@@ -127,6 +127,14 @@ snippets:
     keyword: tn
     snippet: tmux new -A -s $(whoami)
 
+  - name: tmux kill all sessions
+    keyword: tks
+    snippet: tmux kill-session -a
+
+  - name: tmux kill all windows
+    keyword: tkw
+    snippet: tmux kill-window -a
+
   # Utils
   - name: mkdir with parents
     keyword: mkdir
