@@ -71,6 +71,27 @@ snippets:
     keyword: rm
     snippet: trash-put
 
+  # eza (ls replacement)
+  - name: ls
+    keyword: ls
+    snippet: eza --icons --group-directories-first
+
+  - name: ls long
+    keyword: l
+    snippet: eza --icons --group-directories-first -l --header --git --group
+
+  - name: ls all
+    keyword: la
+    snippet: eza --icons --group-directories-first -a
+
+  - name: ls tree
+    keyword: lt
+    snippet: eza --icons --group-directories-first --tree
+
+  - name: ls long all
+    keyword: lla
+    snippet: eza --icons --group-directories-first -la --header --git --group
+
 completions:
   # Git branch completion
   - name: git branch

@@ -266,14 +266,6 @@ zle -N _ghq-fzf
 
 (( ${+commands[nvim]} )) && alias v='nvim'
 
-if (( ${+commands[eza]} )); then
-    alias ls='eza --icons --group-directories-first'
-    alias l='ls -l --header --git --group'
-    alias la='ls -a'
-    alias lt='ls --tree'
-    alias lla='ls -la --header --git --group'
-fi
-
 (( ${+commands[bat]} )) && alias b='bat --theme ansi'
 
 (( ${+commands[memo]} )) && alias m='memo'
