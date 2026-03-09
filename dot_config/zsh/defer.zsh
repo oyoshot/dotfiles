@@ -354,3 +354,21 @@ zle      -N  edit-command-line
 
 bindkey -M vicmd 'jj' edit-command-line
 bindkey -M viins 'jj' edit-command-line
+
+# zeno.zsh
+export ZENO_HOME="$XDG_CONFIG_HOME/zeno"
+export ZENO_DISABLE_EXECUTE_CACHE_COMMAND=1
+(( ${+commands[bat]} )) && export ZENO_GIT_CAT="bat --color=always"
+(( ${+commands[eza]} )) && export ZENO_GIT_TREE="eza --tree"
+source "$ZDOTDIR/plugins/zeno/zeno.zsh"
+
+if [[ -n $ZENO_LOADED ]]; then
+  bindkey ' '  zeno-auto-snippet
+  bindkey '^m' zeno-auto-snippet-and-accept-line
+  bindkey '^i' zeno-completion
+  bindkey '^x^s' zeno-insert-snippet
+  bindkey '^x '  zeno-insert-space
+  bindkey '^x^m' accept-line
+  bindkey '^x^z' zeno-toggle-auto-snippet
+  bindkey '^r'   zeno-history-selection
+fi

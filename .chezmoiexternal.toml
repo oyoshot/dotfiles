@@ -42,7 +42,7 @@
 
 [".config/zsh/plugins/syntax-highlighting"]
   type = "archive"
-  url = "https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz"
+  url = "https://github.com/zdharma-continuum/fast-syntax-highlighting/archive/master.tar.gz"
   exact = true
   stripComponents = 1
   refreshPeriod = "168h"
@@ -67,6 +67,13 @@
   url = "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip"
   path = "win32yank.exe"
   executable = true
+  refreshPeriod = "168h"
+
+[".config/zsh/plugins/zeno"]
+  type = "archive"
+  url = "https://github.com/yuki-yano/zeno.zsh/archive/main.tar.gz"
+  exact = true
+  stripComponents = 1
   refreshPeriod = "168h"
 
 [".config/alacritty/alacritty-theme"]

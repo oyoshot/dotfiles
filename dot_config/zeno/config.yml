@@ -1,0 +1,62 @@
+snippets:
+  # Git
+  - name: git status
+    keyword: gs
+    snippet: git status
+
+  - name: git add
+    keyword: ga
+    snippet: git add
+
+  - name: git commit
+    keyword: gc
+    snippet: git commit -m '{{commit_message}}'
+
+  - name: git push
+    keyword: gp
+    snippet: git push
+
+  - name: git pull
+    keyword: gl
+    snippet: git pull
+
+  - name: git diff
+    keyword: gd
+    snippet: git diff
+
+  - name: git log
+    keyword: glo
+    snippet: git log --oneline
+
+  # Docker
+  - name: docker compose up
+    keyword: dcu
+    snippet: docker compose up -d
+
+  - name: docker compose down
+    keyword: dcd
+    snippet: docker compose down
+
+  - name: docker ps
+    keyword: dps
+    snippet: docker ps
+
+completions:
+  # Git branch completion
+  - name: git branch
+    patterns:
+      - "^git (checkout|switch|merge|rebase|branch -d)( -b)? $"
+    sourceCommand: "git branch -a --format='%(refname:short)'"
+    options:
+      --prompt: "'Git Branch> '"
+      --preview: "git log --oneline {}"
+
+  # Kill process completion
+  - name: kill
+    patterns:
+      - "^kill( -9)? $"
+    sourceCommand: "LANG=C ps -ef | sed 1d"
+    options:
+      --multi: true
+      --prompt: "'Kill Process> '"
+    callback: "awk '{print $2}'"
