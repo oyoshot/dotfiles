@@ -280,8 +280,6 @@ fi
 
 (( ${+commands[memo]} )) && alias m='memo'
 
-alias e='exit'
-
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '

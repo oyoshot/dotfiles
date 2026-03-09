@@ -63,6 +63,10 @@ snippets:
     keyword: c
     snippet: clear
 
+  - name: exit
+    keyword: e
+    snippet: exit
+
 completions:
   # Git branch completion
   - name: git branch
