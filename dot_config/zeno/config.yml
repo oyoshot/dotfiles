@@ -116,3 +116,12 @@ completions:
       --multi: true
       --prompt: "'Kill Process> '"
     callback: "awk '{print $2}'"
+
+  # File completion for editors and viewers
+  - name: file completion
+    patterns:
+      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|cp|mv|open|xdg-open|file|wc|stat|chmod|rg|grep).* $"
+    sourceCommand: "fd --type f --hidden"
+    options:
+      --prompt: "'File> '"
+      --preview: "bat --color=always --style=numbers --line-range=:500 {}"
