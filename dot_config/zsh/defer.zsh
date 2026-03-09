@@ -286,11 +286,6 @@ alias c='clear'
 
 alias e='exit'
 
-if type tmux > /dev/null 2>&1; then
-  alias t='tmux'
-  alias ta='tmux a'
-  alias tn='tmux new -A -s $(whoami)'
-fi
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '

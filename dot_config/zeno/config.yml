@@ -41,6 +41,19 @@ snippets:
     keyword: dps
     snippet: docker ps
 
+  # Tmux
+  - name: tmux
+    keyword: t
+    snippet: tmux
+
+  - name: tmux attach
+    keyword: ta
+    snippet: tmux a
+
+  - name: tmux new session
+    keyword: tn
+    snippet: tmux new -A -s $(whoami)
+
 completions:
   # Git branch completion
   - name: git branch
