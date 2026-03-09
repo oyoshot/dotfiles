@@ -77,6 +77,43 @@ snippets:
     keyword: dps
     snippet: docker ps
 
+  # Cargo
+  - name: cargo
+    keyword: ca
+    snippet: cargo
+
+  - name: cargo build
+    keyword: cab
+    snippet: cargo build
+
+  - name: cargo run
+    keyword: car
+    snippet: cargo run
+
+  - name: cargo test
+    keyword: cate
+    snippet: command -v cargo-nextest >/dev/null && cargo nextest run || cargo test
+
+  - name: cargo check
+    keyword: cac
+    snippet: cargo check
+
+  - name: cargo fmt
+    keyword: caf
+    snippet: cargo fmt
+
+  - name: cargo clippy
+    keyword: cacl
+    snippet: cargo clippy
+
+  - name: cargo add
+    keyword: caa
+    snippet: cargo add
+
+  - name: cargo watch
+    keyword: caw
+    snippet: cargo watch
+
   # Tmux
   - name: tmux
     keyword: t
