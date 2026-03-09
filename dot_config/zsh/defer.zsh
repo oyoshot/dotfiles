@@ -264,8 +264,6 @@ zle -N _ghq-fzf
 
 ## エイリアス
 
-alias trash='trash-put'
-
 (( ${+commands[nvim]} )) && alias v='nvim'
 
 if (( ${+commands[eza]} )); then

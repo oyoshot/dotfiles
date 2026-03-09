@@ -67,6 +67,10 @@ snippets:
     keyword: e
     snippet: exit
 
+  - name: rm (safe delete)
+    keyword: rm
+    snippet: trash-put
+
 completions:
   # Git branch completion
   - name: git branch
