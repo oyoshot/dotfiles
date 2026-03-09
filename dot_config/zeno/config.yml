@@ -60,6 +60,10 @@ snippets:
     keyword: gsw
     snippet: git switch
 
+  - name: git stash
+    keyword: gst
+    snippet: git stash
+
   # Docker
   - name: docker compose up
     keyword: dcu
