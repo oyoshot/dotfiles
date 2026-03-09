@@ -59,6 +59,10 @@ snippets:
     keyword: mkdir
     snippet: mkdir -p
 
+  - name: clear
+    keyword: c
+    snippet: clear
+
 completions:
   # Git branch completion
   - name: git branch

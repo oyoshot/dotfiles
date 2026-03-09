@@ -280,8 +280,6 @@ fi
 
 (( ${+commands[memo]} )) && alias m='memo'
 
-alias c='clear'
-
 alias e='exit'
 
 
