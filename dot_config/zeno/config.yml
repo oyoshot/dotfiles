@@ -204,6 +204,27 @@ snippets:
     keyword: cat
     snippet: bat --theme ansi
 
+  # Chezmoi
+  - name: chezmoi
+    keyword: cz
+    snippet: chezmoi
+
+  - name: chezmoi apply
+    keyword: cza
+    snippet: chezmoi apply
+
+  - name: chezmoi diff
+    keyword: czd
+    snippet: chezmoi diff
+
+  - name: chezmoi edit
+    keyword: cze
+    snippet: chezmoi edit
+
+  - name: chezmoi cd
+    keyword: czcd
+    snippet: cd $(chezmoi source-path)
+
 completions:
   # Git branch completion
   - name: git branch
