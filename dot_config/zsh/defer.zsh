@@ -264,8 +264,6 @@ zle -N _ghq-fzf
 
 ## エイリアス
 
-(( ${+commands[nvim]} )) && alias v='nvim'
-
 (( ${+commands[memo]} )) && alias m='memo'
 
 

@@ -71,6 +71,10 @@ snippets:
     keyword: rm
     snippet: trash-put
 
+  - name: nvim
+    keyword: v
+    snippet: nvim
+
   # eza (ls replacement)
   - name: ls
     keyword: ls
