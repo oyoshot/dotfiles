@@ -55,7 +55,7 @@ for f ($ZDOTDIR/defer/*(N-.)) zsh-defer source $f
 
 # plugins
 zsh-defer source $ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh
-zsh-defer source $ZDOTDIR/plugins/syntax-highlighting/zsh-syntax-highlighting.zsh
+zsh-defer source $ZDOTDIR/plugins/syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 zsh-defer source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
@@ -97,14 +97,6 @@ fi
 # 遅延ロードしない方が安全
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
-
-# Reload shell configs in-place
-reloadzsh() {
-  source ~/.zshenv
-  source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"
-}
-alias rz='reloadzsh'
-alias rezsh='exec zsh -l'
 
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do

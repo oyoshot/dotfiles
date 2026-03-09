@@ -1,0 +1,221 @@
+snippets:
+  # Git
+  - name: git
+    keyword: g
+    snippet: git
+
+  - name: git root
+    keyword: gcd
+    snippet: cd $(git rev-parse --show-toplevel)
+
+  - name: git status
+    keyword: gs
+    snippet: git status
+
+  - name: git add
+    keyword: ga
+    snippet: git add
+
+  - name: git commit
+    keyword: gcm
+    snippet: git commit -m '{{commit_message}}'
+
+  - name: git diff
+    keyword: gd
+    snippet: git diff
+
+  - name: git log
+    keyword: gl
+    snippet: git log --oneline
+
+  - name: git pull
+    keyword: gp
+    snippet: git pull
+
+  - name: git push origin
+    keyword: gpo
+    snippet: git push origin HEAD
+
+  - name: git push force
+    keyword: gpf
+    snippet: git push --force-with-lease --force-if-includes origin HEAD
+
+  - name: git branch
+    keyword: gb
+    snippet: git branch
+
+  - name: git checkout
+    keyword: gc
+    snippet: git checkout
+
+  - name: git fetch
+    keyword: gf
+    snippet: git fetch
+
+  - name: git rebase
+    keyword: gr
+    snippet: git rebase
+
+  - name: git switch
+    keyword: gsw
+    snippet: git switch
+
+  - name: git stash
+    keyword: gst
+    snippet: git stash
+
+  # Docker
+  - name: docker compose up
+    keyword: dcu
+    snippet: docker compose up -d
+
+  - name: docker compose down
+    keyword: dcd
+    snippet: docker compose down
+
+  - name: docker ps
+    keyword: dps
+    snippet: docker ps
+
+  # Cargo
+  - name: cargo
+    keyword: ca
+    snippet: cargo
+
+  - name: cargo build
+    keyword: cab
+    snippet: cargo build
+
+  - name: cargo run
+    keyword: car
+    snippet: cargo run
+
+  - name: cargo test
+    keyword: cate
+    snippet: command -v cargo-nextest >/dev/null && cargo nextest run || cargo test
+
+  - name: cargo check
+    keyword: cac
+    snippet: cargo check
+
+  - name: cargo fmt
+    keyword: caf
+    snippet: cargo fmt
+
+  - name: cargo clippy
+    keyword: cacl
+    snippet: cargo clippy
+
+  - name: cargo add
+    keyword: caa
+    snippet: cargo add
+
+  - name: cargo watch
+    keyword: caw
+    snippet: cargo watch
+
+  # Tmux
+  - name: tmux
+    keyword: t
+    snippet: tmux
+
+  - name: tmux attach
+    keyword: ta
+    snippet: tmux a
+
+  - name: tmux new session
+    keyword: tn
+    snippet: tmux new -A -s $(whoami)
+
+  # Utils
+  - name: mkdir with parents
+    keyword: mkdir
+    snippet: mkdir -p
+
+  - name: clear
+    keyword: c
+    snippet: clear
+
+  - name: exit
+    keyword: e
+    snippet: exit
+
+  - name: rm (safe delete)
+    keyword: rm
+    snippet: trash-put
+
+  - name: nvim
+    keyword: v
+    snippet: nvim
+
+  - name: memo
+    keyword: m
+    snippet: memo
+
+  # zsh
+  - name: source zsh
+    keyword: sz
+    snippet: source ~/.zshenv && source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"
+
+  - name: exec zsh
+    keyword: ez
+    snippet: exec zsh -l
+
+  # eza (ls replacement)
+  - name: ls
+    keyword: ls
+    snippet: eza --icons --group-directories-first
+
+  - name: ls long
+    keyword: l
+    snippet: eza --icons --group-directories-first -l --header --git --group
+
+  - name: ls all
+    keyword: la
+    snippet: eza --icons --group-directories-first -a
+
+  - name: ls tree
+    keyword: lt
+    snippet: eza --icons --group-directories-first --tree
+
+  - name: ls long all
+    keyword: lla
+    snippet: eza --icons --group-directories-first -la --header --git --group
+
+  # bat
+  - name: bat
+    keyword: b
+    snippet: bat --theme ansi
+
+  - name: cat (bat)
+    keyword: cat
+    snippet: bat --theme ansi
+
+completions:
+  # Git branch completion
+  - name: git branch
+    patterns:
+      - "^git (checkout|switch|merge|rebase|branch -d)( -b)? $"
+    sourceCommand: "git branch -a --format='%(refname:short)'"
+    options:
+      --prompt: "'Git Branch> '"
+      --preview: "git log --oneline {}"
+
+  # Kill process completion
+  - name: kill
+    patterns:
+      - "^kill( -9)? $"
+    sourceCommand: "LANG=C ps -ef | sed 1d"
+    options:
+      --multi: true
+      --prompt: "'Kill Process> '"
+    callback: "awk '{print $2}'"
+
+  # File completion for editors and viewers
+  - name: file completion
+    patterns:
+      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|cp|mv|open|xdg-open|file|wc|stat|chmod|rg|grep).* $"
+    sourceCommand: "fd --type f --hidden"
+    options:
+      --prompt: "'File> '"
+      --preview: "bat --color=always --style=numbers --line-range=:500 {}"

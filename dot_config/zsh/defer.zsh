@@ -81,10 +81,6 @@ up() {
     run_command "rustup update" && run_command "cargo install-update -a"
 }
 
-function gr() {
-    local root="$(git rev-parse --show-toplevel)" && builtin cd "$root"
-}
-
 function git-by-tmux-fzf() {
   local root r
   root=$(ghq root) || return $?
@@ -188,7 +184,6 @@ function gg() {
 }
 
 if (( ${+commands[git]} )); then
-  alias g='git'
   eval "$(git wt --init zsh)"
 fi
 
@@ -264,33 +259,6 @@ zle -N _ghq-fzf
 
 ## エイリアス
 
-alias trash='trash-put'
-
-(( ${+commands[nvim]} )) && alias v='nvim'
-
-if (( ${+commands[eza]} )); then
-    alias ls='eza --icons --group-directories-first'
-    alias l='ls -l --header --git --group'
-    alias la='ls -a'
-    alias lt='ls --tree'
-    alias lla='ls -la --header --git --group'
-fi
-
-(( ${+commands[bat]} )) && alias b='bat --theme ansi'
-
-(( ${+commands[memo]} )) && alias m='memo'
-
-alias mkdir='mkdir -p'
-
-alias c='clear'
-
-alias e='exit'
-
-if type tmux > /dev/null 2>&1; then
-  alias t='tmux'
-  alias ta='tmux a'
-  alias tn='tmux new -A -s $(whoami)'
-fi
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
@@ -354,3 +322,20 @@ zle      -N  edit-command-line
 
 bindkey -M vicmd 'jj' edit-command-line
 bindkey -M viins 'jj' edit-command-line
+
+# zeno.zsh
+export ZENO_DISABLE_EXECUTE_CACHE_COMMAND=1
+(( ${+commands[bat]} )) && export ZENO_GIT_CAT="bat --color=always"
+(( ${+commands[eza]} )) && export ZENO_GIT_TREE="eza --tree"
+source "$ZDOTDIR/plugins/zeno/zeno.zsh"
+
+if [[ -n $ZENO_LOADED ]]; then
+  bindkey ' '  zeno-auto-snippet
+  bindkey '^m' zeno-auto-snippet-and-accept-line
+  bindkey '^i' zeno-completion
+  bindkey '^x^s' zeno-insert-snippet
+  bindkey '^x '  zeno-insert-space
+  bindkey '^x^m' accept-line
+  bindkey '^x^z' zeno-toggle-auto-snippet
+  bindkey '^r'   zeno-history-selection
+fi
