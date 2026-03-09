@@ -17,7 +17,7 @@ snippets:
     snippet: git add
 
   - name: git commit
-    keyword: gc
+    keyword: gcm
     snippet: git commit -m '{{commit_message}}'
 
   - name: git diff
@@ -39,6 +39,26 @@ snippets:
   - name: git push force
     keyword: gpf
     snippet: git push --force-with-lease --force-if-includes origin HEAD
+
+  - name: git branch
+    keyword: gb
+    snippet: git branch
+
+  - name: git checkout
+    keyword: gc
+    snippet: git checkout
+
+  - name: git fetch
+    keyword: gf
+    snippet: git fetch
+
+  - name: git rebase
+    keyword: grb
+    snippet: git rebase
+
+  - name: git switch
+    keyword: gsw
+    snippet: git switch
 
   # Docker
   - name: docker compose up
