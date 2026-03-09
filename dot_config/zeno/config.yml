@@ -75,6 +75,10 @@ snippets:
     keyword: v
     snippet: nvim
 
+  - name: memo
+    keyword: m
+    snippet: memo
+
   # eza (ls replacement)
   - name: ls
     keyword: ls

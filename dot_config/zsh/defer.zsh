@@ -264,8 +264,6 @@ zle -N _ghq-fzf
 
 ## エイリアス
 
-(( ${+commands[memo]} )) && alias m='memo'
-
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
