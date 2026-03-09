@@ -20,21 +20,25 @@ snippets:
     keyword: gc
     snippet: git commit -m '{{commit_message}}'
 
-  - name: git push
-    keyword: gp
-    snippet: git push
-
-  - name: git pull
-    keyword: gl
-    snippet: git pull
-
   - name: git diff
     keyword: gd
     snippet: git diff
 
   - name: git log
-    keyword: glo
+    keyword: gl
     snippet: git log --oneline
+
+  - name: git pull
+    keyword: gp
+    snippet: git pull
+
+  - name: git push origin
+    keyword: gpo
+    snippet: git push origin HEAD
+
+  - name: git push force
+    keyword: gpf
+    snippet: git push --force-with-lease --force-if-includes origin HEAD
 
   # Docker
   - name: docker compose up
