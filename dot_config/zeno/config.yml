@@ -150,6 +150,10 @@ snippets:
     keyword: b
     snippet: bat --theme ansi
 
+  - name: cat (bat)
+    keyword: cat
+    snippet: bat --theme ansi
+
 completions:
   # Git branch completion
   - name: git branch
