@@ -266,8 +266,6 @@ zle -N _ghq-fzf
 
 (( ${+commands[nvim]} )) && alias v='nvim'
 
-(( ${+commands[bat]} )) && alias b='bat --theme ansi'
-
 (( ${+commands[memo]} )) && alias m='memo'
 
 

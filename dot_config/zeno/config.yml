@@ -92,6 +92,11 @@ snippets:
     keyword: lla
     snippet: eza --icons --group-directories-first -la --header --git --group
 
+  # bat
+  - name: bat
+    keyword: b
+    snippet: bat --theme ansi
+
 completions:
   # Git branch completion
   - name: git branch
