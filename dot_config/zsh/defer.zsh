@@ -331,7 +331,15 @@ source "$ZDOTDIR/plugins/zeno/zeno.zsh"
 
 if [[ -n $ZENO_LOADED ]]; then
   bindkey ' '  zeno-auto-snippet
-  bindkey '^m' zeno-auto-snippet-and-accept-line
+
+  # autosuggestions をクリアしてから zeno を実行
+  function _zeno-accept-line-clear-suggest() {
+    zle autosuggest-clear 2>/dev/null || true
+    zle zeno-auto-snippet-and-accept-line
+  }
+  zle -N _zeno-accept-line-clear-suggest
+  bindkey '^m' _zeno-accept-line-clear-suggest
+
   bindkey '^i' zeno-completion
   bindkey '^x^s' zeno-insert-snippet
   bindkey '^x '  zeno-insert-space
