@@ -54,8 +54,11 @@ for f ($ZDOTDIR/sync/*(N-.)) source $f
 for f ($ZDOTDIR/defer/*(N-.)) zsh-defer source $f
 
 # plugins
-zsh-defer source $ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh
-zsh-defer source $ZDOTDIR/plugins/syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+
+zsh-defer source "$ZDOTDIR/plugins/syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+zsh-defer source "$ZDOTDIR/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+zsh-defer source "$ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh"
+
 zsh-defer source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
