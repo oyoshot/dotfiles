@@ -127,6 +127,14 @@ snippets:
     keyword: tn
     snippet: tmux new -A -s $(whoami)
 
+  - name: tmux kill all sessions
+    keyword: tks
+    snippet: tmux kill-session -a
+
+  - name: tmux kill all windows
+    keyword: tkw
+    snippet: tmux kill-window -a
+
   # Utils
   - name: mkdir with parents
     keyword: mkdir
@@ -151,6 +159,11 @@ snippets:
   - name: memo
     keyword: m
     snippet: memo
+
+  # up: OS別パッケージ更新 (darwin: brew/mas, linux: yay) + rustup + mise + nvim
+  - name: up
+    keyword: up
+    snippet: if [[ "$OSTYPE" == darwin* ]]; then brew upgrade && brew upgrade --cask --greedy && mas upgrade; else yay --noconfirm; fi && rustup update && mise cache clear && mise up && nvim --headless "+Lazy! update" +qa
 
   # zsh
   - name: source zsh
@@ -190,6 +203,27 @@ snippets:
   - name: cat (bat)
     keyword: cat
     snippet: bat --theme ansi
+
+  # Chezmoi
+  - name: chezmoi
+    keyword: cz
+    snippet: chezmoi
+
+  - name: chezmoi apply
+    keyword: cza
+    snippet: chezmoi apply
+
+  - name: chezmoi diff
+    keyword: czd
+    snippet: chezmoi diff
+
+  - name: chezmoi edit
+    keyword: cze
+    snippet: chezmoi edit
+
+  - name: chezmoi cd
+    keyword: czcd
+    snippet: cd $(chezmoi source-path)
 
 completions:
   # Git branch completion
