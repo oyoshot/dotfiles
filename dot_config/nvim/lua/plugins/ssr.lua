@@ -1,6 +1,5 @@
 return {
 	"cshuaimin/ssr.nvim",
-	lazy = true,
 	event = { "CursorHold", "CursorHoldI" },
 	config = function()
 		require("ssr").setup({

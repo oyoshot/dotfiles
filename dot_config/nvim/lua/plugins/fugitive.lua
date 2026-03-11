@@ -1,10 +1,9 @@
 -- Git related plugins
 return {
-	{ "tpope/vim-rhubarb", lazy = true },
+	{ "tpope/vim-rhubarb" },
 
 	{
 		"tpope/vim-fugitive",
-		lazy = true,
 		event = { "CursorHold", "CursorHoldI" },
 		cond = function()
 			return not vim.g.vscode

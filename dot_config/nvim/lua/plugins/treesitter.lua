@@ -1,7 +1,6 @@
 return {
 	-- Highlight, edit, and navigate code
 	"nvim-treesitter/nvim-treesitter",
-	lazy = true,
 	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
 	cmd = { "TSUpdateSync" },

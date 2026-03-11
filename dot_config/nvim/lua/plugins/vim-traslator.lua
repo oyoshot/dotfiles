@@ -1,6 +1,5 @@
 return {
 	"uga-rosa/translate.nvim",
-	lazy = true,
 	keys = {
 		{ "tt", mode = { "n", "v" } },
 	},

@@ -5,7 +5,6 @@ return {
 	dependencies = {
 		"lewis6991/gitsigns.nvim",
 	},
-	lazy = true,
 	event = { "BufReadPost", "BufAdd", "BufNewFile" },
 	config = function()
 		local lualine = require("lualine")

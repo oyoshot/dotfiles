@@ -1,6 +1,5 @@
 return {
 	"akinsho/toggleterm.nvim",
-	lazy = true,
 	keys = {
 		{ "<leader>L", "<cmd>lua _lazygit_toggle()<CR>", desc = "open [L]azygit" },
 	},

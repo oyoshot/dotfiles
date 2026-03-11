@@ -112,7 +112,6 @@ end
 
 return {
 	"goolord/alpha-nvim",
-	lazy = true,
 	event = "BufWinEnter",
 	config = function()
 		local present, alpha = pcall(require, "alpha")

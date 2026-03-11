@@ -1,6 +1,5 @@
 return {
 	"hrsh7th/nvim-cmp",
-	lazy = true,
 	event = "InsertEnter",
 	config = function()
 		local border = function(hl)
@@ -151,24 +150,23 @@ return {
 		})
 	end,
 	dependencies = {
-		{ "hrsh7th/cmp-nvim-lsp", lazy = true },
-		{ "hrsh7th/cmp-nvim-lua", lazy = true },
-		{ "hrsh7th/cmp-buffer", lazy = true },
-		{ "hrsh7th/cmp-path", lazy = true },
-		{ "hrsh7th/cmp-cmdline", lazy = true },
-		{ "f3fora/cmp-spell", lazy = true },
-		{ "lukas-reineke/cmp-under-comparator", lazy = true },
-		{ "andersevenrud/cmp-tmux", lazy = true },
-		{ "saadparwaiz1/cmp_luasnip", lazy = true },
-		{ "kdheepak/cmp-latex-symbols", lazy = true },
-		{ "ray-x/cmp-treesitter", lazy = true },
-		{ "onsails/lspkind.nvim", lazy = true },
-		{ "uga-rosa/cmp-skkeleton", lazy = true },
+		{ "hrsh7th/cmp-nvim-lsp" },
+		{ "hrsh7th/cmp-nvim-lua" },
+		{ "hrsh7th/cmp-buffer" },
+		{ "hrsh7th/cmp-path" },
+		{ "hrsh7th/cmp-cmdline" },
+		{ "f3fora/cmp-spell" },
+		{ "lukas-reineke/cmp-under-comparator" },
+		{ "andersevenrud/cmp-tmux" },
+		{ "saadparwaiz1/cmp_luasnip" },
+		{ "kdheepak/cmp-latex-symbols" },
+		{ "ray-x/cmp-treesitter" },
+		{ "onsails/lspkind.nvim" },
+		{ "uga-rosa/cmp-skkeleton" },
 
 		{
 			"L3MON4D3/LuaSnip",
 			build = "make install_jsregexp",
-			lazy = true,
 			dependencies = { "rafamadriz/friendly-snippets" },
 			config = function()
 				local snippet_path = vim.fn.stdpath("config") .. "/snips/"
