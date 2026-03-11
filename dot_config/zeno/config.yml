@@ -135,6 +135,10 @@ snippets:
     keyword: tkw
     snippet: tmux kill-window -a
 
+  - name: tmux kill all panes
+    keyword: tkp
+    snippet: tmux kill-pane -a
+
   # Utils
   - name: mkdir with parents
     keyword: mkdir
