@@ -118,6 +118,35 @@ snippets:
     keyword: caw
     snippet: cargo watch
 
+  # uv (Python package manager)
+  - name: uv
+    keyword: uv
+    snippet: uv
+
+  - name: uv run
+    keyword: uvr
+    snippet: uv run
+
+  - name: uv add
+    keyword: uva
+    snippet: uv add
+
+  - name: uv sync
+    keyword: uvs
+    snippet: uv sync
+
+  - name: uv lock
+    keyword: uvl
+    snippet: uv lock
+
+  - name: uv venv
+    keyword: uvv
+    snippet: uv venv
+
+  - name: uv pip install
+    keyword: uvpi
+    snippet: uv pip install
+
   # Tmux
   - name: tmux
     keyword: t
