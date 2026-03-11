@@ -210,23 +210,23 @@ snippets:
 
   # Chezmoi
   - name: chezmoi
-    keyword: cz
+    keyword: ch
     snippet: chezmoi
 
   - name: chezmoi apply
-    keyword: cza
+    keyword: cha
     snippet: chezmoi apply
 
   - name: chezmoi diff
-    keyword: czd
+    keyword: chd
     snippet: chezmoi diff
 
   - name: chezmoi edit
-    keyword: cze
+    keyword: che
     snippet: chezmoi edit
 
   - name: chezmoi cd
-    keyword: czcd
+    keyword: chcd
     snippet: cd $(chezmoi source-path)
 
 completions:
