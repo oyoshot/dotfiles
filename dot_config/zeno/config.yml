@@ -16,6 +16,10 @@ snippets:
     keyword: ga
     snippet: git add
 
+  - name: git add patch
+    keyword: gap
+    snippet: git add -p
+
   - name: git commit
     keyword: gcm
     snippet: git commit -m '{{commit_message}}'
@@ -114,6 +118,35 @@ snippets:
     keyword: caw
     snippet: cargo watch
 
+  # uv (Python package manager)
+  - name: uv
+    keyword: uv
+    snippet: uv
+
+  - name: uv run
+    keyword: uvr
+    snippet: uv run
+
+  - name: uv add
+    keyword: uva
+    snippet: uv add
+
+  - name: uv sync
+    keyword: uvs
+    snippet: uv sync
+
+  - name: uv lock
+    keyword: uvl
+    snippet: uv lock
+
+  - name: uv venv
+    keyword: uvv
+    snippet: uv venv
+
+  - name: uv pip install
+    keyword: uvpi
+    snippet: uv pip install
+
   # Tmux
   - name: tmux
     keyword: t
@@ -134,6 +167,10 @@ snippets:
   - name: tmux kill all windows
     keyword: tkw
     snippet: tmux kill-window -a
+
+  - name: tmux kill all panes
+    keyword: tkp
+    snippet: tmux kill-pane -a
 
   # Utils
   - name: mkdir with parents
@@ -206,23 +243,23 @@ snippets:
 
   # Chezmoi
   - name: chezmoi
-    keyword: cz
+    keyword: ch
     snippet: chezmoi
 
   - name: chezmoi apply
-    keyword: cza
+    keyword: cha
     snippet: chezmoi apply
 
   - name: chezmoi diff
-    keyword: czd
+    keyword: chd
     snippet: chezmoi diff
 
   - name: chezmoi edit
-    keyword: cze
+    keyword: che
     snippet: chezmoi edit
 
   - name: chezmoi cd
-    keyword: czcd
+    keyword: chcd
     snippet: cd $(chezmoi source-path)
 
 completions:
