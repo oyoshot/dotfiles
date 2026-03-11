@@ -16,6 +16,10 @@ snippets:
     keyword: ga
     snippet: git add
 
+  - name: git add patch
+    keyword: gap
+    snippet: git add -p
+
   - name: git commit
     keyword: gcm
     snippet: git commit -m '{{commit_message}}'
