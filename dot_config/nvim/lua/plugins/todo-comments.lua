@@ -1,6 +1,5 @@
 return {
 	"folke/todo-comments.nvim",
-	lazy = true,
 	event = { "CursorHold", "CursorHoldI" },
 	opts = {
 		-- your configuration comes here

@@ -1,6 +1,5 @@
 return {
 	"nvimdev/lspsaga.nvim",
-	lazy = true,
 	event = "LspAttach",
 	-- cond = function()
 	-- 	return not vim.g.vscode

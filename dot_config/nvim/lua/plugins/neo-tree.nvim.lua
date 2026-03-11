@@ -79,7 +79,6 @@ return {
 		"nvim-tree/nvim-web-devicons",
 		"MunifTanjim/nui.nvim",
 	},
-	lazy = true,
 	keys = {
 		{ "<C-n>", "<CMD>Neotree toggle<CR>", desc = "Toggle file explorer" },
 	},
@@ -150,7 +149,6 @@ return {
 					require("neo-tree.sources.manager").get_state("filesystem")
 				)
 			end)
-
 		end
 
 		local function refresh_git_if_visible()

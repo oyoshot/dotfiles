@@ -5,8 +5,8 @@ end
 
 ---@type LazyPluginSpec[]
 return {
-	{ "uasi/skk-emoji-jisyo", name = "skk-emoji-en", lazy = true },
-	{ "ymrl/SKK-JISYO.emoji-ja", name = "skk-emoji-ja", lazy = true },
+	{ "uasi/skk-emoji-jisyo", name = "skk-emoji-en" },
+	{ "ymrl/SKK-JISYO.emoji-ja", name = "skk-emoji-ja" },
 
 	{
 		"vim-skk/skkeleton",
@@ -55,7 +55,6 @@ return {
 	{
 		"delphinus/skkeleton_indicator.nvim",
 		event = { "InsertEnter" },
-		lazy = true,
 		opts = {},
 	},
 }

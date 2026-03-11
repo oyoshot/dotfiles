@@ -1,6 +1,5 @@
 return {
 	"y3owk1n/undo-glow.nvim",
-	lazy = true,
 	event = { "TextYankPost", "CursorMoved", "FocusGained", "CmdlineLeave" },
 
 	---@type UndoGlow.Config

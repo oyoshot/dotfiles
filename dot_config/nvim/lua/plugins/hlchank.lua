@@ -1,6 +1,5 @@
 return {
 	"shellRaining/hlchunk.nvim",
-	lazy = true,
 	event = { "CursorHold", "CursorHoldI" },
 	config = function()
 		require("hlchunk").setup({

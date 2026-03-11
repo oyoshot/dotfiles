@@ -1,8 +1,8 @@
 return {
-	{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0", lazy = true },
-	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make", lazy = true },
-	{ "prochri/telescope-all-recent.nvim", lazy = true, opts = {} },
-	{ "kkharji/sqlite.lua", lazy = true },
+	{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+	{ "prochri/telescope-all-recent.nvim", opts = {} },
+	{ "kkharji/sqlite.lua" },
 
 	--{
 	--	"danielfalk/smart-open.nvim",
@@ -15,7 +15,6 @@ return {
 
 	{
 		"nvim-telescope/telescope.nvim",
-		lazy = true,
 		cmd = {
 			"Telescope",
 		},
