@@ -285,8 +285,24 @@ completions:
   # File completion for editors and viewers
   - name: file completion
     patterns:
-      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|cp|mv|open|xdg-open|file|wc|stat|chmod|rg|grep).* $"
+      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod).* $"
     sourceCommand: "fd --type f --hidden"
     options:
       --prompt: "'File> '"
       --preview: "bat --color=always --style=numbers --line-range=:500 {}"
+
+  - name: directory completion
+    patterns:
+      - "^(cd|pushd|z|zi|rmdir).* $"
+    sourceCommand: "fd --type d --hidden"
+    options:
+      --prompt: "'Dir> '"
+      --preview: "eza --tree --level=2 --icons --color=always {}"
+
+  - name: path completion
+    patterns:
+      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll).* $"
+    sourceCommand: "fd --hidden"
+    options:
+      --prompt: "'Path> '"
+      --preview: "bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza --tree --level=2 --icons --color=always {}"
