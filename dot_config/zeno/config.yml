@@ -301,7 +301,7 @@ completions:
 
   - name: path completion
     patterns:
-      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll).* $"
+      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put).* $"
     sourceCommand: "fd --hidden"
     options:
       --prompt: "'Path> '"
