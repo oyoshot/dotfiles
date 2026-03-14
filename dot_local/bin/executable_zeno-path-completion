@@ -69,7 +69,7 @@ show_preview() {
 
 if [[ $action == preview ]]; then
   [[ -n $selected ]] || exit 0
-  show_preview "$(resolve_path "$selected")"
+  show_preview "$(resolve_path "${(Q)selected}")"
   exit 0
 fi
 
@@ -77,8 +77,30 @@ if [[ -z $lbuffer || $lbuffer != *" "* ]]; then
   exit 0
 fi
 
-token=${lbuffer##* }
-prefix=${lbuffer%"$token"}
+separator_index=0
+for (( i = ${#lbuffer}; i >= 1; i-- )); do
+  char=${lbuffer[i]}
+  [[ $char == [[:space:]] ]] || continue
+
+  backslashes=0
+  for (( j = i - 1; j >= 1; j-- )); do
+    [[ ${lbuffer[j]} == \\ ]] || break
+    (( backslashes++ ))
+  done
+
+  if (( backslashes % 2 == 0 )); then
+    separator_index=$i
+    break
+  fi
+done
+
+if (( separator_index == 0 || separator_index == ${#lbuffer} )); then
+  exit 0
+fi
+
+prefix=${lbuffer[1,separator_index]}
+raw_token=${lbuffer[separator_index + 1,-1]}
+token=${(Q)raw_token}
 
 case $token in
   '~/'*|/*|./*|../*)
@@ -168,5 +190,10 @@ while IFS= read -r relpath; do
     candidate="${candidate%/}/"
   fi
 
-  printf '%s\n' "${candidate}" || break
+  if [[ $candidate == '~/'* ]]; then
+    suffix=${candidate[3,-1]}
+    printf '%s\n' "~/${(q)suffix}" || break
+  else
+    printf '%s\n' "${(q)candidate}" || break
+  fi
 done < <(cd "$search_dir" && fd "${fd_args[@]}" . .)

@@ -338,7 +338,7 @@ completions:
   # Path-like completion for editors and viewers
   - name: file path-like completion
     patterns:
-      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)\\S*$"
+      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
     sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source file'
     callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback file'
     options:
@@ -347,7 +347,7 @@ completions:
 
   - name: directory path-like completion
     patterns:
-      - "^(cd|pushd|z|zi|rmdir)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)\\S*$"
+      - "^(cd|pushd|z|zi|rmdir)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
     sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source dir'
     callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback dir'
     options:
@@ -356,7 +356,7 @@ completions:
 
   - name: path-like completion
     patterns:
-      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)\\S*$"
+      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
     sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source both'
     callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback both'
     options:
