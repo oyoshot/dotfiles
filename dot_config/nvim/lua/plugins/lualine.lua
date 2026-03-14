@@ -4,11 +4,12 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
 		"lewis6991/gitsigns.nvim",
+		"catppuccin/nvim",
 	},
 	event = { "BufReadPost", "BufAdd", "BufNewFile" },
 	config = function()
 		local lualine = require("lualine")
-		local catppuccined = require("lualine.themes.catppuccin")
+		local catppuccined = require("catppuccin.utils.lualine")()
 
 		local palette = require("catppuccin.palettes").get_palette()
 		local segment = { fg = palette.subtext1, bg = palette.surface1 }
