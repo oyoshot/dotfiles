@@ -67,6 +67,19 @@ show_preview() {
   esac
 }
 
+shell_escape_path() {
+  local path=$1
+  local rest
+
+  if [[ $path == '~/'* ]]; then
+    rest=${path#\~/}
+    print -r -- "~/${(q)rest}"
+    return
+  fi
+
+  print -r -- "${(q)path}"
+}
+
 if [[ $action == preview ]]; then
   [[ -n $selected ]] || exit 0
   show_preview "$(resolve_path "$selected")"
@@ -108,7 +121,7 @@ fi
 if [[ $action == callback ]]; then
   while IFS= read -r selected; do
     [[ -n $selected ]] || continue
-    printf '%s\n' "${prefix}${selected}" || break
+    printf '%s\n' "${prefix}$(shell_escape_path "$selected")" || break
   done
   exit 0
 fi
