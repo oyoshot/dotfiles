@@ -21,6 +21,26 @@ resolve_path() {
   print -r -- "${expanded_path:A}"
 }
 
+matches_needle() {
+  local candidate=$1
+  local query=$2
+  local rest=$candidate
+  local char
+
+  [[ -z $query ]] && return 0
+
+  for (( i = 1; i <= ${#query}; i++ )); do
+    char=${query[i]}
+    if [[ $rest == *"$char"* ]]; then
+      rest=${rest#*"$char"}
+    else
+      return 1
+    fi
+  done
+
+  return 0
+}
+
 show_preview() {
   local target_path=$1
 
@@ -111,7 +131,7 @@ esac
 while IFS= read -r relpath; do
   relpath=${relpath#./}
   [[ -n $relpath ]] || continue
-  [[ -z $needle || $relpath == ${needle}* ]] || continue
+  matches_needle "$relpath" "$needle" || continue
 
   candidate="${token_dir_repr}${relpath}"
   if [[ -d ${search_dir}/${relpath} ]]; then
