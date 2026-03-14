@@ -6,8 +6,52 @@ trap '' PIPE
 
 action=${1:-source}
 mode=${2:-both}
+selected=${3-}
 lbuffer=${LBUFFER-}
 cwd=${PWD-$(pwd)}
+
+resolve_path() {
+  local input_path=$1
+  local expanded_path=${~input_path}
+
+  if [[ $expanded_path != /* ]]; then
+    expanded_path="${cwd%/}/${expanded_path}"
+  fi
+
+  print -r -- "${expanded_path:A}"
+}
+
+show_preview() {
+  local target_path=$1
+
+  [[ -e $target_path ]] || return 0
+
+  case $mode in
+    file)
+      bat --color=always --style=numbers --line-range=:500 -- "$target_path" 2>/dev/null ||
+        file --brief -- "$target_path" 2>/dev/null
+      ;;
+    dir)
+      eza --tree --level=2 --icons --color=always -- "$target_path" 2>/dev/null ||
+        ls -la -- "$target_path" 2>/dev/null
+      ;;
+    both)
+      if [[ -d $target_path ]]; then
+        eza --tree --level=2 --icons --color=always -- "$target_path" 2>/dev/null ||
+          ls -la -- "$target_path" 2>/dev/null
+      else
+        bat --color=always --style=numbers --line-range=:500 -- "$target_path" 2>/dev/null ||
+          file --brief -- "$target_path" 2>/dev/null
+      fi
+      ;;
+  esac
+}
+
+if [[ $action == preview ]]; then
+  [[ -n $selected ]] || exit 0
+  show_preview "$(resolve_path "$selected")"
+  exit 0
+fi
 
 if [[ -z $lbuffer || $lbuffer != *" "* ]]; then
   exit 0
@@ -26,19 +70,13 @@ esac
 
 if [[ $token == */ ]]; then
   token_dir_repr=$token
-  expanded_token=${~token}
-  if [[ $expanded_token != /* ]]; then
-    expanded_token="${cwd%/}/${expanded_token}"
-  fi
+  expanded_token=$(resolve_path "$token")
   search_dir=${expanded_token%/}
   [[ -n $search_dir ]] || search_dir="/"
   needle=""
 else
   token_dir_repr=${token%/*}/
-  expanded_token=${~token}
-  if [[ $expanded_token != /* ]]; then
-    expanded_token="${cwd%/}/${expanded_token}"
-  fi
+  expanded_token=$(resolve_path "$token")
   search_dir=${expanded_token:h}
   needle=${expanded_token:t}
 fi

@@ -343,6 +343,7 @@ completions:
     callback: "LBUFFER=\"$LBUFFER\" HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" callback file"
     options:
       --prompt: "'File Path> '"
+      --preview: "HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" preview file {}"
 
   - name: directory path-like completion
     patterns:
@@ -351,6 +352,7 @@ completions:
     callback: "LBUFFER=\"$LBUFFER\" HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" callback dir"
     options:
       --prompt: "'Dir Path> '"
+      --preview: "HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" preview dir {}"
 
   - name: path-like completion
     patterns:
@@ -359,6 +361,7 @@ completions:
     callback: "LBUFFER=\"$LBUFFER\" HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" callback both"
     options:
       --prompt: "'Path> '"
+      --preview: "HOME=\"$HOME\" PWD=\"$PWD\" \"$HOME/.local/bin/zeno-path-completion\" preview both {}"
 
   # File completion for editors and viewers
   - name: file completion
