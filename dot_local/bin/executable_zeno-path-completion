@@ -1,0 +1,75 @@
+#!/usr/bin/env zsh
+
+emulate -L zsh
+setopt extended_glob
+trap '' PIPE
+
+mode=${1:-both}
+lbuffer=${LBUFFER-}
+cwd=${PWD-$(pwd)}
+
+if [[ -z $lbuffer || $lbuffer != *" "* ]]; then
+  exit 0
+fi
+
+token=${lbuffer##* }
+prefix=${lbuffer%"$token"}
+
+case $token in
+  '~/'*|/*|./*|../*)
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+if [[ $token == */ ]]; then
+  token_dir_repr=$token
+  expanded_token=${~token}
+  if [[ $expanded_token != /* ]]; then
+    expanded_token="${cwd%/}/${expanded_token}"
+  fi
+  search_dir=${expanded_token%/}
+  [[ -n $search_dir ]] || search_dir="/"
+  needle=""
+else
+  token_dir_repr=${token%/*}/
+  expanded_token=${~token}
+  if [[ $expanded_token != /* ]]; then
+    expanded_token="${cwd%/}/${expanded_token}"
+  fi
+  search_dir=${expanded_token:h}
+  needle=${expanded_token:t}
+fi
+
+if [[ -z $search_dir || ! -d $search_dir ]]; then
+  exit 0
+fi
+
+fd_args=(--hidden --follow)
+case $mode in
+  file)
+    fd_args+=(--type f)
+    ;;
+  dir)
+    fd_args+=(--type d)
+    ;;
+  both)
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+while IFS= read -r relpath; do
+  relpath=${relpath#./}
+  [[ -n $relpath ]] || continue
+  [[ -z $needle || $relpath == ${needle}* ]] || continue
+
+  candidate="${token_dir_repr}${relpath}"
+  if [[ -d ${search_dir}/${relpath} ]]; then
+    candidate="${candidate%/}/"
+  fi
+
+  printf '%s\n' "${prefix}${candidate}" || break
+done < <(cd "$search_dir" && fd "${fd_args[@]}" . .)
