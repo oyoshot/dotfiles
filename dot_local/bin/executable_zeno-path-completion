@@ -141,10 +141,6 @@ fd_args=(
   --exclude .next
   --exclude .nuxt
   --exclude .svelte-kit
-  --exclude vendor
-  --exclude target
-  --exclude dist
-  --exclude build
   --exclude .venv
   --exclude venv
 )

@@ -331,7 +331,7 @@ if [[ -n $ZENO_LOADED ]]; then
     }
     zle -N _zeno-completion-clear-suggest
 
-    bindkey '^f' _zeno-completion-clear-suggest
+    bindkey '^x^f' _zeno-completion-clear-suggest
     bindkey '^x^s' zeno-insert-snippet
     bindkey '^x ' zeno-insert-space
     bindkey '^x^m' accept-line
