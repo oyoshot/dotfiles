@@ -1,0 +1,199 @@
+#!/usr/bin/env zsh
+
+emulate -L zsh
+setopt extended_glob
+trap '' PIPE
+
+action=${1:-source}
+mode=${2:-both}
+selected=${3-}
+lbuffer=${LBUFFER-}
+cwd=${PWD-$(pwd)}
+
+resolve_path() {
+  local input_path=$1
+  local expanded_path=${~input_path}
+
+  if [[ $expanded_path != /* ]]; then
+    expanded_path="${cwd%/}/${expanded_path}"
+  fi
+
+  print -r -- "${expanded_path:A}"
+}
+
+matches_needle() {
+  local candidate=$1
+  local query=$2
+  local rest=$candidate
+  local char
+
+  [[ -z $query ]] && return 0
+
+  for (( i = 1; i <= ${#query}; i++ )); do
+    char=${query[i]}
+    if [[ $rest == *"$char"* ]]; then
+      rest=${rest#*"$char"}
+    else
+      return 1
+    fi
+  done
+
+  return 0
+}
+
+show_preview() {
+  local target_path=$1
+
+  [[ -e $target_path ]] || return 0
+
+  case $mode in
+    file)
+      bat --color=always --style=numbers --line-range=:500 -- "$target_path" 2>/dev/null ||
+        file --brief -- "$target_path" 2>/dev/null
+      ;;
+    dir)
+      eza --tree --level=2 --icons --color=always -- "$target_path" 2>/dev/null ||
+        ls -la -- "$target_path" 2>/dev/null
+      ;;
+    both)
+      if [[ -d $target_path ]]; then
+        eza --tree --level=2 --icons --color=always -- "$target_path" 2>/dev/null ||
+          ls -la -- "$target_path" 2>/dev/null
+      else
+        bat --color=always --style=numbers --line-range=:500 -- "$target_path" 2>/dev/null ||
+          file --brief -- "$target_path" 2>/dev/null
+      fi
+      ;;
+  esac
+}
+
+if [[ $action == preview ]]; then
+  [[ -n $selected ]] || exit 0
+  show_preview "$(resolve_path "${(Q)selected}")"
+  exit 0
+fi
+
+if [[ -z $lbuffer || $lbuffer != *" "* ]]; then
+  exit 0
+fi
+
+separator_index=0
+for (( i = ${#lbuffer}; i >= 1; i-- )); do
+  char=${lbuffer[i]}
+  [[ $char == [[:space:]] ]] || continue
+
+  backslashes=0
+  for (( j = i - 1; j >= 1; j-- )); do
+    [[ ${lbuffer[j]} == \\ ]] || break
+    (( backslashes++ ))
+  done
+
+  if (( backslashes % 2 == 0 )); then
+    separator_index=$i
+    break
+  fi
+done
+
+if (( separator_index == 0 || separator_index == ${#lbuffer} )); then
+  exit 0
+fi
+
+prefix=${lbuffer[1,separator_index]}
+raw_token=${lbuffer[separator_index + 1,-1]}
+token=${(Q)raw_token}
+
+case $token in
+  '~/'*|/*|./*|../*)
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+if [[ $token == */ ]]; then
+  token_dir_repr=$token
+  expanded_token=$(resolve_path "$token")
+  search_dir=${expanded_token%/}
+  [[ -n $search_dir ]] || search_dir="/"
+  needle=""
+else
+  token_dir_repr=${token%/*}/
+  expanded_token=$(resolve_path "$token")
+  search_dir=${expanded_token:h}
+  needle=${expanded_token:t}
+fi
+
+if [[ -z $search_dir || ! -d $search_dir ]]; then
+  exit 0
+fi
+
+if [[ $action == callback ]]; then
+  while IFS= read -r selected; do
+    [[ -n $selected ]] || continue
+    printf '%s\n' "${prefix}${selected}" || break
+  done
+  exit 0
+fi
+
+fd_args=(
+  --hidden
+  --follow
+  --exclude .git
+  --exclude .jj
+  --exclude .svn
+  --exclude .hg
+  --exclude .direnv
+  --exclude .cache
+  --exclude .cargo
+  --exclude registry
+  --exclude cache
+  --exclude caches
+  --exclude __pycache__
+  --exclude .mypy_cache
+  --exclude .pytest_cache
+  --exclude .ruff_cache
+  --exclude .tox
+  --exclude .nox
+  --exclude node_modules
+  --exclude .npm
+  --exclude .pnpm-store
+  --exclude .yarn
+  --exclude .gradle
+  --exclude .terraform
+  --exclude .next
+  --exclude .nuxt
+  --exclude .svelte-kit
+  --exclude .venv
+  --exclude venv
+)
+case $mode in
+  file)
+    fd_args+=(--type f)
+    ;;
+  dir)
+    fd_args+=(--type d)
+    ;;
+  both)
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+while IFS= read -r relpath; do
+  relpath=${relpath#./}
+  [[ -n $relpath ]] || continue
+  matches_needle "$relpath" "$needle" || continue
+
+  candidate="${token_dir_repr}${relpath}"
+  if [[ -d ${search_dir}/${relpath} ]]; then
+    candidate="${candidate%/}/"
+  fi
+
+  if [[ $candidate == '~/'* ]]; then
+    suffix=${candidate[3,-1]}
+    printf '%s\n' "~/${(q)suffix}" || break
+  else
+    printf '%s\n' "${(q)candidate}" || break
+  fi
+done < <(cd "$search_dir" && fd "${fd_args[@]}" . .)

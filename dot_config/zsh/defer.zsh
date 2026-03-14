@@ -325,7 +325,13 @@ if [[ -n $ZENO_LOADED ]]; then
     zle -N _zeno-accept-line-clear-suggest
     bindkey '^m' _zeno-accept-line-clear-suggest
 
-    bindkey '^i' zeno-completion
+    function _zeno-completion-clear-suggest() {
+        zle autosuggest-clear 2>/dev/null || true
+        zle zeno-completion
+    }
+    zle -N _zeno-completion-clear-suggest
+
+    bindkey '^x^f' _zeno-completion-clear-suggest
     bindkey '^x^s' zeno-insert-snippet
     bindkey '^x ' zeno-insert-space
     bindkey '^x^m' accept-line
