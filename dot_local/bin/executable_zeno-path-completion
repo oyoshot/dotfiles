@@ -113,7 +113,41 @@ if [[ $action == callback ]]; then
   exit 0
 fi
 
-fd_args=(--hidden --follow)
+fd_args=(
+  --hidden
+  --follow
+  --exclude .git
+  --exclude .jj
+  --exclude .svn
+  --exclude .hg
+  --exclude .direnv
+  --exclude .cache
+  --exclude .cargo
+  --exclude registry
+  --exclude cache
+  --exclude caches
+  --exclude __pycache__
+  --exclude .mypy_cache
+  --exclude .pytest_cache
+  --exclude .ruff_cache
+  --exclude .tox
+  --exclude .nox
+  --exclude node_modules
+  --exclude .npm
+  --exclude .pnpm-store
+  --exclude .yarn
+  --exclude .gradle
+  --exclude .terraform
+  --exclude .next
+  --exclude .nuxt
+  --exclude .svelte-kit
+  --exclude vendor
+  --exclude target
+  --exclude dist
+  --exclude build
+  --exclude .venv
+  --exclude venv
+)
 case $mode in
   file)
     fd_args+=(--type f)
