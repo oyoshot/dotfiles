@@ -81,6 +81,59 @@ snippets:
     keyword: dps
     snippet: docker ps
 
+  # Terraform
+  - name: terraform
+    keyword: tf
+    snippet: terraform
+
+  - name: terraform init
+    keyword: tfi
+    snippet: terraform init
+
+  - name: terraform plan
+    keyword: tfp
+    snippet: terraform plan -lock=false
+
+  - name: terraform apply
+    keyword: tfa
+    snippet: terraform apply
+
+  - name: terraform destroy
+    keyword: tfd
+    snippet: terraform destroy
+
+  - name: terraform fmt
+    keyword: tff
+    snippet: terraform fmt
+
+  - name: terraform validate
+    keyword: tfv
+    snippet: terraform validate
+
+  - name: terraform output
+    keyword: tfo
+    snippet: terraform output
+
+  - name: terraform state list
+    keyword: tfsl
+    snippet: terraform state list
+
+  - name: terraform state show
+    keyword: tfss
+    snippet: terraform state show
+
+  - name: terraform workspace
+    keyword: tfw
+    snippet: terraform workspace
+
+  - name: terraform workspace list
+    keyword: tfwl
+    snippet: terraform workspace list
+
+  - name: terraform providers lock (multi-platform)
+    keyword: tfpl
+    snippet: terraform providers lock -platform=windows_amd64 -platform=darwin_amd64 -platform=linux_amd64 -platform=darwin_arm64 -platform=linux_arm64
+
   # Cargo
   - name: cargo
     keyword: ca
@@ -301,7 +354,7 @@ completions:
 
   - name: path completion
     patterns:
-      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll).* $"
+      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put).* $"
     sourceCommand: "fd --hidden"
     options:
       --prompt: "'Path> '"
