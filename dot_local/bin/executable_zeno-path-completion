@@ -4,7 +4,8 @@ emulate -L zsh
 setopt extended_glob
 trap '' PIPE
 
-mode=${1:-both}
+action=${1:-source}
+mode=${2:-both}
 lbuffer=${LBUFFER-}
 cwd=${PWD-$(pwd)}
 
@@ -46,6 +47,14 @@ if [[ -z $search_dir || ! -d $search_dir ]]; then
   exit 0
 fi
 
+if [[ $action == callback ]]; then
+  while IFS= read -r selected; do
+    [[ -n $selected ]] || continue
+    printf '%s\n' "${prefix}${selected}" || break
+  done
+  exit 0
+fi
+
 fd_args=(--hidden --follow)
 case $mode in
   file)
@@ -71,5 +80,5 @@ while IFS= read -r relpath; do
     candidate="${candidate%/}/"
   fi
 
-  printf '%s\n' "${prefix}${candidate}" || break
+  printf '%s\n' "${candidate}" || break
 done < <(cd "$search_dir" && fd "${fd_args[@]}" . .)
