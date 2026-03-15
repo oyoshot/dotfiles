@@ -69,11 +69,9 @@
   executable = true
   refreshPeriod = "168h"
 
-[".config/zsh/plugins/zeno"]
-  type = "archive"
-  url = "https://github.com/yuki-yano/zeno.zsh/archive/main.tar.gz"
-  exact = true
-  stripComponents = 1
+[".config/zsh/plugins/reno"]
+  type = "git-repo"
+  url = "git@github.com:oyoshot/reno-mvp.git"
   refreshPeriod = "168h"
 
 [".config/zsh/plugins/zsh-autocomplete"]

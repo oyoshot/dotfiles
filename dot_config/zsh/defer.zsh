@@ -308,33 +308,28 @@ zle -N edit-command-line
 bindkey -M vicmd 'jj' edit-command-line
 bindkey -M viins 'jj' edit-command-line
 
-# zeno.zsh
-export ZENO_DISABLE_EXECUTE_CACHE_COMMAND=1
-((${+commands[bat]})) && export ZENO_GIT_CAT="bat --color=always"
-((${+commands[eza]})) && export ZENO_GIT_TREE="eza --tree"
-source "$ZDOTDIR/plugins/zeno/zeno.zsh"
+# reno
+source "$ZDOTDIR/plugins/reno/reno.zsh"
 
-if [[ -n $ZENO_LOADED ]]; then
-    bindkey ' ' zeno-auto-snippet
+function _reno-expand-and-space-clear-suggest() {
+    zle autosuggest-clear 2>/dev/null || true
+    zle _reno_expand_and_space
+}
+zle -N _reno-expand-and-space-clear-suggest
+bindkey ' ' _reno-expand-and-space-clear-suggest
 
-    # autosuggestions をクリアしてから zeno を実行
-    function _zeno-accept-line-clear-suggest() {
-        zle autosuggest-clear 2>/dev/null || true
-        zle zeno-auto-snippet-and-accept-line
-    }
-    zle -N _zeno-accept-line-clear-suggest
-    bindkey '^m' _zeno-accept-line-clear-suggest
+function _reno-accept-line-clear-suggest() {
+    zle autosuggest-clear 2>/dev/null || true
+    zle _reno_expand_and_accept
+}
+zle -N _reno-accept-line-clear-suggest
+bindkey '^m' _reno-accept-line-clear-suggest
 
-    function _zeno-completion-clear-suggest() {
-        zle autosuggest-clear 2>/dev/null || true
-        zle zeno-completion
-    }
-    zle -N _zeno-completion-clear-suggest
+function _reno-complete-clear-suggest() {
+    zle autosuggest-clear 2>/dev/null || true
+    zle _reno_complete
+}
+zle -N _reno-complete-clear-suggest
+bindkey '^x^f' _reno-complete-clear-suggest
 
-    bindkey '^x^f' _zeno-completion-clear-suggest
-    bindkey '^x^s' zeno-insert-snippet
-    bindkey '^x ' zeno-insert-space
-    bindkey '^x^m' accept-line
-    bindkey '^x^z' zeno-toggle-auto-snippet
-    bindkey '^r' zeno-history-selection
-fi
+bindkey '^x ' self-insert

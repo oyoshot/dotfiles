@@ -318,72 +318,36 @@ snippets:
 completions:
   # Git branch completion
   - name: git branch
-    patterns:
-      - "^git (checkout|switch|merge|rebase|branch -d)( -b)? $"
-    sourceCommand: "git branch -a --format='%(refname:short)'"
-    options:
-      --prompt: "'Git Branch> '"
-      --preview: "git log --oneline {}"
+    pattern: "^git (checkout|switch|merge|rebase|branch -d)( -b)? $"
+    command: "git branch -a --format='%(refname:short)' | fzf --prompt 'Git Branch> ' --preview 'git log --oneline {}'"
 
   # Kill process completion
   - name: kill
-    patterns:
-      - "^kill( -9)? $"
-    sourceCommand: "LANG=C ps -ef | sed 1d"
-    options:
-      --multi: true
-      --prompt: "'Kill Process> '"
-    callback: "awk '{print $2}'"
+    pattern: "^kill( -9)? $"
+    command: "LANG=C ps -ef | sed 1d | fzf --multi --prompt 'Kill Process> ' | awk '{print $2}'"
 
   # Path-like completion for editors and viewers
   - name: file path-like completion
-    patterns:
-      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
-    sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source file'
-    callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback file'
-    options:
-      --prompt: "'File Path> '"
-      --preview: 'HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview file {}'
+    pattern: "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source file | fzf --prompt ''File Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview file {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback file'
 
   - name: directory path-like completion
-    patterns:
-      - "^(cd|pushd|z|zi|rmdir)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
-    sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source dir'
-    callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback dir'
-    options:
-      --prompt: "'Dir Path> '"
-      --preview: 'HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview dir {}'
+    pattern: "^(cd|pushd|z|zi|rmdir)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source dir | fzf --prompt ''Dir Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview dir {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback dir'
 
   - name: path-like completion
-    patterns:
-      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
-    sourceCommand: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source both'
-    callback: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback both'
-    options:
-      --prompt: "'Path> '"
-      --preview: 'HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview both {}'
+    pattern: "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source both | fzf --prompt ''Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview both {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback both'
 
   # File completion for editors and viewers
   - name: file completion
-    patterns:
-      - "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod).* $"
-    sourceCommand: "fd --type f --hidden"
-    options:
-      --prompt: "'File> '"
-      --preview: "bat --color=always --style=numbers --line-range=:500 {}"
+    pattern: "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod).* $"
+    command: "fd --type f --hidden | fzf --prompt 'File> ' --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 
   - name: directory completion
-    patterns:
-      - "^(cd|pushd|z|zi|rmdir).* $"
-    sourceCommand: "fd --type d --hidden"
-    options:
-      --prompt: "'Dir> '"
-      --preview: "eza --tree --level=2 --icons --color=always {}"
+    pattern: "^(cd|pushd|z|zi|rmdir).* $"
+    command: "fd --type d --hidden | fzf --prompt 'Dir> ' --preview 'eza --tree --level=2 --icons --color=always {}'"
 
   - name: path completion
-    patterns:
-      - "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put).* $"
-    sourceCommand: "fd --hidden"
-    options:
-      --prompt: "'Path> '"
-      --preview: "bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza --tree --level=2 --icons --color=always {}"
+    pattern: "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put).* $"
+    command: "fd --hidden | fzf --prompt 'Path> ' --preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza --tree --level=2 --icons --color=always {}'"
