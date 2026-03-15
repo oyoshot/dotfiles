@@ -1,353 +1,597 @@
 snippets:
   # Git
   - name: git
-    keyword: g
+    match:
+      type: exact
+      value: g
     snippet: git
 
   - name: git root
-    keyword: gcd
+    match:
+      type: exact
+      value: gcd
     snippet: cd $(git rev-parse --show-toplevel)
 
   - name: git status
-    keyword: gs
+    match:
+      type: exact
+      value: gs
     snippet: git status
 
   - name: git add
-    keyword: ga
+    match:
+      type: exact
+      value: ga
     snippet: git add
 
   - name: git add patch
-    keyword: gap
+    match:
+      type: exact
+      value: gap
     snippet: git add -p
 
   - name: git commit
-    keyword: gcm
+    match:
+      type: exact
+      value: gcm
     snippet: git commit -m '{{commit_message}}'
 
   - name: git diff
-    keyword: gd
+    match:
+      type: exact
+      value: gd
     snippet: git diff
 
   - name: git log
-    keyword: gl
+    match:
+      type: exact
+      value: gl
     snippet: git log --oneline
 
   - name: git pull
-    keyword: gp
+    match:
+      type: exact
+      value: gp
     snippet: git pull
 
   - name: git push origin
-    keyword: gpo
+    match:
+      type: exact
+      value: gpo
     snippet: git push origin HEAD
 
   - name: git push force
-    keyword: gpf
+    match:
+      type: exact
+      value: gpf
     snippet: git push --force-with-lease --force-if-includes origin HEAD
 
   - name: git branch
-    keyword: gb
+    match:
+      type: exact
+      value: gb
     snippet: git branch
 
   - name: git checkout
-    keyword: gc
+    match:
+      type: exact
+      value: gc
     snippet: git checkout
 
   - name: git fetch
-    keyword: gf
+    match:
+      type: exact
+      value: gf
     snippet: git fetch
 
   - name: git rebase
-    keyword: gr
+    match:
+      type: exact
+      value: gr
     snippet: git rebase
 
   - name: git switch
-    keyword: gsw
+    match:
+      type: exact
+      value: gsw
     snippet: git switch
 
   - name: git stash
-    keyword: gst
+    match:
+      type: exact
+      value: gst
     snippet: git stash
 
   # Docker
   - name: docker compose up
-    keyword: dcu
+    match:
+      type: exact
+      value: dcu
     snippet: docker compose up -d
 
   - name: docker compose down
-    keyword: dcd
+    match:
+      type: exact
+      value: dcd
     snippet: docker compose down
 
   - name: docker ps
-    keyword: dps
+    match:
+      type: exact
+      value: dps
     snippet: docker ps
 
   # Terraform
   - name: terraform
-    keyword: tf
+    match:
+      type: exact
+      value: tf
     snippet: terraform
 
   - name: terraform init
-    keyword: tfi
+    match:
+      type: exact
+      value: tfi
     snippet: terraform init
 
   - name: terraform plan
-    keyword: tfp
+    match:
+      type: exact
+      value: tfp
     snippet: terraform plan -lock=false
 
   - name: terraform apply
-    keyword: tfa
+    match:
+      type: exact
+      value: tfa
     snippet: terraform apply
 
   - name: terraform destroy
-    keyword: tfd
+    match:
+      type: exact
+      value: tfd
     snippet: terraform destroy
 
   - name: terraform fmt
-    keyword: tff
+    match:
+      type: exact
+      value: tff
     snippet: terraform fmt
 
   - name: terraform validate
-    keyword: tfv
+    match:
+      type: exact
+      value: tfv
     snippet: terraform validate
 
   - name: terraform output
-    keyword: tfo
+    match:
+      type: exact
+      value: tfo
     snippet: terraform output
 
   - name: terraform state list
-    keyword: tfsl
+    match:
+      type: exact
+      value: tfsl
     snippet: terraform state list
 
   - name: terraform state show
-    keyword: tfss
+    match:
+      type: exact
+      value: tfss
     snippet: terraform state show
 
   - name: terraform workspace
-    keyword: tfw
+    match:
+      type: exact
+      value: tfw
     snippet: terraform workspace
 
   - name: terraform workspace list
-    keyword: tfwl
+    match:
+      type: exact
+      value: tfwl
     snippet: terraform workspace list
 
   - name: terraform providers lock (multi-platform)
-    keyword: tfpl
+    match:
+      type: exact
+      value: tfpl
     snippet: terraform providers lock -platform=windows_amd64 -platform=darwin_amd64 -platform=linux_amd64 -platform=darwin_arm64 -platform=linux_arm64
 
   # Cargo
   - name: cargo
-    keyword: ca
+    match:
+      type: exact
+      value: ca
     snippet: cargo
 
   - name: cargo build
-    keyword: cab
+    match:
+      type: exact
+      value: cab
     snippet: cargo build
 
   - name: cargo run
-    keyword: car
+    match:
+      type: exact
+      value: car
     snippet: cargo run
 
   - name: cargo test
-    keyword: cate
+    match:
+      type: exact
+      value: cate
     snippet: command -v cargo-nextest >/dev/null && cargo nextest run || cargo test
 
   - name: cargo check
-    keyword: cac
+    match:
+      type: exact
+      value: cac
     snippet: cargo check
 
   - name: cargo fmt
-    keyword: caf
+    match:
+      type: exact
+      value: caf
     snippet: cargo fmt
 
   - name: cargo clippy
-    keyword: cacl
+    match:
+      type: exact
+      value: cacl
     snippet: cargo clippy
 
   - name: cargo add
-    keyword: caa
+    match:
+      type: exact
+      value: caa
     snippet: cargo add
 
   - name: cargo watch
-    keyword: caw
+    match:
+      type: exact
+      value: caw
     snippet: cargo watch
 
   # uv (Python package manager)
   - name: uv
-    keyword: uv
+    match:
+      type: exact
+      value: uv
     snippet: uv
 
   - name: uv run
-    keyword: uvr
+    match:
+      type: exact
+      value: uvr
     snippet: uv run
 
   - name: uv add
-    keyword: uva
+    match:
+      type: exact
+      value: uva
     snippet: uv add
 
   - name: uv sync
-    keyword: uvs
+    match:
+      type: exact
+      value: uvs
     snippet: uv sync
 
   - name: uv lock
-    keyword: uvl
+    match:
+      type: exact
+      value: uvl
     snippet: uv lock
 
   - name: uv venv
-    keyword: uvv
+    match:
+      type: exact
+      value: uvv
     snippet: uv venv
 
   - name: uv pip install
-    keyword: uvpi
+    match:
+      type: exact
+      value: uvpi
     snippet: uv pip install
 
   # Tmux
   - name: tmux
-    keyword: t
+    match:
+      type: exact
+      value: t
     snippet: tmux
 
   - name: tmux attach
-    keyword: ta
+    match:
+      type: exact
+      value: ta
     snippet: tmux a
 
   - name: tmux new session
-    keyword: tn
+    match:
+      type: exact
+      value: tn
     snippet: tmux new -A -s $(whoami)
 
   - name: tmux kill all sessions
-    keyword: tks
+    match:
+      type: exact
+      value: tks
     snippet: tmux kill-session -a
 
   - name: tmux kill all windows
-    keyword: tkw
+    match:
+      type: exact
+      value: tkw
     snippet: tmux kill-window -a
 
   - name: tmux kill all panes
-    keyword: tkp
+    match:
+      type: exact
+      value: tkp
     snippet: tmux kill-pane -a
 
   # Utils
   - name: mkdir with parents
-    keyword: mkdir
+    match:
+      type: exact
+      value: mkdir
     snippet: mkdir -p
 
   - name: clear
-    keyword: c
+    match:
+      type: exact
+      value: c
     snippet: clear
 
   - name: exit
-    keyword: e
+    match:
+      type: exact
+      value: e
     snippet: exit
 
   - name: rm (safe delete)
-    keyword: rm
+    match:
+      type: exact
+      value: rm
     snippet: trash-put
 
   - name: nvim
-    keyword: v
+    match:
+      type: exact
+      value: v
     snippet: nvim
 
   - name: memo
-    keyword: m
+    match:
+      type: exact
+      value: m
     snippet: memo
 
-  # up: OS別パッケージ更新 (darwin: brew/mas, linux: yay) + rustup + mise + nvim
   - name: up
-    keyword: up
+    match:
+      type: exact
+      value: up
     snippet: if [[ "$OSTYPE" == darwin* ]]; then brew upgrade && brew upgrade --cask --greedy && mas upgrade; else yay --noconfirm; fi && rustup update && mise cache clear && mise up && nvim --headless "+Lazy! update" +qa
 
   # zsh
   - name: source zsh
-    keyword: sz
+    match:
+      type: exact
+      value: sz
     snippet: source ~/.zshenv && source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"
 
   - name: exec zsh
-    keyword: ez
+    match:
+      type: exact
+      value: ez
     snippet: exec zsh -l
 
   # eza (ls replacement)
   - name: ls
-    keyword: ls
+    match:
+      type: exact
+      value: ls
     snippet: eza --icons --group-directories-first
 
   - name: ls long
-    keyword: l
+    match:
+      type: exact
+      value: l
     snippet: eza --icons --group-directories-first -l --header --git --group
 
   - name: ls all
-    keyword: la
+    match:
+      type: exact
+      value: la
     snippet: eza --icons --group-directories-first -a
 
   - name: ls tree
-    keyword: lt
+    match:
+      type: exact
+      value: lt
     snippet: eza --icons --group-directories-first --tree
 
   - name: ls long all
-    keyword: lla
+    match:
+      type: exact
+      value: lla
     snippet: eza --icons --group-directories-first -la --header --git --group
 
   # bat
   - name: bat
-    keyword: b
+    match:
+      type: exact
+      value: b
     snippet: bat --theme ansi
 
   - name: cat (bat)
-    keyword: cat
+    match:
+      type: exact
+      value: cat
     snippet: bat --theme ansi
 
   # Chezmoi
   - name: chezmoi
-    keyword: ch
+    match:
+      type: exact
+      value: ch
     snippet: chezmoi
 
   - name: chezmoi apply
-    keyword: cha
+    match:
+      type: exact
+      value: cha
     snippet: chezmoi apply
 
   - name: chezmoi diff
-    keyword: chd
+    match:
+      type: exact
+      value: chd
     snippet: chezmoi diff
 
   - name: chezmoi edit
-    keyword: che
+    match:
+      type: exact
+      value: che
     snippet: chezmoi edit
 
   - name: chezmoi cd
-    keyword: chcd
+    match:
+      type: exact
+      value: chcd
     snippet: cd $(chezmoi source-path)
 
 completions:
-  # Git branch completion
   - name: git branch
-    pattern: "^git (checkout|switch|merge|rebase|branch -d)( -b)? $"
+    match:
+      type: command_set
+      commands:
+        - git checkout
+        - git switch
+        - git merge
+        - git rebase
+        - git branch -d
+      suffixes:
+        - ""
+        - " -b"
+      require_trailing_space: true
     command: "git branch -a --format='%(refname:short)' | fzf --prompt 'Git Branch> ' --preview 'git log --oneline {}'"
 
-  # Kill process completion
   - name: kill
-    pattern: "^kill( -9)? $"
+    match:
+      type: command_set
+      commands:
+        - kill
+      suffixes:
+        - ""
+        - " -9"
+      require_trailing_space: true
     command: "LANG=C ps -ef | sed 1d | fzf --multi --prompt 'Kill Process> ' | awk '{print $2}'"
 
-  # Path-like completion for editors and viewers
   - name: file path-like completion
-    pattern: "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    match:
+      type: path_like
+      mode: file
+      commands:
+        - bat
+        - nvim
+        - vim
+        - cat
+        - less
+        - head
+        - tail
+        - diff
+        - delta
+        - open
+        - xdg-open
+        - file
+        - wc
+        - stat
+        - chmod
     command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source file | fzf --prompt ''File Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview file {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback file'
 
   - name: directory path-like completion
-    pattern: "^(cd|pushd|z|zi|rmdir)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    match:
+      type: path_like
+      mode: dir
+      commands:
+        - cd
+        - pushd
+        - z
+        - zi
+        - rmdir
     command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source dir | fzf --prompt ''Dir Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview dir {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback dir'
 
   - name: path-like completion
-    pattern: "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put)(?: .*)? (~/|/|\\./|(?:\\.\\./)+)(?:\\\\.|\\\\|\\S)*$"
+    match:
+      type: path_like
+      mode: any
+      commands:
+        - cp
+        - mv
+        - rg
+        - grep
+        - find
+        - fd
+        - ls
+        - tree
+        - eza
+        - la
+        - ll
+        - trash-put
     command: 'LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" source both | fzf --prompt ''Path> '' --preview ''HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" preview both {}'' | LBUFFER="$LBUFFER" HOME="$HOME" PWD="$PWD" "$HOME/.local/bin/zeno-path-completion" callback both'
 
-  # File completion for editors and viewers
   - name: file completion
-    pattern: "^(bat|nvim|vim|cat|less|head|tail|diff|delta|open|xdg-open|file|wc|stat|chmod).* $"
+    match:
+      type: command_prefix_space
+      commands:
+        - bat
+        - nvim
+        - vim
+        - cat
+        - less
+        - head
+        - tail
+        - diff
+        - delta
+        - open
+        - xdg-open
+        - file
+        - wc
+        - stat
+        - chmod
     command: "fd --type f --hidden | fzf --prompt 'File> ' --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 
   - name: directory completion
-    pattern: "^(cd|pushd|z|zi|rmdir).* $"
+    match:
+      type: command_prefix_space
+      commands:
+        - cd
+        - pushd
+        - z
+        - zi
+        - rmdir
     command: "fd --type d --hidden | fzf --prompt 'Dir> ' --preview 'eza --tree --level=2 --icons --color=always {}'"
 
   - name: path completion
-    pattern: "^(cp|mv|rg|grep|find|fd|ls|tree|eza|la|ll|trash-put).* $"
+    match:
+      type: command_prefix_space
+      commands:
+        - cp
+        - mv
+        - rg
+        - grep
+        - find
+        - fd
+        - ls
+        - tree
+        - eza
+        - la
+        - ll
+        - trash-put
     command: "fd --hidden | fzf --prompt 'Path> ' --preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza --tree --level=2 --icons --color=always {}'"
