@@ -114,7 +114,7 @@ return {
 				callback = "mcphub.extensions.codecompanion",
 				opts = {
 					make_tools = true,
-					make_vars = true,
+					make_vars = false, -- TODO: re-enable after ravitemer/mcphub.nvim#279 lands
 					make_slash_commands = true,
 					show_result_in_chat = true,
 				},
