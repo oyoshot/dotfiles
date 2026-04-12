@@ -182,7 +182,7 @@ local function uniquify_path(dir, base)
 
 		n = n + 1
 		if n > 999 then
-			return vim.fs.joinpath(dir, string.format("%s-%d.md", base, vim.loop.hrtime()))
+			return vim.fs.joinpath(dir, string.format("%s-%d.md", base, vim.uv.hrtime()))
 		end
 	end
 end
