@@ -200,7 +200,7 @@ return {
 			end,
 		})
 
-		local uv = vim.uv or vim.loop
+		local uv = vim.uv
 		local poll_timer = uv.new_timer()
 		if poll_timer then
 			-- tmux 別ペインなど Vim の autcmd が飛ばない更新を拾う

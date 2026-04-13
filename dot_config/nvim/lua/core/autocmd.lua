@@ -9,7 +9,12 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
 -- 末尾の空白を削除する
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 	pattern = { "*" },
-	callback = function()
+	callback = function(args)
+		local bo = vim.bo[args.buf]
+		if not bo.modifiable or bo.buftype ~= "" then
+			return
+		end
+
 		local save_cursor = vim.fn.getpos(".")
 		pcall(function()
 			vim.cmd([[%s/\s\+$//e]])
@@ -21,8 +26,13 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 -- LF 書き換え
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 	pattern = { "*" },
-	callback = function()
-		vim.cmd([[ setlocal fileformat=unix ]])
+	callback = function(args)
+		local bo = vim.bo[args.buf]
+		if not bo.modifiable or bo.buftype ~= "" then
+			return
+		end
+
+		bo.fileformat = "unix"
 	end,
 })
 
