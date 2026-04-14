@@ -1,13 +1,14 @@
 return {
 	-- Highlight, edit, and navigate code
 	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPost", "BufNewFile" },
+	branch = "main",
+	lazy = false,
 	build = ":TSUpdate",
-	cmd = { "TSUpdateSync" },
 	cond = function()
 		return not vim.g.vscode
 	end,
 	opts = {
+		install_dir = vim.fn.stdpath("data") .. "/lazy/nvim-treesitter",
 		ensure_installed = {
 			"astro",
 			"go",
@@ -25,7 +26,6 @@ return {
 			"dockerfile",
 			"json",
 			"json5",
-			"jsonc",
 			"terraform",
 			"hcl",
 			"bash",
@@ -43,21 +43,27 @@ return {
 			"toml",
 			"ron",
 		},
-		-- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-		auto_install = true,
-		highlight = { enable = true },
-		indent = { enable = true },
-		incremental_selection = {
-			enable = true,
-			keymaps = {
-				init_selection = "<c-space>",
-				node_incremental = "<c-space>",
-				scope_incremental = "<c-s>",
-				node_decremental = "<M-space>",
-			},
-		},
 	},
 	config = function(_, opts)
-		require("nvim-treesitter.configs").setup(opts)
+		local treesitter = require("nvim-treesitter")
+
+		treesitter.setup({ install_dir = opts.install_dir })
+		if vim.fn.executable("tree-sitter") == 1 then
+			treesitter.install(opts.ensure_installed)
+		else
+			vim.notify(
+				"tree-sitter CLI is required for nvim-treesitter parser installs. Install tree-sitter-cli.",
+				vim.log.levels.ERROR
+			)
+		end
+
+		vim.api.nvim_create_autocmd("FileType", {
+			group = vim.api.nvim_create_augroup("user_treesitter", { clear = true }),
+			callback = function()
+				if pcall(vim.treesitter.start) then
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end,
+		})
 	end,
 }
