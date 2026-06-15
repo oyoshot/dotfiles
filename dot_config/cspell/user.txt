@@ -46,3 +46,13 @@ actix
 cicd
 toset
 deno
+cweill
+gotests
+fatih
+gomodifytags
+segmentio
+golines
+govulncheck
+honnef
+mvdan
+gofumpt
