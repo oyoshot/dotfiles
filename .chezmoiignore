@@ -9,6 +9,11 @@ images
 
 **/node_modules
 
+.config/herdr/*.log
+.config/herdr/*.sock
+.config/herdr/session.json
+.config/herdr/.plugins.lock
+
 scoop.json
 bootstrap.sh
 script_*
