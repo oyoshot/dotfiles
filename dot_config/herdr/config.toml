@@ -1,9 +1,5 @@
 onboarding = false
 
-[theme]
-name = "terminal"
-auto_switch = true
-
 [keys]
 # Navigate mode (prefix+w) only: pick workspaces with j/k like nvim,
 # and move panes with the arrow keys instead.
