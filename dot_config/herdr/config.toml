@@ -8,3 +8,28 @@ navigate_workspace_up = "k"
 navigate_workspace_down = "j"
 navigate_pane_up = "up"
 navigate_pane_down = "down"
+
+# 開いている workspace/tab と ghq のリポジトリを 1 つの fzf に混ぜて出し、
+# 既存なら focus、無ければ作る。旧 tmux の prefix g s/w の代替。
+[[keys.command]]
+key = "prefix+ctrl+w"
+type = "popup"
+command = "~/.config/herdr/scripts/herdr-fzf-open workspace"
+width = "70%"
+height = "70%"
+
+[[keys.command]]
+key = "prefix+ctrl+t"
+type = "popup"
+command = "~/.config/herdr/scripts/herdr-fzf-open tab"
+width = "70%"
+height = "70%"
+
+# 走っている agent を状態つきで並べ、選んだ pane に移動する。
+# 手が要るもの (要対応/完了) から順に並ぶので、上から潰していける。
+[[keys.command]]
+key = "prefix+ctrl+a"
+type = "popup"
+command = "~/.config/herdr/scripts/herdr-fzf-open agent"
+width = "70%"
+height = "70%"

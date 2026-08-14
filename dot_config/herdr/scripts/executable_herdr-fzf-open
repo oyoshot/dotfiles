@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+# Usage: herdr-fzf-open <action>
+# action: workspace | tab | agent
+#
+# workspace/tab は herdr で開いている workspace/tab と ghq のリポジトリを
+# 1 つの fzf に混ぜて出し、選んだものを開く。
+# すでに開いていれば focus し、無ければ action の単位で作る。
+#   prefix+ctrl+w -> workspace (旧 tmux: prefix g s / prefix z s)
+#   prefix+ctrl+t -> tab       (旧 tmux: prefix g w / prefix z w)
+# agent は走っている agent を状態つきで並べ、選んだ pane に移動する。
+#   prefix+ctrl+a -> agent
+
+set -euo pipefail
+
+action="${1:-}"
+
+case "$action" in
+workspace | tab | agent) ;;
+*)
+    echo "Usage: herdr-fzf-open <action>" >&2
+    echo "  action: workspace | tab | agent" >&2
+    exit 1
+    ;;
+esac
+
+# agent は候補の作り方も選んだあとの動きも workspace/tab と共有できないので、
+# ここで完結させる。
+if [[ "$action" == agent ]]; then
+    # 記号は herdr のサイドバーに合わせ、手が要るものから順に並べる。
+    # 候補行: <display>\t<pane_id>
+    list=$(
+        herdr agent list |
+            jq -r --argjson ws "$(herdr workspace list | jq -c '.result.workspaces // []')" '
+                ($ws | map({(.workspace_id): .label}) | add // {}) as $label
+                | {blocked: 0, done: 1, working: 2, idle: 3} as $rank
+                | {blocked: "◉", done: "✓", working: "⠂", idle: "●"} as $glyph
+                | (.result.agents // [])
+                | sort_by($rank[.agent_status] // 4, .workspace_id, .tab_id)[]
+                | "\($glyph[.agent_status] // "○") \($label[.workspace_id] // .workspace_id)  \(.terminal_title_stripped // .agent)\t\(.pane_id)"
+            '
+    )
+    [[ -z "$list" ]] && exit 0
+
+    selection=$(
+        fzf --delimiter=$'\t' --with-nth=1 \
+            --bind=tab:down,shift-tab:up,btab:up \
+            --reverse \
+            --preview-window=down:50% \
+            --preview 'herdr agent read {2} --lines 40 --format ansi' \
+            --header="◉ 要対応 / ✓ 完了 / ⠂ 実行中 / ● 待機 — enter で agent に移動" \
+            <<<"$list"
+    ) || exit 0
+
+    [[ -z "$selection" ]] && exit 0
+
+    IFS=$'\t' read -r _ pane_id <<<"$selection"
+    [[ -n "$pane_id" ]] && herdr agent focus "$pane_id" >/dev/null
+    exit 0
+fi
+
+# 表示用にホームを ~ に縮める
+tildify() {
+    printf '%s' "${1/#$HOME/\~}"
+}
+
+# 候補行: <display>\t<path>\t<workspace_id>\t<tab_id>
+# 優先度の高いソースから並べ、あとで path の重複を落とす
+candidates() {
+    # 1. herdr で開いている workspace/tab (pane の cwd から逆引き)
+    herdr pane list |
+        jq -r '(.result.panes // []) | group_by(.cwd)[] | .[0]
+               | "\(.cwd)\t\(.workspace_id)\t\(.tab_id)"' |
+        while IFS=$'\t' read -r path workspace_id tab_id; do
+            printf '● %s\t%s\t%s\t%s\n' "$(tildify "$path")" "$path" "$workspace_id" "$tab_id"
+        done
+
+    # 2. ghq のリポジトリ (worktree も ghq root 配下にあれば拾われる)
+    ghq list -p |
+        while IFS= read -r path; do
+            printf '◆ %s\t%s\t\t\n' "$(tildify "$path")" "$path"
+        done
+}
+
+# 候補は fzf に渡す前に確定させる
+# (パイプで流すと、読み込み完了前に確定したときヘッド側が SIGPIPE で死んで
+#  pipefail に引っかかり、選択が無かったことになる)
+list=$(candidates | awk -F'\t' '!seen[$2]++')
+[[ -z "$list" ]] && exit 0
+
+# fzf をキャンセルすると非ゼロ終了するので、その場合は何もせず抜ける
+selection=$(
+    fzf --delimiter=$'\t' --with-nth=1 \
+        --bind=tab:down,shift-tab:up,btab:up \
+        --reverse \
+        --preview-window=down:40% \
+        --preview 'git -C {2} log --oneline --graph --decorate --color=always -n 20 2>/dev/null || ls -la {2}' \
+        --header="● 開いている / ◆ リポジトリ — enter で $action を開く" \
+        <<<"$list"
+) || exit 0
+
+[[ -z "$selection" ]] && exit 0
+
+IFS=$'\t' read -r _ path workspace_id tab_id <<<"$selection"
+
+# worktree のパスから親リポジトリを導く
+# gwq 形式: <repo>=<branch> / git-wt 形式: <repo>/.worktrees/<branch>
+parent_repo() {
+    case "$1" in
+    */.worktrees/*) printf '%s' "${1%%/.worktrees/*}" ;;
+    *=*) printf '%s' "${1%%=*}" ;;
+    *) printf '' ;;
+    esac
+}
+
+# そのパス配下に pane がある workspace を返す
+workspace_for_path() {
+    herdr pane list |
+        jq -r --arg path "$1" 'first((.result.panes // [])[]
+            | select(.cwd == $path or (.cwd | startswith($path + "/")))
+            | .workspace_id) // empty'
+}
+
+case "$action" in
+workspace)
+    if [[ -n "$workspace_id" ]]; then
+        herdr workspace focus "$workspace_id" >/dev/null
+    else
+        herdr workspace create --cwd "$path" --label "$(basename "$path")" --focus >/dev/null
+    fi
+    ;;
+tab)
+    if [[ -n "$tab_id" ]]; then
+        herdr tab focus "$tab_id" >/dev/null
+        exit 0
+    fi
+
+    # worktree なら親リポジトリの workspace に入れる。無ければ現在の workspace
+    target_workspace="${HERDR_WORKSPACE_ID:-}"
+    repo=$(parent_repo "$path")
+    if [[ -n "$repo" ]]; then
+        found=$(workspace_for_path "$repo")
+        [[ -n "$found" ]] && target_workspace="$found"
+    fi
+
+    create_opts=()
+    [[ -n "$target_workspace" ]] && create_opts=(--workspace "$target_workspace")
+
+    # tab の label は branch 名 (gwq の <repo>=<branch> は branch 部分だけ使う)
+    label=$(basename "$path")
+    herdr tab create "${create_opts[@]}" \
+        --cwd "$path" --label "${label#*=}" --focus >/dev/null
+    ;;
+esac
