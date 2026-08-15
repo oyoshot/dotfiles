@@ -9,27 +9,22 @@ navigate_workspace_down = "j"
 navigate_pane_up = "up"
 navigate_pane_down = "down"
 
-# 開いている workspace/tab と ghq のリポジトリを 1 つの fzf に混ぜて出し、
-# 既存なら focus、無ければ作る。旧 tmux の prefix g s/w の代替。
+# ghq のリポジトリを独立した作業として開く。
+# 既にその repo を使う workspace があれば focus、無ければ作成する。
 [[keys.command]]
 key = "prefix+ctrl+w"
 type = "popup"
-command = "~/.config/herdr/scripts/herdr-fzf-open workspace"
+command = "~/.config/herdr/scripts/herdr-ghq-open workspace"
+description = "open ghq repository as workspace"
 width = "70%"
 height = "70%"
 
+# ghq のリポジトリを現在の作業に tab として追加する。
+# 同じ workspace 内にすでにあればその tab へ focus する。
 [[keys.command]]
 key = "prefix+ctrl+t"
 type = "popup"
-command = "~/.config/herdr/scripts/herdr-fzf-open tab"
-width = "70%"
-height = "70%"
-
-# 走っている agent を状態つきで並べ、選んだ pane に移動する。
-# 手が要るもの (要対応/完了) から順に並ぶので、上から潰していける。
-[[keys.command]]
-key = "prefix+ctrl+a"
-type = "popup"
-command = "~/.config/herdr/scripts/herdr-fzf-open agent"
+command = "~/.config/herdr/scripts/herdr-ghq-open tab"
+description = "open ghq repository as tab"
 width = "70%"
 height = "70%"
