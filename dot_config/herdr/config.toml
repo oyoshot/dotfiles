@@ -9,6 +9,10 @@ navigate_workspace_down = "j"
 navigate_pane_up = "up"
 navigate_pane_down = "down"
 
+# Move through the Agents sidebar without leaving terminal mode.
+previous_agent = "prefix+shift+k"
+next_agent = "prefix+shift+j"
+
 # ghq のリポジトリを独立した作業として開く。
 # 既にその repo を使う workspace があれば focus、無ければ作成する。
 [[keys.command]]
@@ -18,6 +22,14 @@ command = "~/.config/herdr/scripts/herdr-ghq-open workspace"
 description = "open ghq repository as workspace"
 width = "70%"
 height = "70%"
+
+[ui.sidebar.agents]
+# herdr-plugin-renamer replaces the agent display label with the generated task.
+# Before naming completes, this falls back to the detected agent name.
+rows = [
+  ["state_icon", "agent"],
+  ["workspace", "tab"],
+]
 
 # ghq のリポジトリを現在の作業に tab として追加する。
 # 同じ workspace 内にすでにあればその tab へ focus する。
