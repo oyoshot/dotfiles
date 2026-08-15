@@ -9,9 +9,9 @@ navigate_workspace_down = "j"
 navigate_pane_up = "up"
 navigate_pane_down = "down"
 
-# Move through the Agents sidebar without leaving terminal mode.
-previous_agent = "prefix+shift+k"
-next_agent = "prefix+shift+j"
+# Jump directly to an agent by its visible sidebar index.
+# Use the native prefix+g navigator when browsing or searching.
+focus_agent = "prefix+shift+1..9"
 
 # ghq のリポジトリを独立した作業として開く。
 # 既にその repo を使う workspace があれば focus、無ければ作成する。
@@ -22,6 +22,11 @@ command = "~/.config/herdr/scripts/herdr-ghq-open workspace"
 description = "open ghq repository as workspace"
 width = "70%"
 height = "70%"
+
+[ui]
+# Keep agents needing attention at the top. This order is also used by
+# indexed agent navigation.
+agent_panel_sort = "priority"
 
 [ui.sidebar.agents]
 # herdr-plugin-renamer replaces the agent display label with the generated task.
