@@ -59,13 +59,23 @@ local function pick_agent(agents, callback)
 	local conf = require("telescope.config").values
 	local entry_display = require("telescope.pickers.entry_display")
 	local finders = require("telescope.finders")
+	local widths = { name = 1, status = 1, pane = 1, cwd = 1 }
+	for _, agent in ipairs(agents) do
+		widths.name = math.max(widths.name, vim.fn.strdisplaywidth(agent.agent or "agent"))
+		widths.status = math.max(widths.status, vim.fn.strdisplaywidth(agent.agent_status or "unknown"))
+		widths.pane = math.max(widths.pane, vim.fn.strdisplaywidth(agent.pane_id or "?"))
+		widths.cwd = math.max(
+			widths.cwd,
+			math.min(vim.fn.strdisplaywidth(vim.fn.fnamemodify(agent.foreground_cwd or agent.cwd or "?", ":~")), 30)
+		)
+	end
 	local displayer = entry_display.create({
 		separator = " │ ",
 		items = {
-			{},
-			{},
-			{},
-			{},
+			{ width = widths.name },
+			{ width = widths.status },
+			{ width = widths.pane },
+			{ width = widths.cwd },
 			{ remaining = true },
 		},
 	})
@@ -82,13 +92,13 @@ local function pick_agent(agents, callback)
 					local status = agent.agent_status or "unknown"
 					return {
 						value = agent,
-						display = function()
+							display = function()
 							return displayer({
 								{ name, "Identifier" },
 								{ status, status == "idle" and "DiagnosticOk" or "Comment" },
-								{ task or "—", "Normal" },
 								{ agent.pane_id or "?", "Comment" },
 								{ vim.fn.fnamemodify(cwd, ":~"), "Directory" },
+								{ task or "—", "Normal" },
 							})
 						end,
 						ordinal = table.concat({ name, status, task or "", agent.pane_id or "", cwd }, " "),
