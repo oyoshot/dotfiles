@@ -60,10 +60,12 @@ local function pick_agent(agents, callback)
 	local entry_display = require("telescope.pickers.entry_display")
 	local finders = require("telescope.finders")
 	local displayer = entry_display.create({
-		separator = "  ",
+		separator = " │ ",
 		items = {
-			{ width = 8 },
-			{ width = 8 },
+			{},
+			{},
+			{},
+			{},
 			{ remaining = true },
 		},
 	})
@@ -85,6 +87,8 @@ local function pick_agent(agents, callback)
 								{ name, "Identifier" },
 								{ status, status == "idle" and "DiagnosticOk" or "Comment" },
 								{ task or "—", "Normal" },
+								{ agent.pane_id or "?", "Comment" },
+								{ vim.fn.fnamemodify(cwd, ":~"), "Directory" },
 							})
 						end,
 						ordinal = table.concat({ name, status, task or "", agent.pane_id or "", cwd }, " "),
