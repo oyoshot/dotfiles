@@ -57,7 +57,6 @@ for f ($ZDOTDIR/defer/*(N-.)) zsh-defer source $f
 
 zsh-defer -c '
     source "$ZDOTDIR/plugins/syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    source "$ZDOTDIR/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
     source "$ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh"
 '
 
