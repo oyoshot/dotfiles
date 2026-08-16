@@ -62,7 +62,6 @@
   "skk-jisyo": { "branch": "master", "commit": "cef1036ff165a3de090f2b11b7ee05507b7f0915" },
   "skkeleton": { "branch": "main", "commit": "158ae753bc5099ab12537c23152926c42b1f7c3a" },
   "skkeleton_indicator.nvim": { "branch": "v2", "commit": "f08532787cf842b996c8a5065be7e85cd3376c1f" },
-  "snacks.nvim": { "branch": "main", "commit": "fe7cfe9800a182274d0f868a74b7263b8c0c020b" },
   "sqlite.lua": { "branch": "master", "commit": "50092d60feb242602d7578398c6eb53b4a8ffe7b" },
   "ssr.nvim": { "branch": "main", "commit": "7c95cfa5836508f08ae833a4b31d2ed265560f64" },
   "telescope-all-recent.nvim": { "branch": "main", "commit": "e437f60ea468268e49ffdc0c9ed7c5ba384e63cf" },

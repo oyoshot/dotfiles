@@ -90,12 +90,19 @@ local function select_agent(callback)
 		end)
 
 		vim.ui.select(agents, {
-			prompt = "Send context to agent",
+			prompt = "Send and focus herdr agent:",
 			format_item = function(agent)
+				local name = agent.agent or "agent"
+				local task = agent.display_agent
+				if task == name then
+					task = nil
+				end
 				return string.format(
-					"%s [%s] — %s",
-					agent.display_agent or agent.agent or agent.pane_id,
+					"%-8s  %-8s  task: %-24s  pane: %-8s  cwd: %s",
+					name,
 					agent.agent_status or "unknown",
+					task or "—",
+					agent.pane_id or "?",
 					agent.foreground_cwd or agent.cwd or "?"
 				)
 			end,
