@@ -57,7 +57,16 @@ local function pick_agent(agents, callback)
 	local actions = require("telescope.actions")
 	local action_state = require("telescope.actions.state")
 	local conf = require("telescope.config").values
+	local entry_display = require("telescope.pickers.entry_display")
 	local finders = require("telescope.finders")
+	local displayer = entry_display.create({
+		separator = "  ",
+		items = {
+			{ width = 8 },
+			{ width = 8 },
+			{ remaining = true },
+		},
+	})
 
 	pickers
 		.new({}, {
@@ -68,18 +77,17 @@ local function pick_agent(agents, callback)
 					local name = agent.agent or "agent"
 					local task = agent.display_agent ~= name and agent.display_agent or nil
 					local cwd = agent.foreground_cwd or agent.cwd or "?"
-					local display = string.format(
-						"%-8s  %-8s  task: %-24s  pane: %-8s  cwd: %s",
-						name,
-						agent.agent_status or "unknown",
-						task or "—",
-						agent.pane_id or "?",
-						cwd
-					)
+					local status = agent.agent_status or "unknown"
 					return {
 						value = agent,
-						display = display,
-						ordinal = table.concat({ name, task or "", agent.agent_status or "", cwd }, " "),
+						display = function()
+							return displayer({
+								{ name, "Identifier" },
+								{ status, status == "idle" and "DiagnosticOk" or "Comment" },
+								{ task or "—", "Normal" },
+							})
+						end,
+						ordinal = table.concat({ name, status, task or "", agent.pane_id or "", cwd }, " "),
 					}
 				end,
 			}),
