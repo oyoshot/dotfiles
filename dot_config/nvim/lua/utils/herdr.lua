@@ -66,21 +66,16 @@ local function pick_agent(agents, callback)
 				results = agents,
 				entry_maker = function(agent)
 					local name = agent.agent or "agent"
-					local task = agent.display_agent ~= name and agent.display_agent or nil
+					local task = agent.display_agent ~= name and agent.display_agent or "no-task-yet"
 					local cwd = vim.fn.fnamemodify(agent.foreground_cwd or agent.cwd or "?", ":~")
+					local display_cwd = vim.fn.strdisplaywidth(cwd) > 30 and vim.fn.pathshorten(cwd, 1) or cwd
 					local status = agent.agent_status or "unknown"
-					local display = string.format(
-						"%s/%s/%s/%s@%s",
-						name,
-						status,
-						agent.pane_id or "?",
-						task or "—",
-						cwd
-					)
+					local pane = (agent.pane_id or "?"):match("[^:]+$")
+					local display = string.format("%s on %s — %s@%s (%s)", task, display_cwd, name, status, pane)
 					return {
 						value = agent,
 						display = display,
-						ordinal = display,
+						ordinal = table.concat({ task, cwd, name, status, agent.pane_id or "" }, " "),
 					}
 				end,
 			}),
