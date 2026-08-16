@@ -45,6 +45,60 @@ local function relative_path(path, cwd)
 	return normalized
 end
 
+---@param agents table[]
+---@param callback fun(agent: table)
+local function pick_agent(agents, callback)
+	local ok, pickers = pcall(require, "telescope.pickers")
+	if not ok then
+		notify("Telescope is required to select between multiple agents", vim.log.levels.ERROR)
+		return
+	end
+
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+	local conf = require("telescope.config").values
+	local finders = require("telescope.finders")
+
+	pickers
+		.new({}, {
+			prompt_title = "Send and focus herdr agent",
+			finder = finders.new_table({
+				results = agents,
+				entry_maker = function(agent)
+					local name = agent.agent or "agent"
+					local task = agent.display_agent ~= name and agent.display_agent or nil
+					local cwd = agent.foreground_cwd or agent.cwd or "?"
+					local display = string.format(
+						"%-8s  %-8s  task: %-24s  pane: %-8s  cwd: %s",
+						name,
+						agent.agent_status or "unknown",
+						task or "—",
+						agent.pane_id or "?",
+						cwd
+					)
+					return {
+						value = agent,
+						display = display,
+						ordinal = table.concat({ name, task or "", agent.agent_status or "", cwd }, " "),
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			previewer = false,
+			attach_mappings = function(prompt_bufnr)
+				actions.select_default:replace(function()
+					local entry = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					if entry then
+						callback(entry.value)
+					end
+				end)
+				return true
+			end,
+		})
+		:find()
+end
+
 ---@param callback fun(agent: table)
 local function select_agent(callback)
 	if vim.env.HERDR_ENV ~= "1" then
@@ -89,28 +143,7 @@ local function select_agent(callback)
 			return (a.display_agent or a.agent or a.pane_id) < (b.display_agent or b.agent or b.pane_id)
 		end)
 
-		vim.ui.select(agents, {
-			prompt = "Send and focus herdr agent:",
-			format_item = function(agent)
-				local name = agent.agent or "agent"
-				local task = agent.display_agent
-				if task == name then
-					task = nil
-				end
-				return string.format(
-					"%-8s  %-8s  task: %-24s  pane: %-8s  cwd: %s",
-					name,
-					agent.agent_status or "unknown",
-					task or "—",
-					agent.pane_id or "?",
-					agent.foreground_cwd or agent.cwd or "?"
-				)
-			end,
-		}, function(agent)
-			if agent then
-				callback(agent)
-			end
-		end)
+		pick_agent(agents, callback)
 	end)
 end
 
