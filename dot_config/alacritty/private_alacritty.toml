@@ -91,5 +91,7 @@ history = 10000
 save_to_clipboard = true
 
 [terminal.shell]
-args = ["-l", "-c", "/opt/homebrew/bin/tmux a -t 0 || /opt/homebrew/bin/tmux -u"]
-program = "/bin/zsh"
+# herdr は非対話シェルから起動する。zshrc を読ませないことで
+# ペイン内のシェルから herdr が再帰起動するのを防ぐ。
+args = ["-lc", "herdr"]
+program = "zsh"

@@ -1,0 +1,47 @@
+onboarding = false
+
+[keys]
+# Navigate mode (prefix+w) only: pick workspaces with j/k like nvim,
+# and move panes with the arrow keys instead.
+# Normal pane movement (prefix+h/j/k/l) is unaffected.
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
+navigate_pane_up = "up"
+navigate_pane_down = "down"
+
+# Jump directly to an agent by its visible sidebar index.
+# Use the native prefix+g navigator when browsing or searching.
+focus_agent = "prefix+shift+1..9"
+
+# ghq のリポジトリを独立した作業として開く。
+# 既にその repo を使う workspace があれば focus、無ければ作成する。
+[[keys.command]]
+key = "prefix+ctrl+w"
+type = "popup"
+command = "~/.config/herdr/scripts/herdr-ghq-open workspace"
+description = "open ghq repository as workspace"
+width = "70%"
+height = "70%"
+
+[ui]
+# Keep agents needing attention at the top. This order is also used by
+# indexed agent navigation.
+agent_panel_sort = "priority"
+
+[ui.sidebar.agents]
+# herdr-plugin-renamer replaces the agent display label with the generated task.
+# Before naming completes, this falls back to the detected agent name.
+rows = [
+  ["state_icon", "agent"],
+  ["workspace", "tab"],
+]
+
+# ghq のリポジトリを現在の作業に tab として追加する。
+# 同じ workspace 内にすでにあればその tab へ focus する。
+[[keys.command]]
+key = "prefix+ctrl+t"
+type = "popup"
+command = "~/.config/herdr/scripts/herdr-ghq-open tab"
+description = "open ghq repository as tab"
+width = "70%"
+height = "70%"
