@@ -66,3 +66,12 @@ vim.keymap.set({ "v", "x" }, "<Leader>h", "^", opts)
 vim.keymap.set({ "v", "x" }, "<Leader>l", "$h", opts)
 vim.keymap.set("v", ">", ">gv", opts)
 vim.keymap.set("v", "<", "<gv", opts)
+
+-- Send file context to a coding agent in the current herdr tab.
+vim.keymap.set("n", "<Leader>as", function()
+	require("utils.herdr").send_file()
+end, { desc = "Send file to herdr agent" })
+
+vim.keymap.set("x", "<Leader>as", function()
+	require("utils.herdr").send_selection()
+end, { desc = "Send file and lines to herdr agent" })
