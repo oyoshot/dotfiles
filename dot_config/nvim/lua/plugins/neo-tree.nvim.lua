@@ -73,6 +73,7 @@ end
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	branch = "v3.x",
+	cond = false,
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		-- not strictly required, but recommended
