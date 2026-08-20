@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Usage: herdr-open <workspace|tab> <directory>
+
+set -euo pipefail
+
+action="${1:-}"
+dir="${2:-}"
+
+case "$action" in
+workspace | tab) ;;
+*)
+    echo "Usage: herdr-open <workspace|tab> <directory>" >&2
+    exit 1
+    ;;
+esac
+
+if [[ -z "$dir" || ! -d "$dir" ]]; then
+    echo "herdr-open: directory does not exist: $dir" >&2
+    exit 1
+fi
+
+# directory 自体、またはその配下を cwd にしている最初の pane を返す。
+find_pane() {
+    local workspace_id="${1:-}"
+    local -a list_args=()
+    [[ -n "$workspace_id" ]] && list_args=(--workspace "$workspace_id")
+
+    herdr pane list "${list_args[@]}" |
+        jq -r --arg dir "$dir" '
+            first((.result.panes // [])[]
+                | select(
+                    .cwd == $dir
+                    or (.cwd | startswith($dir + "/"))
+                    or .foreground_cwd == $dir
+                    or ((.foreground_cwd // "") | startswith($dir + "/"))
+                )
+                | [.workspace_id, .tab_id]
+                | @tsv
+            ) // empty
+        '
+}
+
+case "$action" in
+workspace)
+    match=$(find_pane)
+    if [[ -n "$match" ]]; then
+        IFS=$'\t' read -r workspace_id _ <<<"$match"
+        herdr workspace focus "$workspace_id" >/dev/null
+    else
+        herdr workspace create \
+            --cwd "$dir" --label "$(basename "$dir")" --focus >/dev/null
+    fi
+    ;;
+tab)
+    active_workspace_id="${HERDR_ACTIVE_WORKSPACE_ID:-${HERDR_WORKSPACE_ID:-}}"
+    if [[ -z "$active_workspace_id" ]]; then
+        echo "herdr-open: active workspace is unavailable" >&2
+        exit 1
+    fi
+
+    match=$(find_pane "$active_workspace_id")
+    if [[ -n "$match" ]]; then
+        IFS=$'\t' read -r _ tab_id <<<"$match"
+        herdr tab focus "$tab_id" >/dev/null
+    else
+        herdr tab create --workspace "$active_workspace_id" \
+            --cwd "$dir" --label "$(basename "$dir")" --focus >/dev/null
+    fi
+    ;;
+esac

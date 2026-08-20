@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+tildify() {
+    printf '%s' "${1/#$HOME/\~}"
+}
+
+# 候補行: <icon + display path>\t<absolute path>
+# ghq を先に出し、同じ path が zoxide にもあれば後で重複を落とす。
+candidates() {
+    local dir icon
+
+    while IFS= read -r dir; do
+        [[ -n "$dir" ]] || continue
+        printf '  %s\t%s\n' "$(tildify "$dir")" "$dir"
+    done < <(ghq list -p)
+
+    while IFS= read -r dir; do
+        [[ -n "$dir" ]] || continue
+        if [[ -e "$dir/.git" ]]; then
+            icon=''
+        else
+            icon=''
+        fi
+        printf '%s  %s\t%s\n' "$icon" "$(tildify "$dir")" "$dir"
+    done < <(zoxide query --list)
+}
+
+list=$(candidates | awk -F '\t' '!seen[$2]++')
+[[ -z "$list" ]] && exit 0
+
+selection=$(
+    fzf --delimiter=$'\t' --with-nth=1 \
+        --bind=tab:down,shift-tab:up,btab:up \
+        --reverse \
+        --no-multi \
+        --preview-window=down:40% \
+        --preview 'git -C {2} log --oneline --graph --decorate --color=always -n 20 2>/dev/null || ls -la -- {2}' \
+        --header=$'  Git repo     Directory' \
+        <<<"$list"
+) || exit 0
+
+IFS=$'\t' read -r _ dir <<<"$selection"
+[[ -z "$dir" ]] && exit 0
+
+action_selection=$(
+    printf '%s\n' \
+        $'󰎬  Workspace\tworkspace' \
+        $'󰃩  Tab\ttab' |
+        fzf --delimiter=$'\t' --with-nth=1 \
+            --no-input \
+            --no-multi \
+            --reverse \
+            --bind=j:down,k:up,tab:down,shift-tab:up,btab:up \
+            --header='Open as'
+) || exit 0
+
+IFS=$'\t' read -r _ action <<<"$action_selection"
+[[ -z "$action" ]] && exit 0
+
+exec ~/.config/herdr/scripts/herdr-open "$action" "$dir"
