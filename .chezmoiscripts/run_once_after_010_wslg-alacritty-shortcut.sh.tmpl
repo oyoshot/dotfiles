@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+{{ if eq .chezmoi.os "linux" }}
+# /dev/dxg は WSL2 専用デバイス
+if [ -e /dev/dxg ]; then
+    win_user="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')"
+    target="/mnt/c/Users/${win_user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Alacritty.vbs"
+
+    if [ ! -f "$target" ]; then
+        cat > "$target" << 'VBS'
+Set ws = CreateObject("WScript.Shell")
+ws.Run "wsl -e zsh -lc alacritty", 0, False
+VBS
+    fi
+fi
+{{ end }}
