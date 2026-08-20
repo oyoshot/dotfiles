@@ -25,16 +25,16 @@ thickness = 0.18
 size = 16
 
 [font.bold]
-family = "UDEV Gothic NF"
+family = "JetBrainsMono Nerd Font Mono"
 
 [font.bold_italic]
-family = "Hack Nerd Font Mono"
+family = "JetBrainsMono Nerd Font Mono"
 
 [font.italic]
-family = "Hack Nerd Font Mono"
+family = "JetBrainsMono Nerd Font Mono"
 
 [font.normal]
-family = "Hack Nerd Font Mono"
+family = "JetBrainsMono Nerd Font Mono"
 
 [[keyboard.bindings]]
 key = "Comma"
@@ -91,7 +91,5 @@ history = 10000
 save_to_clipboard = true
 
 [terminal.shell]
-# herdr は非対話シェルから起動する。zshrc を読ませないことで
-# ペイン内のシェルから herdr が再帰起動するのを防ぐ。
-args = ["-lc", "herdr"]
+args = ["-lc", "unset HERDR_ENV; pgrep -x fcitx5 >/dev/null || fcitx5 --disable=waylandim --disable=wayland -d; exec herdr"]
 program = "zsh"

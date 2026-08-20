@@ -104,3 +104,12 @@ fi
 typeset -gx VISUAL=$EDITOR
 typeset -gx GIT_EDITOR=$EDITOR
 typeset -gx SUDO_EDITOR=$EDITOR
+
+# WSLg: X11 (XWayland) 経由で GPU + IME を両立させる
+if [[ -e /dev/dxg ]]; then
+  export WAYLAND_DISPLAY=
+  export GALLIUM_DRIVER=d3d12
+  export XMODIFIERS=@im=fcitx
+  export GTK_IM_MODULE=fcitx
+  export QT_IM_MODULE=fcitx
+fi
