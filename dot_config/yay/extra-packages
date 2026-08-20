@@ -1,3 +1,4 @@
+alacritty
 ansible
 aws-session-manager-plugin
 base-devel
@@ -9,6 +10,10 @@ clang
 downgrade
 eva
 eza
+fcitx5
+fcitx5-configtool
+fcitx5-gtk
+fcitx5-mozc
 fd
 fuse3
 fzf
@@ -26,6 +31,8 @@ man-pages
 mise
 mold
 nfs-utils
+noto-fonts-cjk
+noto-fonts-emoji
 nvim
 pinentry
 podman
@@ -36,6 +43,7 @@ reflector
 ripgrep
 starship
 tmux
+ttf-jetbrains-mono-nerd
 trash-cli
 tree-sitter-cli
 unzip
