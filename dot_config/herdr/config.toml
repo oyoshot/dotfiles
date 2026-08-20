@@ -13,13 +13,12 @@ navigate_pane_down = "down"
 # Use the native prefix+g navigator when browsing or searching.
 focus_agent = "prefix+shift+1..9"
 
-# ghq のリポジトリを独立した作業として開く。
-# 既にその repo を使う workspace があれば focus、無ければ作成する。
+# ghq と zoxide をまとめて曖昧検索し、workspace または tab で開く。
 [[keys.command]]
-key = "prefix+ctrl+w"
+key = "prefix+f"
 type = "popup"
-command = "~/.config/herdr/scripts/herdr-ghq-open workspace"
-description = "open ghq repository as workspace"
+command = "~/.config/herdr/scripts/herdr-open-launcher"
+description = "find and open a directory"
 width = "70%"
 height = "70%"
 
@@ -35,13 +34,3 @@ rows = [
   ["state_icon", "agent"],
   ["workspace", "tab"],
 ]
-
-# ghq のリポジトリを現在の作業に tab として追加する。
-# 同じ workspace 内にすでにあればその tab へ focus する。
-[[keys.command]]
-key = "prefix+ctrl+t"
-type = "popup"
-command = "~/.config/herdr/scripts/herdr-ghq-open tab"
-description = "open ghq repository as tab"
-width = "70%"
-height = "70%"
