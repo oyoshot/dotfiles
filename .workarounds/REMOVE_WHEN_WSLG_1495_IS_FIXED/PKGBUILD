@@ -1,0 +1,49 @@
+# TEMPORARY: Arch Linux fcitx5 5.1.21-1 with the WSLg candidate-window workaround.
+# Upstream issue: https://github.com/microsoft/wslg/issues/1495
+
+pkgname=fcitx5
+pkgver=5.1.21
+_dictver=20121020
+pkgrel=1.1
+pkgdesc="Next generation of fcitx, cross-platform input method framework"
+arch=('x86_64')
+url="https://github.com/fcitx/fcitx5"
+license=('LGPL-2.1-or-later AND Unicode-DFS-2016')
+conflicts=('fcitx')
+groups=('fcitx5-im')
+depends=('cairo' 'enchant' 'iso-codes' 'libgl' 'libxkbcommon-x11' 'pango' 'systemd' 'wayland'
+         'xcb-imdkit' 'xcb-util-wm' 'libxkbfile' 'gdk-pixbuf2' 'yoga')
+makedepends=('git' 'extra-cmake-modules' 'ninja' 'nlohmann-json' 'plasma-wayland-protocols' 'wayland-protocols')
+source=("git+https://github.com/fcitx/fcitx5.git#tag=$pkgver?signed"
+        "https://download.fcitx-im.org/data/en_dict-$_dictver.tar.gz"
+        "wslg-keep-candidate-window-mapped.patch")
+noextract=("en_dict-$_dictver.tar.gz")
+sha512sums=('7c692ce6bfc7c6cc27ebc6040e8a2ee8be496cce99575e64b6e1ba3b9eb066dfa4288032568d54b8c8f4b26219b39295ef2b49c0579e20d088b9c875bf801b80'
+            '8418bd02492bfd786c0fab93be4400ef027ec8e9fac02220cc1f653f5eb67f54573a6a84a15baba19bb34ab892745c87df16499d6304ea75009131e2ab3b97f2'
+            '33303e7f0d441325b785d2524329eb3c2f746e86e7e1bc0cf705d6c81f95b9fd2293c4669ae2b058cf84a516238f4186d4c8def925eaccf5b5a5b05a569f115d')
+validpgpkeys=('2CC8A0609AD2A479C65B6D5C8E8B898CBF2412F9')
+
+prepare() {
+  mv en_dict-$_dictver.tar.gz fcitx5/src/modules/spell/en_dict-$_dictver.tar.gz
+  grep "SPELL_EN_DICT_VER $_dictver" fcitx5/src/modules/spell/CMakeLists.txt
+  patch -d fcitx5 -Np1 -i ../wslg-keep-candidate-window-mapped.patch
+}
+
+build() {
+  cd fcitx5
+  cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib \
+        -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib \
+        -DUSE_SYSTEM_YOGA=ON .
+  ninja
+}
+
+check() {
+  cd fcitx5
+  ninja test
+}
+
+package() {
+  cd fcitx5
+  DESTDIR="$pkgdir" ninja install
+  install -Dm644 LICENSES/Unicode-DFS-2016.txt -t "$pkgdir"/usr/share/licenses/$pkgname/
+}

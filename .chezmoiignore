@@ -1,6 +1,7 @@
 README.md
 theme.png
 images
+.workarounds
 
 .vscode
 .github
@@ -36,6 +37,11 @@ Library
 {{ if (or (ne .chezmoi.os "linux") (ne .chezmoi.osRelease.id "arch")) }}
 .config/yay
 .config/systemd
+{{ end }}
+
+{{ if not (contains "microsoft" (lower .chezmoi.kernel.osrelease)) }}
+.local/bin/explorer.exe
+.local/bin/rundll32.exe
 {{ end }}
 
 {{ if eq .chezmoi.os "windows" }}

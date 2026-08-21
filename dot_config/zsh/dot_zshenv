@@ -37,6 +37,16 @@ path=(
   $XDG_DATA_HOME/gh-red/bin(N-/)
   $path
 )
+
+# WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると
+# $commands (PATH 全走査) だけで ~90ms 遅くなる。対話シェルでは退避しておき、
+# .zshrc の winpath / command_not_found_handler で必要になった時に戻す。
+# 非対話 (zsh -c のインライン実行) は exe を直接呼べるよう維持する。
+if [[ -o interactive ]]; then
+  typeset -ga _ZSH_WIN_PATH=( ${(M)path:#/mnt/*} )
+  path=( ${path:#/mnt/*} )
+fi
+
 export PATH
 
 # Rust
@@ -93,13 +103,16 @@ export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
 export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 
-if (( $+commands[nvim] )); then
-  typeset -gx EDITOR=nvim
-elif (( $+commands[vim] )); then
-  typeset -gx EDITOR=vim
-else
-  typeset -gx EDITOR=vi
-fi
+# $+commands は PATH 全走査を起こす。非対話シェルは上の WSL ブロックで PATH を
+# 維持しているため走査が重い。実ファイルを直接見て EDITOR を決める。
+typeset -gx EDITOR=vi
+for _ed in nvim vim; do
+  if [[ -x /usr/bin/$_ed || -x /usr/local/bin/$_ed || -x /opt/homebrew/bin/$_ed || -x $HOME/.local/bin/$_ed ]]; then
+    typeset -gx EDITOR=$_ed
+    break
+  fi
+done
+unset _ed
 
 typeset -gx VISUAL=$EDITOR
 typeset -gx GIT_EDITOR=$EDITOR

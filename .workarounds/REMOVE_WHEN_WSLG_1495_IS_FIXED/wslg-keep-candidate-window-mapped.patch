@@ -1,0 +1,13 @@
+diff --git a/src/ui/classic/xcbinputwindow.cpp b/src/ui/classic/xcbinputwindow.cpp
+index b35ed26..c507127 100644
+--- a/src/ui/classic/xcbinputwindow.cpp
++++ b/src/ui/classic/xcbinputwindow.cpp
+@@ -178,7 +178,7 @@ void XCBInputWindow::update(InputContext *inputContext) {
+     auto [width, height] = InputWindow::update(inputContext);
+     if (!visible()) {
+         if (oldVisible) {
+-            xcb_unmap_window(ui_->connection(), wid_);
++            resize(1, 1);
+             hoverIndex_ = -1;
+         }
+         return;
