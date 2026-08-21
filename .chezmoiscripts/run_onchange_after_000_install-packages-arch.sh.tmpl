@@ -1,6 +1,8 @@
 #!/bin/sh
 set -euo pipefail
 
+# extra-packages: {{ include "dot_config/yay/extra-packages" | sha256sum }}
+
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 # Install packages on Arch
