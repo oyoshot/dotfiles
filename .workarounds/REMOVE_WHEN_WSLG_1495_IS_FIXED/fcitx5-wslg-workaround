@@ -1,0 +1,166 @@
+#!/bin/sh
+set -eu
+
+readonly upstream_version="5.1.21-1"
+readonly patched_version="5.1.21-1.1"
+readonly signing_key="2CC8A0609AD2A479C65B6D5C8E8B898CBF2412F9"
+readonly rollback_sha256="d5117c44026445c80aa7ea85a80c447c5f61f7ae64a910a684fbb29fea59fd36"
+data_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+readonly data_dir
+readonly cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fcitx5-wslg-workaround"
+
+usage() {
+    cat <<EOF
+Usage: ${0##*/} install|status|rollback
+
+Build and install the fcitx5 workaround for microsoft/wslg#1495.
+The recipe is pinned to Arch package ${upstream_version}.
+EOF
+}
+
+installed_version() {
+    pacman -Q fcitx5 2>/dev/null | awk '{ print $2 }'
+}
+
+require_wsl_arch() {
+    if [ ! -e /dev/dxg ]; then
+        printf '%s\n' "error: this workaround is only intended for WSLg" >&2
+        exit 1
+    fi
+    if ! command -v pacman >/dev/null 2>&1; then
+        printf '%s\n' "error: pacman is required" >&2
+        exit 1
+    fi
+    if [ "$(id -u)" -eq 0 ]; then
+        printf '%s\n' "error: run as a regular user; the script invokes sudo when needed" >&2
+        exit 1
+    fi
+}
+
+find_official_package() {
+    find "$cache_dir" /var/cache/pacman/pkg -maxdepth 1 -type f \
+        -name "fcitx5-${upstream_version}-x86_64.pkg.tar.*" ! -name '*.sig' \
+        -print 2>/dev/null | head -n 1
+}
+
+verify_rollback_package() {
+    package_path=$1
+    printf '%s  %s\n' "$rollback_sha256" "$package_path" | sha256sum -c -
+}
+
+save_rollback_package() {
+    mkdir -p "$cache_dir"
+    rollback_package="$(find_official_package || true)"
+    if [ -z "$rollback_package" ]; then
+        archive_base="https://archive.archlinux.org/packages/f/fcitx5/fcitx5-${upstream_version}-x86_64.pkg.tar.zst"
+        rollback_package="$cache_dir/fcitx5-${upstream_version}-x86_64.pkg.tar.zst"
+        curl -fL "$archive_base" -o "$rollback_package"
+        curl -fL "$archive_base.sig" -o "$rollback_package.sig"
+        verify_rollback_package "$rollback_package"
+        pacman-key --verify "$rollback_package.sig" "$rollback_package"
+        return
+    fi
+    verify_rollback_package "$rollback_package"
+    case "$rollback_package" in
+        "$cache_dir"/*) ;;
+        *)
+            cp -p "$rollback_package" "$cache_dir/"
+            ;;
+    esac
+}
+
+install_workaround() {
+    require_wsl_arch
+
+    current_version="$(installed_version || true)"
+    case "$current_version" in
+        "$patched_version")
+            printf 'fcitx5 %s is already installed\n' "$patched_version"
+            return
+            ;;
+        "$upstream_version") ;;
+        *)
+            printf 'error: expected fcitx5 %s, found %s\n' \
+                "$upstream_version" "${current_version:-not installed}" >&2
+            exit 1
+            ;;
+    esac
+
+    for command_name in curl git gpg makepkg pacman-key patch sha256sum sudo; do
+        if ! command -v "$command_name" >/dev/null 2>&1; then
+            printf 'error: required command is missing: %s\n' "$command_name" >&2
+            exit 1
+        fi
+    done
+
+    save_rollback_package
+
+    build_dir="$(mktemp -d "${TMPDIR:-/tmp}/fcitx5-wslg-workaround.XXXXXX")"
+    missing_deps=
+    cleanup() {
+        rm -rf "$build_dir"
+        if [ -n "$missing_deps" ]; then
+            # shellcheck disable=SC2086
+            sudo pacman -Rns --noconfirm $missing_deps || true
+        fi
+    }
+    trap cleanup EXIT HUP INT TERM
+
+    cp "$data_dir/PKGBUILD" "$data_dir/wslg-keep-candidate-window-mapped.patch" "$build_dir/"
+
+    missing_deps="$(pacman -T \
+        extra-cmake-modules ninja nlohmann-json plasma-wayland-protocols wayland-protocols |
+        sed 's/[<>=].*$//' | tr '\n' ' ')"
+    if [ -n "$missing_deps" ]; then
+        # shellcheck disable=SC2086
+        sudo pacman -S --asdeps --needed --noconfirm $missing_deps
+    fi
+
+    if ! gpg --list-keys "$signing_key" >/dev/null 2>&1; then
+        gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys "$signing_key"
+    fi
+
+    (
+        cd "$build_dir"
+        makepkg --cleanbuild --clean --noconfirm
+    )
+
+    package_path="$(find "$build_dir" -maxdepth 1 -type f \
+        -name "fcitx5-${patched_version}-x86_64.pkg.tar.*" ! -name '*.sig' \
+        -print | head -n 1)"
+    if [ -z "$package_path" ]; then
+        printf 'error: built fcitx5 %s package was not found\n' "$patched_version" >&2
+        exit 1
+    fi
+    sudo pacman -U --noconfirm "$package_path"
+    printf '%s\n' "installed fcitx5 ${patched_version}; run 'wsl --shutdown' from PowerShell"
+}
+
+rollback_workaround() {
+    require_wsl_arch
+    rollback_package="$(find_official_package || true)"
+    if [ -z "$rollback_package" ]; then
+        printf '%s\n' "error: no cached fcitx5 ${upstream_version} rollback package found" >&2
+        exit 1
+    fi
+    verify_rollback_package "$rollback_package"
+    sudo pacman -U --noconfirm "$rollback_package"
+    printf '%s\n' "restored fcitx5 ${upstream_version}; run 'wsl --shutdown' from PowerShell"
+}
+
+show_status() {
+    current_version="$(installed_version || true)"
+    printf 'installed: %s\n' "${current_version:-not installed}"
+    if rollback_package="$(find_official_package || true)" && [ -n "$rollback_package" ]; then
+        printf 'rollback:  %s\n' "$rollback_package"
+    else
+        printf '%s\n' "rollback:  unavailable"
+    fi
+}
+
+case "${1:-}" in
+    install) install_workaround ;;
+    status) show_status ;;
+    rollback) rollback_workaround ;;
+    *) usage >&2; exit 2 ;;
+esac
