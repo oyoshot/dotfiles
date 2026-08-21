@@ -81,11 +81,12 @@ typeset -g __MISE_BIN
 
 # Avoid building the full $commands hash just to locate startup dependencies.
 _zsh_find_command() {
-  local dir
+  local dir candidate
   REPLY=
-  for dir in $path; do
-    [[ -x "$dir/$1" && ! -d "$dir/$1" ]] || continue
-    REPLY="$dir/$1"
+  for dir in "$path[@]"; do
+    candidate=${dir:+$dir/}$1
+    [[ -x $candidate && ! -d $candidate ]] || continue
+    REPLY=${candidate:a}
     return 0
   done
   return 1
@@ -128,7 +129,11 @@ if _zsh_find_command starship; then
   typeset _starship_bin=$REPLY
   typeset _starship_config=${STARSHIP_CONFIG:-$XDG_CONFIG_HOME/starship.toml}
   typeset _starship_init=$XDG_CACHE_HOME/zsh/starship-init.zsh
-  typeset _starship_marker="# starship-bin: $_starship_bin"
+  typeset _starship_init_tmp="$_starship_init.tmp.$$"
+  typeset -A _starship_stat
+  zmodload zsh/stat
+  zstat -H _starship_stat -- "$_starship_bin"
+  typeset _starship_marker="# starship-bin: $_starship_bin:$_starship_stat[device]:$_starship_stat[inode]:$_starship_stat[size]:$_starship_stat[mtime]"
   typeset _starship_cached_marker=
   typeset -i _starship_cache_matches=0
   typeset -i _starship_initialized=0
@@ -147,21 +152,22 @@ if _zsh_find_command starship; then
       # Starship computes PROMPT2 eagerly; defer it until a continuation prompt is used.
       _starship_source="${_starship_source%$'\n'PROMPT2=*}"$'\n'"PROMPT2='\$(\"$_starship_bin\" prompt --continuation)'"
       if mkdir -p "${_starship_init:h}" 2>/dev/null &&
-          print -r -- "$_starship_marker"$'\n'"$_starship_source" >| "$_starship_init.tmp" 2>/dev/null &&
-          mv -f "$_starship_init.tmp" "$_starship_init" 2>/dev/null; then
+          print -r -- "$_starship_marker"$'\n'"$_starship_source" >| "$_starship_init_tmp" 2>/dev/null &&
+          mv -f "$_starship_init_tmp" "$_starship_init" 2>/dev/null; then
         _starship_cache_matches=1
       else
-        rm -f "$_starship_init.tmp" 2>/dev/null
-        eval "$_starship_source"
-        _starship_initialized=1
+        rm -f "$_starship_init_tmp" 2>/dev/null
       fi
+      # Another shell may replace the shared cache before it can be sourced.
+      eval "$_starship_source"
+      _starship_initialized=1
     fi
     unset _starship_source
   fi
 
   (( _starship_initialized || ! _starship_cache_matches )) || source "$_starship_init"
-  unset _starship_bin _starship_config _starship_init _starship_marker
-  unset _starship_cached_marker _starship_cache_matches _starship_initialized
+  unset _starship_bin _starship_config _starship_init _starship_init_tmp _starship_marker
+  unset _starship_stat _starship_cached_marker _starship_cache_matches _starship_initialized
 fi
 unfunction _zsh_find_command
 
