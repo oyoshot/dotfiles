@@ -110,6 +110,32 @@ fi
 # Starship
 (( ${+commands[starship]} )) && eval "$(starship init zsh)"
 
+# WSL: .zshenv が退避した Windows PATH を戻す。rehash に ~90ms かかるので
+# 必要になった時だけ払う。戻すのはこのシェルのみ。
+if (( $#_ZSH_WIN_PATH )); then
+  winpath() {
+    (( $#_ZSH_WIN_PATH )) || return 0
+    path+=( $_ZSH_WIN_PATH )
+    _ZSH_WIN_PATH=()
+    rehash
+  }
+
+  # 見つからないコマンドは Windows 側かもしれないので PATH を戻して引き直す。
+  # handler は外部コマンド用に fork された subshell で動くため、戻した PATH は
+  # この 1 回で消える (zsh の仕様)。何度も呼ぶなら winpath で永続的に戻す。
+  command_not_found_handler() {
+    if (( $#_ZSH_WIN_PATH )); then
+      winpath
+      if (( $+commands[$1] )); then
+        "$@"
+        return $?
+      fi
+    fi
+    print -u2 "zsh: command not found: $1"
+    return 127
+  }
+fi
+
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
   [[ -r $cand ]] && source "$cand" && break

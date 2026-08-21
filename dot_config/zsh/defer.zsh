@@ -275,8 +275,6 @@ tgz() {
 if grep -qE "(Microsoft|WSL)" /proc/version &>/dev/null; then
     LS_COLORS="${LS_COLORS}:ow=01;34"
     export LS_COLORS
-    export PATH=$PATH:/mnt/c/windows
-    alias II='explorer.exe'
 fi
 
 if ((${+commands[brew]})); then
