@@ -38,6 +38,11 @@ Library
 .config/systemd
 {{ end }}
 
+{{ if not (contains "microsoft" (lower .chezmoi.kernel.osrelease)) }}
+.local/bin/explorer.exe
+.local/bin/rundll32.exe
+{{ end }}
+
 {{ if eq .chezmoi.os "windows" }}
 .asdf*
 # .bashrc
