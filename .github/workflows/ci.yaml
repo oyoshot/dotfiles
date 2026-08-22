@@ -27,7 +27,7 @@ jobs:
   validate-mac:
     name: validate (mac)
     if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 10
     permissions:
       contents: read
@@ -106,7 +106,7 @@ jobs:
     name: provision (mac)
     needs: provisioning-changes
     if: ${{ needs.provisioning-changes.outputs.mac == 'true' }}
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 180
     permissions:
       contents: read
@@ -171,7 +171,7 @@ jobs:
   warm-cache-mac:
     name: warm-cache (mac)
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 180
     permissions:
       contents: read
