@@ -61,6 +61,113 @@ jobs:
         with:
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
 
+  provisioning-changes:
+    name: detect provisioning changes
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      arch: ${{ steps.changes.outputs.arch }}
+      mac: ${{ steps.changes.outputs.mac }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+      - id: changes
+        name: Detect platform provisioning changes
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only --diff-filter=ACMR "${BASE_SHA}" "${HEAD_SHA}" >/tmp/changed-files
+
+          common_pattern='^(\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|\.github/workflows/ci\.yaml$)'
+          arch_pattern='^(\.github/actions/arch/|dot_config/yay/extra-packages$)'
+          mac_pattern='^(\.github/actions/mac/|dot_config/homebrew/Brewfile$)'
+
+          arch=false
+          mac=false
+          if grep -Eq "${common_pattern}|${arch_pattern}" /tmp/changed-files; then
+            arch=true
+          fi
+          if grep -Eq "${common_pattern}|${mac_pattern}" /tmp/changed-files; then
+            mac=true
+          fi
+
+          echo "arch=${arch}" >>"${GITHUB_OUTPUT}"
+          echo "mac=${mac}" >>"${GITHUB_OUTPUT}"
+          echo "Changed files:"
+          sed 's/^/  /' /tmp/changed-files
+
+  provision-mac:
+    name: provision (mac)
+    needs: provisioning-changes
+    if: ${{ needs.provisioning-changes.outputs.mac == 'true' }}
+    runs-on: macos-14
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-provision-mac-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_BUNDLE_NO_UPGRADE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: echo "value=$(date -u +%G-W%V)" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/mac
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "false"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  provision-arch:
+    name: provision (arch)
+    needs: provisioning-changes
+    if: ${{ needs.provisioning-changes.outputs.arch == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    concurrency:
+      group: ci-provision-arch-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    container:
+      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
+      volumes:
+        - /mnt/pac-pkg:/var/cache/pacman/pkg
+        - /mnt/yay-pkg:/home/builder/.cache/yay
+        - /mnt/mise-pkg:/home/builder/.local/share/mise
+        - /mnt/mise-state:/home/builder/.local/state/mise
+      options: >-
+        --tmpfs /tmp:exec,mode=1777
+        --tmpfs /var/tmp:exec,mode=1777
+        --shm-size 2g
+    steps:
+      - name: Free disk space on host toolcache
+        shell: bash
+        run: rm -rf /__t/*
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - id: cache-epoch
+        name: Resolve cache epoch
+        shell: bash
+        run: echo "value=$(date -u +%G-W%V)" >>"${GITHUB_OUTPUT}"
+      - uses: ./.github/actions/arch
+        with:
+          cache-epoch: ${{ steps.cache-epoch.outputs.value }}
+          warm-mode: "false"
+          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   warm-cache-mac:
     name: warm-cache (mac)
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}

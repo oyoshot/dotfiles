@@ -14,5 +14,5 @@ rustup default stable &&
 
 # Install Mise dependency
 if type mise >/dev/null 2>&1; then
-    mise install -y -v
+    mise install --locked -y -v
 fi
