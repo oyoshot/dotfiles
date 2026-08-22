@@ -14,5 +14,14 @@ rustup default stable &&
 
 # Install Mise dependency
 if type mise >/dev/null 2>&1; then
-    mise install -y -v
+    for attempt in {1..3}; do
+        if mise install -y -v; then
+            break
+        fi
+
+        (( attempt < 3 )) || exit 1
+        retry_delay=$(( 5 * (2 ** (attempt - 1)) ))
+        print -u2 "mise install failed; retrying in ${retry_delay}s (${attempt}/3)"
+        sleep "$retry_delay"
+    done
 fi
