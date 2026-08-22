@@ -10,7 +10,6 @@ fi
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 brew update
-brew bundle --file "$CONFIG_DIR/homebrew/Brewfile" --no-upgrade --quiet
-brew upgrade mise
+brew bundle --file "$CONFIG_DIR/homebrew/Brewfile" --quiet
 brew autoremove
 {{ end }}

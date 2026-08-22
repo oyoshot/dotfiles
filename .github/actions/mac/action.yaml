@@ -8,15 +8,9 @@ inputs:
   mise-config-path:
     description: "Path to mise config"
     default: dot_config/mise/config.toml
-  mise-lock-path:
-    description: "Path to mise lockfile"
-    default: dot_config/mise/mise.lock
   cache-epoch:
     description: "Cache generation identifier"
     required: true
-  warm-mode:
-    description: "Whether this run is a warm-cache job"
-    default: "false"
   chezmoi-version:
     description: "Pinned chezmoi version"
     required: true
@@ -30,24 +24,18 @@ runs:
     - id: brew-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
+        key: macos-brew-v4-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
-          macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-
-        path: |
-          ~/Library/Caches/Homebrew
-          /opt/homebrew/Cellar
+          macos-brew-v4-${{ hashFiles(inputs.brewfile-path) }}-
+        path: ~/Library/Caches/Homebrew
 
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v4-${{ hashFiles(inputs.mise-config-path, inputs.mise-lock-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
+        key: macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          macos-mise-v4-${{ hashFiles(inputs.mise-config-path, inputs.mise-lock-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-
-          macos-mise-v4-${{ hashFiles(inputs.mise-config-path, inputs.mise-lock-path) }}-
-        path: |
-          ~/.cache/mise
-          ~/.local/share/mise
+          macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-
+        path: ~/.cache/mise
 
     - name: Install pinned chezmoi
       shell: bash
@@ -75,35 +63,20 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
         MISE_JOBS: 4
-        MISE_LOCKED: "1"
       run: |
         set -euo pipefail
         chezmoi init --apply -S "${{ github.workspace }}"
-
-    - name: Trim caches (warm mode)
-      if: inputs.warm-mode == 'true'
-      shell: bash
-      run: |
-        set -euo pipefail
-        brew cleanup -s || true
-        if command -v mise >/dev/null 2>&1; then
-          mise cache clear || true
-        fi
 
     - name: Save Homebrew cache
       if: success() && github.event_name != 'pull_request'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-brew-v3-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
-        path: |
-          ~/Library/Caches/Homebrew
-          /opt/homebrew/Cellar
+        key: macos-brew-v4-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
+        path: ~/Library/Caches/Homebrew
 
     - name: Save mise cache
       if: success() && github.event_name != 'pull_request'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v4-${{ hashFiles(inputs.mise-config-path, inputs.mise-lock-path) }}-${{ inputs.warm-mode == 'true' && 'warm' || 'build' }}-${{ inputs.cache-epoch }}
-        path: |
-          ~/.cache/mise
-          ~/.local/share/mise
+        key: macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        path: ~/.cache/mise

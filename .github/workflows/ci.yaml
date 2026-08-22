@@ -8,17 +8,6 @@ on:
   schedule:
     - cron: "17 10 * * 6"
   workflow_dispatch:
-    inputs:
-      refresh_cache:
-        description: "Run warm-cache jobs instead of regular build jobs"
-        required: false
-        type: boolean
-        default: false
-      cache_epoch_override:
-        description: "Optional cache epoch override (for example: 2026-W06-manual1)"
-        required: false
-        type: string
-        default: ""
 
 env:
   CHEZMOI_VERSION: 2.69.3
@@ -26,7 +15,7 @@ env:
 jobs:
   validate-mac:
     name: validate (mac)
-    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: macos-latest
     timeout-minutes: 10
     permissions:
@@ -42,7 +31,7 @@ jobs:
 
   validate-arch:
     name: validate (arch)
-    if: ${{ github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || !inputs.refresh_cache) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -68,8 +57,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      arch: ${{ steps.changes.outputs.arch }}
-      mac: ${{ steps.changes.outputs.mac }}
+      run: ${{ steps.changes.outputs.run }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -84,28 +72,20 @@ jobs:
           set -euo pipefail
           git diff --name-only --diff-filter=ACMR "${BASE_SHA}" "${HEAD_SHA}" >/tmp/changed-files
 
-          common_pattern='^(\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|\.github/workflows/ci\.yaml$)'
-          arch_pattern='^(\.github/actions/arch/|dot_config/yay/extra-packages$)'
-          mac_pattern='^(\.github/actions/mac/|dot_config/homebrew/Brewfile$)'
-
-          arch=false
-          mac=false
-          if grep -Eq "${common_pattern}|${arch_pattern}" /tmp/changed-files; then
-            arch=true
-          fi
-          if grep -Eq "${common_pattern}|${mac_pattern}" /tmp/changed-files; then
-            mac=true
+          provisioning_pattern='^(\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|dot_config/homebrew/Brewfile$|dot_config/yay/extra-packages$|\.github/actions/(mac|arch)/|\.github/workflows/ci\.yaml$)'
+          run=false
+          if grep -Eq "${provisioning_pattern}" /tmp/changed-files; then
+            run=true
           fi
 
-          echo "arch=${arch}" >>"${GITHUB_OUTPUT}"
-          echo "mac=${mac}" >>"${GITHUB_OUTPUT}"
+          echo "run=${run}" >>"${GITHUB_OUTPUT}"
           echo "Changed files:"
           sed 's/^/  /' /tmp/changed-files
 
   provision-mac:
     name: provision (mac)
     needs: provisioning-changes
-    if: ${{ needs.provisioning-changes.outputs.mac == 'true' }}
+    if: ${{ needs.provisioning-changes.outputs.run == 'true' }}
     runs-on: macos-latest
     timeout-minutes: 180
     permissions:
@@ -114,7 +94,6 @@ jobs:
       group: ci-provision-mac-${{ github.event.pull_request.number }}
       cancel-in-progress: true
     env:
-      HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -125,14 +104,13 @@ jobs:
       - uses: ./.github/actions/mac
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          warm-mode: "false"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   provision-arch:
     name: provision (arch)
     needs: provisioning-changes
-    if: ${{ needs.provisioning-changes.outputs.arch == 'true' }}
+    if: ${{ needs.provisioning-changes.outputs.run == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     permissions:
@@ -145,8 +123,6 @@ jobs:
       volumes:
         - /mnt/pac-pkg:/var/cache/pacman/pkg
         - /mnt/yay-pkg:/home/builder/.cache/yay
-        - /mnt/mise-pkg:/home/builder/.local/share/mise
-        - /mnt/mise-state:/home/builder/.local/state/mise
       options: >-
         --tmpfs /tmp:exec,mode=1777
         --tmpfs /var/tmp:exec,mode=1777
@@ -163,13 +139,12 @@ jobs:
       - uses: ./.github/actions/arch
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          warm-mode: "false"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  warm-cache-mac:
-    name: warm-cache (mac)
-    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}
+  scheduled-provision-mac:
+    name: scheduled provision (mac)
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     timeout-minutes: 180
     permissions:
@@ -178,30 +153,22 @@ jobs:
       group: ci-warm-mac-${{ github.ref_name }}
       cancel-in-progress: true
     env:
-      HOMEBREW_BUNDLE_NO_UPGRADE: 1
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
-        run: |
-          set -euo pipefail
-          epoch="$(date -u +%G-W%V)"
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
-            epoch="${{ inputs.cache_epoch_override }}"
-          fi
-          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+        run: echo "value=$(date -u +%G-W%V)" >>"${GITHUB_OUTPUT}"
       - uses: ./.github/actions/mac
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          warm-mode: "true"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  warm-cache-arch:
-    name: warm-cache (arch)
-    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_cache) }}
+  scheduled-provision-arch:
+    name: scheduled provision (arch)
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     permissions:
@@ -214,8 +181,6 @@ jobs:
       volumes:
         - /mnt/pac-pkg:/var/cache/pacman/pkg
         - /mnt/yay-pkg:/home/builder/.cache/yay
-        - /mnt/mise-pkg:/home/builder/.local/share/mise
-        - /mnt/mise-state:/home/builder/.local/state/mise
       options: >-
         --tmpfs /tmp:exec,mode=1777
         --tmpfs /var/tmp:exec,mode=1777
@@ -228,16 +193,9 @@ jobs:
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
-        run: |
-          set -euo pipefail
-          epoch="$(date -u +%G-W%V)"
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.cache_epoch_override }}" ]]; then
-            epoch="${{ inputs.cache_epoch_override }}"
-          fi
-          echo "value=${epoch}" >>"${GITHUB_OUTPUT}"
+        run: echo "value=$(date -u +%G-W%V)" >>"${GITHUB_OUTPUT}"
       - uses: ./.github/actions/arch
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          warm-mode: "true"
           chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
