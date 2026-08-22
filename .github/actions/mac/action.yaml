@@ -74,7 +74,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
-        MISE_GITHUB_ATTESTATIONS: "false"
         MISE_JOBS: 4
         MISE_LOCKED: "1"
       run: |
