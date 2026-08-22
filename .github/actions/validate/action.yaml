@@ -9,13 +9,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install validation dependencies (Arch)
-      shell: bash
-      run: |
-        if command -v pacman >/dev/null 2>&1; then
-          pacman -Sy --needed --noconfirm curl ca-certificates tar gzip
-        fi
-
     - name: Install pinned chezmoi
       shell: bash
       run: |
