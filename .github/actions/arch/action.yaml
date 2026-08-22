@@ -133,14 +133,12 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
-        MISE_HTTP_RETRIES: "5"
         MISE_JOBS: 4
       run: |
         set -euo pipefail
         sudo -Hu builder env \
           GITHUB_TOKEN="${GITHUB_TOKEN}" \
           MISE_FETCH_REMOTE_VERSIONS_TIMEOUT="${MISE_FETCH_REMOTE_VERSIONS_TIMEOUT}" \
-          MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \
           MISE_JOBS="${MISE_JOBS}" \
           chezmoi init --apply -S "${GITHUB_WORKSPACE}"
 
