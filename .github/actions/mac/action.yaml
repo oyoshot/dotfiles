@@ -70,6 +70,9 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
+        MISE_GITHUB_ATTESTATIONS: "false"
+        MISE_JOBS: 4
       run: |
         set -euo pipefail
         chezmoi init --apply -S "${{ github.workspace }}"
