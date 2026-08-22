@@ -1,0 +1,71 @@
+name: Validate chezmoi source
+description: Install pinned chezmoi and render the source without applying it
+
+inputs:
+  chezmoi-version:
+    description: "Pinned chezmoi version"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install pinned chezmoi
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        case "$(uname -s)-$(uname -m)" in
+          Darwin-arm64)
+            platform="darwin_arm64"
+            checksum_command=(shasum -a 256)
+            ;;
+          Linux-x86_64)
+            platform="linux_amd64"
+            checksum_command=(sha256sum)
+            ;;
+          *)
+            echo "Unsupported validation platform: $(uname -s)-$(uname -m)" >&2
+            exit 1
+            ;;
+        esac
+
+        version="${{ inputs.chezmoi-version }}"
+        archive="chezmoi_${version}_${platform}.tar.gz"
+        checksums="chezmoi_${version}_checksums.txt"
+        tmpdir="$(mktemp -d)"
+        trap 'rm -rf "${tmpdir}"' EXIT
+
+        curl -fsSLo "${tmpdir}/${archive}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${archive}"
+        curl -fsSLo "${tmpdir}/${checksums}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${checksums}"
+        grep "  ${archive}$" "${tmpdir}/${checksums}" |
+          (cd "${tmpdir}" && "${checksum_command[@]}" -c -)
+        tar -xzf "${tmpdir}/${archive}" -C "${tmpdir}" chezmoi
+        install -d "${RUNNER_TEMP}/chezmoi-bin"
+        install -m 0755 "${tmpdir}/chezmoi" "${RUNNER_TEMP}/chezmoi-bin/chezmoi"
+        echo "${RUNNER_TEMP}/chezmoi-bin" >>"${GITHUB_PATH}"
+
+    - name: Render source templates
+      shell: bash
+      run: |
+        set -euo pipefail
+        validation_home="$(mktemp -d)"
+        trap 'rm -rf "${validation_home}"' EXIT
+
+        template_count=0
+        while IFS= read -r -d '' template; do
+          echo "Rendering ${template#${GITHUB_WORKSPACE}/}"
+          HOME="${validation_home}" chezmoi \
+            --source "${GITHUB_WORKSPACE}" \
+            execute-template \
+            --file "${template}" >/dev/null
+          template_count=$((template_count + 1))
+        done < <(
+          find "${GITHUB_WORKSPACE}" \
+            -path "${GITHUB_WORKSPACE}/.git" -prune -o \
+            -type f \( -name '*.tmpl' -o -name '.chezmoiignore' \) -print0
+        )
+
+        if (( template_count == 0 )); then
+          echo "No chezmoi templates found" >&2
+          exit 1
+        fi
