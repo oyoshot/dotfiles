@@ -39,7 +39,7 @@ Library
 .config/systemd
 {{ end }}
 
-{{ if not (contains "microsoft" (lower .chezmoi.kernel.osrelease)) }}
+{{ if not (contains "microsoft" (lower (get .chezmoi.kernel "osrelease"))) }}
 .local/bin/explorer.exe
 .local/bin/rundll32.exe
 {{ end }}
