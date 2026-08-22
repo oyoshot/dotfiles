@@ -103,7 +103,7 @@ runs:
           useradd --uid 1000 --create-home builder
         fi
         echo 'builder ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/builder
-        chown -R builder:builder "$GITHUB_WORKSPACE"
+        chown -R builder:builder /home/builder "$GITHUB_WORKSPACE"
 
     - name: Prepare builder home
       shell: bash
@@ -112,10 +112,6 @@ runs:
         sudo -u builder install -d \
           /home/builder/.cache \
           /home/builder/.local
-
-    - name: Fix cache permissions (builder)
-      shell: bash
-      run: sudo chown -R builder:builder /home/builder || true
 
     - name: Apply chezmoi (builder)
       shell: bash
