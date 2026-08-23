@@ -130,7 +130,7 @@ runs:
           chezmoi init --apply -S "${GITHUB_WORKSPACE}"
 
     - name: Save pacman cache
-      if: success() && github.event_name != 'pull_request'
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-pacman-v4-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
@@ -139,14 +139,14 @@ runs:
           /etc/pacman.d/gnupg
 
     - name: Save yay cache
-      if: success() && github.event_name != 'pull_request'
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-yay-v4-${{ hashFiles(inputs.arch-extra-packages-path) }}-${{ inputs.cache-epoch }}
         path: /home/builder/.cache/yay
 
     - name: Save mise cache
-      if: success() && github.event_name != 'pull_request'
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}

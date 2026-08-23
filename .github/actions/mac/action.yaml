@@ -69,14 +69,14 @@ runs:
         chezmoi init --apply -S "${{ github.workspace }}"
 
     - name: Save Homebrew cache
-      if: success() && github.event_name != 'pull_request'
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: macos-brew-v4-${{ hashFiles(inputs.brewfile-path) }}-${{ inputs.cache-epoch }}
         path: ~/Library/Caches/Homebrew
 
     - name: Save mise cache
-      if: success() && github.event_name != 'pull_request'
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
