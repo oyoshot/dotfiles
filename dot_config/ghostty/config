@@ -1,0 +1,32 @@
+# Keep the terminal setup consistent with Alacritty.
+theme = Catppuccin Frappe
+background = 16171e
+foreground = d1d2d3
+background-opacity = 0.85
+background-opacity-cells = true
+
+font-family = JetBrainsMono Nerd Font Mono
+font-family-bold = JetBrainsMono Nerd Font Mono
+font-family-italic = JetBrainsMono Nerd Font Mono
+font-family-bold-italic = JetBrainsMono Nerd Font Mono
+font-size = 16
+
+window-padding-x = 8
+window-padding-y = 4
+window-padding-balance = true
+mouse-hide-while-typing = true
+scrollback-limit = 10000
+
+# Start the same interactive environment as Alacritty.
+command = zsh -lc "unset HERDR_ENV; pgrep -x fcitx5 >/dev/null || fcitx5 --disable=waylandim --disable=wayland -d; exec herdr"
+
+# macOS-style shortcuts, also understood by the GTK build as Super.
+macos-option-as-alt = true
+keybind = super+,=open_config
+keybind = super+n=new_window
+keybind = alt+space=text:\x20
+keybind = super+backspace=text:\x15
+keybind = alt+left=esc:b
+keybind = alt+right=esc:f
+keybind = super+left=text:\x1bOH
+keybind = super+right=text:\x1bOF

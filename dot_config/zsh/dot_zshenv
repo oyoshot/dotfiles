@@ -122,6 +122,9 @@ typeset -gx SUDO_EDITOR=$EDITOR
 if [[ -e /dev/dxg ]]; then
   export WAYLAND_DISPLAY=
   export GALLIUM_DRIVER=d3d12
+  if [[ -z $DBUS_SESSION_BUS_ADDRESS && -S ${XDG_RUNTIME_DIR:-/run/user/$UID}/bus ]]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR:-/run/user/$UID}/bus"
+  fi
   export XMODIFIERS=@im=fcitx
   export GTK_IM_MODULE=fcitx
   export QT_IM_MODULE=fcitx
