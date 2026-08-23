@@ -118,7 +118,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
-        MISE_HTTP_RETRIES: "3"
+        MISE_HTTP_RETRIES: "5"
         MISE_JOBS: 4
       run: |
         set -euo pipefail
