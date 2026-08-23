@@ -61,13 +61,10 @@ runs:
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-${{ github.run_id }}-${{ github.run_attempt }}
+        key: arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-
-          arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-
-        path: |
-          /home/builder/.cache/mise
-          /home/builder/.local/share/mise/downloads
+          arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-
+        path: /home/builder/.cache/mise
 
     - name: System bootstrap (root)
       shell: bash
@@ -151,10 +148,8 @@ runs:
         path: /home/builder/.cache/yay
 
     - name: Save mise cache
-      if: ${{ !cancelled() }}
+      if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-${{ github.run_id }}-${{ github.run_attempt }}
-        path: |
-          /home/builder/.cache/mise
-          /home/builder/.local/share/mise/downloads
+        key: arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        path: /home/builder/.cache/mise
