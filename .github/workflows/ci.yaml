@@ -70,7 +70,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          git diff --name-only --diff-filter=ACMR "${BASE_SHA}" "${HEAD_SHA}" >/tmp/changed-files
+          git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" >/tmp/changed-files
 
           provisioning_pattern='^(\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|dot_config/homebrew/Brewfile$|dot_config/yay/extra-packages$|\.github/actions/(mac|arch)/|\.github/workflows/ci\.yaml$)'
           run=false
