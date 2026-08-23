@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+# fcitx5-wslg.service: {{ include "dot_config/systemd/user/fcitx5-wslg.service" | sha256sum }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch") }}
+if [ -e /dev/dxg ]; then
+    systemctl --user daemon-reload
+    systemctl --user enable --now fcitx5-wslg.service
+fi
+{{ end }}

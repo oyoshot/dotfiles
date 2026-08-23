@@ -118,7 +118,8 @@ typeset -gx VISUAL=$EDITOR
 typeset -gx GIT_EDITOR=$EDITOR
 typeset -gx SUDO_EDITOR=$EDITOR
 
-# WSLg: X11 (XWayland) 経由で GPU + IME を両立させる
+# WSLg: compositor が fcitx5 の Wayland IM 登録を拒否するため、
+# fcitx5 を必要とする GUI アプリは XWayland で動かす。
 if [[ -e /dev/dxg ]]; then
   export WAYLAND_DISPLAY=
   export GALLIUM_DRIVER=d3d12

@@ -17,9 +17,8 @@ window-padding-balance = true
 mouse-hide-while-typing = true
 scrollback-limit = 10000
 
-# Keep fcitx5 on the known-good WSLg XIM path and detach its diagnostics from
-# the terminal PTY.
-command = zsh -lc "unset HERDR_ENV; pgrep -x fcitx5 >/dev/null || fcitx5 --disable=waylandim --disable=wayland -d >/dev/null 2>&1; exec herdr"
+# fcitx5 is started after WSLg by the systemd user service.
+command = zsh -lc "unset HERDR_ENV; exec herdr"
 
 # macOS-style shortcuts, also understood by the GTK build as Super.
 macos-option-as-alt = true
