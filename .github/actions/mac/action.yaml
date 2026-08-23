@@ -32,10 +32,13 @@ runs:
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
-          macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-
-        path: ~/.cache/mise
+          macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-
+          macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-
+        path: |
+          ~/.cache/mise
+          ~/.local/share/mise/downloads
 
     - name: Install pinned chezmoi
       shell: bash
@@ -77,8 +80,10 @@ runs:
         path: ~/Library/Caches/Homebrew
 
     - name: Save mise cache
-      if: success()
+      if: ${{ !cancelled() }}
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
-        path: ~/.cache/mise
+        key: macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}-${{ github.run_id }}-${{ github.run_attempt }}
+        path: |
+          ~/.cache/mise
+          ~/.local/share/mise/downloads
