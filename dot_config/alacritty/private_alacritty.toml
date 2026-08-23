@@ -91,5 +91,5 @@ history = 10000
 save_to_clipboard = true
 
 [terminal.shell]
-args = ["-lc", "unset HERDR_ENV; pgrep -x fcitx5 >/dev/null || fcitx5 --disable=waylandim --disable=wayland -d; exec herdr"]
+args = ["-lc", "unset HERDR_ENV; pgrep -x fcitx5 >/dev/null || fcitx5 --disable=waylandim --disable=wayland -d >/dev/null 2>&1; exec herdr"]
 program = "zsh"
