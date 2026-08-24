@@ -5,7 +5,12 @@ windows under WSLg.
 
 Upstream issue: https://github.com/microsoft/wslg/issues/1495
 
-Install:
+On Arch WSLg machines, `chezmoi apply` installs the patched package
+automatically while the installed fcitx5 version matches this pinned recipe.
+The onchange setup script skips unknown newer versions instead of downgrading
+them or failing the rest of the apply.
+
+Manual install:
 
 ```sh
 sh ./.workarounds/REMOVE_WHEN_WSLG_1495_IS_FIXED/fcitx5-wslg-workaround install
