@@ -1,0 +1,21 @@
+[Unit]
+Description=Fcitx 5 input method for WSLg
+Documentation=https://fcitx-im.org/
+ConditionPathExists=/dev/dxg
+Wants=wslg-session.service
+After=wslg-session.service
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=GALLIUM_DRIVER=d3d12
+Environment=XMODIFIERS=@im=fcitx
+Environment=GTK_IM_MODULE=fcitx
+Environment=QT_IM_MODULE=fcitx
+# WSLg rejects zwp_input_method_v1 with "permission to bind input_method denied".
+ExecStart=/usr/bin/fcitx5 --disable=waylandim --disable=wayland --replace
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=default.target
