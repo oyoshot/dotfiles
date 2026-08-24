@@ -17,8 +17,33 @@ window-padding-balance = true
 mouse-hide-while-typing = true
 scrollback-limit = 10000
 
+# WSLg: keep the libadwaita frame instead of the dated Weston 9 one.
+#
+# The trade-off is that dragging the window edges does not resize it. Ghostty
+# declares _MOTIF_WM_HINTS decorations=0x0, so Weston draws a frame but offers
+# no resize handles, and GTK4 refuses to run its own client-side resize because
+# _GTK_FRAME_EXTENTS is absent from _NET_SUPPORTED. Nobody handles the press,
+# even though _NET_FRAME_EXTENTS keeps reporting 38,38,59,38 (= GTK's 32px
+# shadow margin plus Weston's 6px border). Measured: 1600 pointer samples with
+# 45 of them inside the 6px band and several seconds held there, zero change in
+# window geometry.
+#
+# Resize with the Windows snap shortcuts (Win+Left/Right/Up) -- those run on the
+# Windows side and bypass Weston -- or with ctrl+enter below. Switch to `server`
+# if edge dragging is ever needed: Weston then sets decorations=0x1 and provides
+# a 38px grab area, at the cost of the frame's looks.
+window-decoration = client
+
 # fcitx5 is started after WSLg by the systemd user service.
 command = zsh -lc "unset HERDR_ENV; exec herdr"
+
+# WSLg: fullscreen fits the monitor it lands on (measured 1920x1200+0+0 on the
+# 1200-tall head, 3840x2160+1920+0 on the 2160-tall one) but never subtracts the
+# taskbar, so it always covers it. maximize does respect the workarea -- 2112 =
+# 2160 - 48 -- so take over the default ctrl+enter bind, which would otherwise
+# be toggle_fullscreen. Real fullscreen stays available from the command palette
+# (ctrl+shift+p).
+keybind = ctrl+enter=toggle_maximize
 
 # macOS-style shortcuts, also understood by the GTK build as Super.
 macos-option-as-alt = true
