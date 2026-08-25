@@ -41,7 +41,9 @@ Library
 
 {{ if not (contains "microsoft" (lower (get .chezmoi.kernel "osrelease"))) }}
 .local/bin/explorer.exe
+.local/bin/ghostty
 .local/bin/rundll32.exe
+.local/share/applications/com.mitchellh.ghostty.desktop
 {{ end }}
 
 {{ if eq .chezmoi.os "windows" }}
