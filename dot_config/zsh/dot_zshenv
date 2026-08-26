@@ -119,7 +119,8 @@ typeset -gx GIT_EDITOR=$EDITOR
 typeset -gx SUDO_EDITOR=$EDITOR
 
 # WSLg: compositor が fcitx5 の Wayland IM 登録を拒否するため、
-# fcitx5 を必要とする GUI アプリは XWayland で動かす。
+# fcitx5 を必要とする GUI アプリはデフォルトで XWayland で動かす。
+# Ghostty だけは ~/.local/bin/ghostty で Wayland + GTK IM に戻す。
 if [[ -e /dev/dxg ]]; then
   export WAYLAND_DISPLAY=
   export GALLIUM_DRIVER=d3d12

@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+# WSLg cannot host fcitx5's Wayland input-method protocol, but the fcitx GTK4
+# module can use D-Bus and render its candidate list as a GtkPopover.  Rendering
+# that popup through Mesa's D3D12-backed GSK renderer deadlocks, so keep GTK's
+# chrome on Cairo. Ghostty's terminal renderer remains OpenGL.
+if [ -e /dev/dxg ]; then
+    runtime_dir=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+    wayland_display=${WAYLAND_DISPLAY:-wayland-0}
+
+    if [ -S "$runtime_dir/$wayland_display" ]; then
+        export WAYLAND_DISPLAY=$wayland_display
+        export GDK_BACKEND=wayland
+        export GALLIUM_DRIVER=d3d12
+        export GTK_IM_MODULE=fcitx
+        export FCITX_ENABLE_SYNC_MODE=0
+        export GSK_RENDERER=cairo
+
+        if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && [ -S "$runtime_dir/bus" ]; then
+            export DBUS_SESSION_BUS_ADDRESS="unix:path=$runtime_dir/bus"
+        fi
+    fi
+fi
+
+exec /usr/bin/ghostty "$@"
