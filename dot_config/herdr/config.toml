@@ -28,8 +28,8 @@ height = "70%"
 agent_panel_sort = "priority"
 
 [ui.sidebar.agents]
-# herdr-plugin-renamer replaces the agent display label with the generated task.
-# Before naming completes, this falls back to the detected agent name.
+# Show the native Claude Code / Codex session title. Until the agent generates
+# one, this falls back to the detected agent name.
 rows = [
   ["state_icon", "agent"],
   ["workspace", "tab"],
