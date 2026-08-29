@@ -63,10 +63,10 @@ return {
 					return
 				end
 
-				-- stop any non-deno LSP attached to this buffer
+				-- denols and TypeScript language servers must not share a Deno buffer.
 				for _, c in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-					if c.name ~= "denols" then
-						c.stop(true)
+					if c.name == "vtsls" or c.name == "ts_ls" then
+						c:stop(true)
 					end
 				end
 			end,
