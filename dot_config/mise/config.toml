@@ -88,8 +88,6 @@ zig = "latest"
 "npm:textlint-rule-preset-jtf-style" = "latest"
 "npm:textlint-rule-prh" = "latest"
 "npm:textlint-rule-terminology" = "latest"
-"npm:typescript" = "5"
-
 "pipx:poetry" = "latest"
 "pipx:pyright" = "latest"
 "pipx:ruff" = "latest"
