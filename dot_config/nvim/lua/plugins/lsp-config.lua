@@ -19,8 +19,6 @@ return {
 			end,
 		})
 
-		pcall(require, "lspconfig")
-
 		local cfg = vim.fn.stdpath("config")
 		local globs = {
 			cfg .. "/lua/lsp/*.lua",
