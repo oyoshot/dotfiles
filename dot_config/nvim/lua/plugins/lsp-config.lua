@@ -1,6 +1,6 @@
 return {
 	"neovim/nvim-lspconfig",
-	event = "BufReadPre",
+	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		vim.lsp.config("*", {
 			capabilities = require("cmp_nvim_lsp").default_capabilities(),
@@ -25,24 +25,19 @@ return {
 		local globs = {
 			cfg .. "/lua/lsp/*.lua",
 			cfg .. "/lsp/*.lua",
+			cfg .. "/after/lsp/*.lua",
 		}
 
-		local files = {}
+		local names = {}
 
 		for _, pat in ipairs(globs) do
 			for _, f in ipairs(vim.fn.glob(vim.fs.normalize(pat), true, true)) do
-				table.insert(files, f)
+				local name = f:match("([^/]+)%.lua$")
+				if name and name ~= "init" then
+					names[name] = true
+				end
 			end
 		end
-
-		local names = vim.iter(files)
-			:map(function(p)
-				return p:match("([^/]+)%.lua$")
-			end)
-			:filter(function(n)
-				return n and n ~= "init"
-			end)
-			:totable()
 
 		pcall(function()
 			local common = require("lsp.common")
@@ -51,12 +46,10 @@ return {
 			end
 		end)
 
-		if #names > 0 and vim.lsp.enable then
-			local ok = pcall(vim.lsp.enable, names) -- 0.11 は配列OK
+		for name in vim.spairs(names) do
+			local ok, err = pcall(vim.lsp.enable, name)
 			if not ok then
-				for _, n in ipairs(names) do
-					pcall(vim.lsp.enable, n)
-				end
+				vim.notify(("Failed to enable LSP %s: %s"):format(name, err), vim.log.levels.ERROR)
 			end
 		end
 
