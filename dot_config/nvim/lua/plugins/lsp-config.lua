@@ -21,8 +21,6 @@ return {
 
 		local cfg = vim.fn.stdpath("config")
 		local globs = {
-			cfg .. "/lua/lsp/*.lua",
-			cfg .. "/lsp/*.lua",
 			cfg .. "/after/lsp/*.lua",
 		}
 
