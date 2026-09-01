@@ -5,7 +5,10 @@ vim.diagnostic.config({
 		source = true,
 	},
 	severity_sort = true,
-	virtual_text = false,
+	virtual_text = {
+		source = "if_many",
+		spacing = 2,
+	},
 })
 
 -- Diagnostic keymaps
