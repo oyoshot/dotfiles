@@ -13,7 +13,9 @@ Environment=XMODIFIERS=@im=fcitx
 Environment=GTK_IM_MODULE=fcitx
 Environment=QT_IM_MODULE=fcitx
 # WSLg rejects zwp_input_method_v1 with "permission to bind input_method denied".
-ExecStart=/usr/bin/fcitx5 --disable=waylandim --disable=wayland --replace
+# Its RDP clipboard backend can also abort when fcitx5's clipboard monitor
+# overlaps an outstanding request: https://github.com/microsoft/wslg/issues/1407
+ExecStart=/usr/bin/fcitx5 --disable=waylandim,wayland,clipboard --replace
 Restart=always
 RestartSec=2s
 
