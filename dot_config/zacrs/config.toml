@@ -87,3 +87,45 @@ chcd = 'cd $(chezmoi source-path)'
 trigger = "gcm"
 expansion = "git commit -m '{{cursor}}'"
 description = "git commit with a message"
+
+[[abbreviation]]
+trigger = "null"
+expansion = "> /dev/null 2>&1"
+description = "redirect stdout and stderr to /dev/null"
+when.position = "any"
+
+[[abbreviation]]
+trigger = "clip"
+expansion = "| pbcopy"
+description = "copy stdout to clipboard"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "json"
+expansion = "| jq"
+description = "format JSON output"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "count"
+expansion = "| wc -l"
+description = "count output lines"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "sortu"
+expansion = "| sort -u"
+description = "sort and deduplicate output"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "nullout"
+expansion = "> /dev/null"
+description = "discard stdout"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "nullerr"
+expansion = "2> /dev/null"
+description = "discard stderr"
+when.position = "argument"
