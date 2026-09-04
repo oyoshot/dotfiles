@@ -1,0 +1,5 @@
+#compdef claude
+
+# Claude Code does not provide a shell-completion generator. Let zsh derive
+# options from `claude --help` so CLI upgrades do not require updating this file.
+_gnu_generic

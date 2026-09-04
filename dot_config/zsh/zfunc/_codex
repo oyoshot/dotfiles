@@ -1,0 +1,7 @@
+#compdef codex
+
+# Generate the completion from the installed Codex version so it stays in sync
+# when mise upgrades the CLI.
+if (( $+commands[codex] )); then
+  source <(codex completion zsh 2>/dev/null)
+fi
