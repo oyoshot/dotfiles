@@ -144,6 +144,7 @@
           };
           modules = [
             ./home.nix
+            ./dotfiles.nix
             {
               home.username = "oyoshot";
               home.homeDirectory = "/home/oyoshot";
@@ -158,6 +159,7 @@
           };
           modules = [
             ./home.nix
+            ./dotfiles.nix
             {
               home.username = "oyoshot";
               home.homeDirectory = "/Users/oyoshot";

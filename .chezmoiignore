@@ -7,6 +7,7 @@ images
 flake.nix
 flake.lock
 home.nix
+dotfiles.nix
 result
 result-*
 

@@ -1,7 +1,7 @@
 # Nix / Home Manager CLI 環境
 
 Linux x86_64 と macOS Apple Silicon の CLI 64 パッケージを、`flake.lock` で固定したソースから導入する。
-設定ファイルは引き続き chezmoi で管理する。
+CLI と設定ファイルを Home Manager の同じ世代で管理する。
 
 ## 今回の分担
 
@@ -22,14 +22,13 @@ Nix 自体が必要。新しい端末には、先に [Nix 公式の導入手順]
 
 ```sh
 sh script_home-apply.sh
-chezmoi apply
 exec zsh -l
 ```
 
 `script_home-apply.sh` は OS に合う `homeConfigurations` を選び、CLI 一式をビルドして Home Manager の世代を切り替える。
 成功すると `~/.local/state/nix/profiles/home-manager/home-path` からコマンドを使える。
 ビルドや衝突確認に失敗した場合、Home Manager は現在の世代を維持して処理を止める。
-`chezmoi apply` は Zsh、Neovim などの設定ファイルだけを反映する。CLI 定義だけを変えた場合は不要。
+同じ activation で Zsh、Neovim などの設定ファイルも反映するため、`chezmoi apply` は不要。
 
 以後、CLI のビルドと切り替えは次のコマンドだけでよい:
 
@@ -86,7 +85,7 @@ home-manager generations
 ```
 
 一覧に表示された過去の世代の `activate` を実行すると、その CLI 世代へ戻せる。
-設定も戻す場合は、動作確認済みの `flake.nix`、`flake.lock` と設定ファイルに戻し、`sh script_home-apply.sh` と `chezmoi apply` を実行する。
+設定も戻す場合は、動作確認済みの `flake.nix`、`flake.lock` と設定ファイルに戻し、`sh script_home-apply.sh` を実行する。
 移行全体を取り消す場合は、移行前の mise / Brew / Arch の宣言とシェル設定を復元する。
 
 ## 今回の検証（2026-09-10）
