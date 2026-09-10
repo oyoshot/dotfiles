@@ -9,20 +9,20 @@ CLI と設定ファイルは Home Manager で管理する。chezmoi と適用ラ
 
 ```sh
 # Linux / WSL (oyoshot)
-home-manager switch --flake .#oyoshot-linux
+home-manager switch --flake '.#oyoshot-linux'
 
 # macOS Apple Silicon (oyoshot)
-home-manager switch --flake .#oyoshot-darwin
+home-manager switch --flake '.#oyoshot-darwin'
 ```
 
 新しい端末では先に Nix を導入し、Home Manager 本体がまだなければ次で初回適用できる:
 
 ```sh
-nix --extra-experimental-features 'nix-command flakes' run .#home-manager -- switch --flake .#oyoshot-linux
+nix --extra-experimental-features 'nix-command flakes' run '.#home-manager' -- switch --flake '.#oyoshot-linux'
 ```
 
 macOS では末尾を `.#oyoshot-darwin` にする。ユーザー名・ホームディレクトリが異なる場合は `flake.nix` にその端末の構成を追加する。
-初回に既存ファイルとの衝突が出たら、差分を確認して `home-manager -b before-home-manager switch --flake .#oyoshot-linux` で退避する。通常の定義に `force = true` は入れない。
+初回に既存ファイルとの衝突が出たら、差分を確認して `home-manager -b before-home-manager switch --flake '.#oyoshot-linux'` で退避する。通常の定義に `force = true` は入れない。
 
 反映後にシェルを開き直すか `exec zsh -l` を実行する。
 設定を編集するときはホームの管理リンクではなく、このリポジトリの `config/`・`local/` を編集して再適用する。アプリが書き換えるロックファイルなどは、変更内容をリポジトリへ取り込んでから再適用する。
@@ -48,14 +48,22 @@ GPG agent・memo・fcitx のリポジトリ内設定は認証情報を含まな�
 nix flake update nixpkgs home-manager
 # 外部プラグインも更新する場合は nix flake update
 git diff -- flake.lock
-home-manager switch --flake .#oyoshot-linux
+home-manager switch --flake '.#oyoshot-linux'
 ```
+
+お知らせを見る場合も、このリポジトリの構成を指定する:
+
+```sh
+home-manager news --flake '.#oyoshot-linux'
+```
+
+この Zsh 設定では `#` がパターンとして解釈されるため、flake の指定を引用符で囲む。`--flake` を省略すると Home Manager は標準の設定場所を探すため、このリポジトリの構成は選ばれない。
 
 更新前の世代は `home-manager generations` で確認し、表示された過去のストアパスの `activate` を実行して戻せる。
 
 ```sh
 nix flake check --all-systems --no-build
-nix build .#homeConfigurations.oyoshot-linux.activationPackage --no-link
+nix build '.#homeConfigurations.oyoshot-linux.activationPackage' --no-link
 ```
 
 `flake check` だけでは任意の `homeConfigurations` 全体を評価しないため、CI では4構成それぞれの `activationPackage.drvPath` も評価する。Linux と macOS の新規環境は、それぞれ `ci-linux`（builder）と `ci-darwin`（runner）を適用し、ホストのセットアップと CLI 起動を検証する。

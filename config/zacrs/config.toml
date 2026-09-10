@@ -77,8 +77,8 @@ lt = 'eza --icons --group-directories-first --tree'
 lla = 'eza --icons --group-directories-first -la --header --git --group'
 b = 'bat --theme ansi'
 cat = 'bat --theme ansi'
-hal = 'home-manager switch --flake ~/.local/share/chezmoi#oyoshot-linux'
-ham = 'home-manager switch --flake ~/.local/share/chezmoi#oyoshot-darwin'
+hal = 'home-manager switch --flake "$HOME/.local/share/chezmoi#oyoshot-linux"'
+ham = 'home-manager switch --flake "$HOME/.local/share/chezmoi#oyoshot-darwin"'
 
 [[abbreviation]]
 trigger = "gcm"
