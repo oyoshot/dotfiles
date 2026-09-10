@@ -69,7 +69,7 @@ vim.o.laststatus = 2
 vim.env.PATH = vim.env.PATH
 	.. ":"
 	.. (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state"))
-	.. "/nix/profiles/dotfiles/bin"
+	.. "/nix/profiles/home-manager/home-path/bin"
 	.. ":"
 	.. (vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share"))
 	.. "/mise/shims"

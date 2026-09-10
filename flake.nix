@@ -2,13 +2,17 @@
   description = "Pinned CLI tools for these dotfiles";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.home-manager = {
+    url = "github:nix-community/home-manager/master";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
   inputs.zacrs-src = {
     url = "github:oyoshot/zsh-autocomplete-rs-proto/e0a41c3c46d0c8f36b1fbd7bc27b31bf14e6d575";
     flake = false;
   };
 
   outputs =
-    { nixpkgs, zacrs-src, ... }:
+    { self, nixpkgs, home-manager, zacrs-src, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -112,6 +116,7 @@
     in
     {
       packages = forAllSystems (pkgs: {
+        home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
         zsh-autocomplete-rs = zacrsPackage pkgs;
         default = pkgs.buildEnv {
           name = "dotfiles-cli";
@@ -130,5 +135,36 @@
           packages = cliPackages pkgs;
         };
       });
+
+      homeConfigurations = {
+        oyoshot-linux = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          };
+          modules = [
+            ./home.nix
+            {
+              home.username = "oyoshot";
+              home.homeDirectory = "/home/oyoshot";
+              home.packages = [ self.packages.x86_64-linux.default ];
+            }
+          ];
+        };
+        oyoshot-darwin = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "aarch64-darwin";
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          };
+          modules = [
+            ./home.nix
+            {
+              home.username = "oyoshot";
+              home.homeDirectory = "/Users/oyoshot";
+              home.packages = [ self.packages.aarch64-darwin.default ];
+            }
+          ];
+        };
+      };
     };
 }

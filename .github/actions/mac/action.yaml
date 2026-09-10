@@ -61,6 +61,10 @@ runs:
       shell: bash
       run: sh .github/scripts/install-nix.sh
 
+    - name: Activate Home Manager CLI environment
+      shell: bash
+      run: sh script_home-apply.sh
+
     - name: Apply dotfiles with chezmoi
       shell: bash
       env:

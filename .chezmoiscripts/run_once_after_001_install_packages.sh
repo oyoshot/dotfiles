@@ -1,7 +1,7 @@
 #!/bin/zsh
 set -euo pipefail
 
-export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/dotfiles/bin:$PATH"
+export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path/bin:$PATH"
 
 if [[ ! -f "$CARGO_HOME/env" ]]; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |

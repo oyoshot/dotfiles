@@ -117,6 +117,10 @@ runs:
       shell: bash
       run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/install-nix.sh"
 
+    - name: Activate Home Manager CLI environment (builder)
+      shell: bash
+      run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/script_home-apply.sh"
+
     - name: Apply chezmoi (builder)
       shell: bash
       env:

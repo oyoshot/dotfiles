@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/dotfiles"
+profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path"
 export PATH="$profile/bin:$PATH"
 for tool in rg fd jq nvim herdr pyright stylua zsh-autocomplete-rs; do
     actual=$(command -v "$tool")
@@ -28,7 +28,7 @@ zsh -ic '
     __mise_activate_once
     for pass in 1 2; do
         for tool in rg nvim herdr pyright; do
-            [[ $(command -v "$tool") == "$XDG_STATE_HOME/nix/profiles/dotfiles/bin/$tool" ]] || exit 1
+            [[ $(command -v "$tool") == "$XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin/$tool" ]] || exit 1
         done
         _mise_hook
     done

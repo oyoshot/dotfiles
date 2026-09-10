@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/dotfiles/bin:$PATH"
+export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path/bin:$PATH"
 
 OS="$(uname -s)"
 HOME_DIR="${HOME}"

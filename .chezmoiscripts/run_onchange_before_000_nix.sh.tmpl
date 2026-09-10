@@ -1,9 +1,0 @@
-{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin") -}}
-#!/bin/sh
-set -eu
-# flake: {{ include "flake.nix" | sha256sum }}
-# lock: {{ include "flake.lock" | sha256sum }}
-# installer: {{ include "script_nix-apply.sh" | sha256sum }}
-# Build before chezmoi replaces the package lists or shell configuration.
-sh {{ joinPath .chezmoi.sourceDir "script_nix-apply.sh" | quote }}
-{{ end -}}

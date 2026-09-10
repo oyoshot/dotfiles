@@ -3,9 +3,10 @@ theme.png
 images
 .workarounds
 
-# Repository-local Nix definitions (built by the before script)
+# Repository-local Nix and Home Manager definitions
 flake.nix
 flake.lock
+home.nix
 result
 result-*
 
