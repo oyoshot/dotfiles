@@ -1,97 +1,72 @@
-# Nix / Home Manager CLI 環境
+# Home Manager 環境
 
-Linux x86_64 と macOS Apple Silicon の CLI 64 パッケージを、`flake.lock` で固定したソースから導入する。
-CLI と設定ファイルを Home Manager の同じ世代で管理する。
+CLI と設定ファイルは Home Manager で管理する。chezmoi と適用ラッパーは不要。
+設定の内容は `config/` と `local/` の普通のファイルとして保持し、`dotfiles.nix` の `xdg.configFile`・`home.file` で配置先を宣言する。
 
-## 今回の分担
+## 適用
 
-- Nix + Home Manager: mise から移した 48 件の CLI・LSP・フォーマッターと、bat / fzf / Neovim / tmux など日常用の 16 パッケージ。zacrs は公開済み Git リビジョンと Cargo の依存を固定してソースからビルドする。Home Manager が CLI の世代と切り替えを管理する。
-- mise: 言語ランタイム、Terraform の複数バージョン、未収録の CLI、textlint のルール一式、Astro の言語サーバーと TypeScript プラグイン。
-- Homebrew / Arch: GUI、OS 統合、シェル、コンパイラー、残りの CLI。今回 Brew から 16 件、Arch から 15 件の重複宣言を除いた。
-- Rustup: Rust のツールチェーンとコンポーネント。
-
-パッケージの一覧は `flake.nix`、移行前の依存調査は [NIX-DEPENDENCIES.md](NIX-DEPENDENCIES.md) を参照。
-Nixpkgs の非自由パッケージ許可は、今回必要な `claude-code` に限定している。
-
-## 導入
-
-Nix 自体が必要。新しい端末には、先に [Nix 公式の導入手順](https://nix.dev/manual/nix/2.33/installation/installing-binary.html) でインストールする。
-このリポジトリは Nix 本体を自動インストールしない。CI のみ、バージョンと SHA-256 を固定した公式インストーラーを使用する。
-
-リポジトリのルートで:
+このリポジトリで実行する:
 
 ```sh
-sh script_home-apply.sh
-exec zsh -l
+# Linux / WSL (oyoshot)
+home-manager switch --flake .#oyoshot-linux
+
+# macOS Apple Silicon (oyoshot)
+home-manager switch --flake .#oyoshot-darwin
 ```
 
-`script_home-apply.sh` は OS に合う `homeConfigurations` を選び、CLI 一式をビルドして Home Manager の世代を切り替える。
-成功すると `~/.local/state/nix/profiles/home-manager/home-path` からコマンドを使える。
-ビルドや衝突確認に失敗した場合、Home Manager は現在の世代を維持して処理を止める。
-同じ activation で Zsh、Neovim などの設定ファイルも反映するため、`chezmoi apply` は不要。
-
-以後、CLI のビルドと切り替えは次のコマンドだけでよい:
+新しい端末では先に Nix を導入し、Home Manager 本体がまだなければ次で初回適用できる:
 
 ```sh
-sh script_home-apply.sh
+nix --extra-experimental-features 'nix-command flakes' run .#home-manager -- switch --flake .#oyoshot-linux
 ```
 
-個人の既存 Nix プロファイルとは別に世代を管理する。元の mise / Brew / Arch のインストール済みパッケージは削除しない。
+macOS では末尾を `.#oyoshot-darwin` にする。ユーザー名・ホームディレクトリが異なる場合は `flake.nix` にその端末の構成を追加する。
+初回に既存ファイルとの衝突が出たら、差分を確認して `home-manager -b before-home-manager switch --flake .#oyoshot-linux` で退避する。通常の定義に `force = true` は入れない。
 
-## コマンドの選択
+反映後にシェルを開き直すか `exec zsh -l` を実行する。
+設定を編集するときはホームの管理リンクではなく、このリポジトリの `config/`・`local/` を編集して再適用する。アプリが書き換えるロックファイルなどは、変更内容をリポジトリへ取り込んでから再適用する。
 
-Zsh の基本の順序は `~/.local/bin` → Home Manager のプロファイル → 個人の Nix プロファイル → OS のコマンド → mise shims。
-mise の有効化後は、プロジェクトで明示されたバージョンが優先される。
-Neovim はこの順序を引き継ぎ、mise shims を先頭に割り込ませない。
-Nix の man ページと Zsh 補完も読み込む。
+## 分担
 
-```sh
-command -v rg nvim herdr pyright
-rg --version
-nvim --version
-```
+- `flake.nix`: 共有 CLI、プラットフォーム、ユーザー。
+- `home.nix`: Home Manager のモジュールと互換性バージョン。
+- `dotfiles.nix`: 設定ファイルの配置。OS 別の配置先とホーム依存のテンプレートもここで指定する。
+- `externals.nix`: Zsh プラグイン、tmux plugin manager、Alacritty テーマ、校正ルール、WSL クリップボード。ソースは `flake.lock` またはハッシュで固定する。
+- `services.nix`: Neovim ログローテーションと WSLg fcitx の systemd／launchd 定義。
+- mise: ランタイム、Terraform の複数バージョン、未移行 CLI、textlint のルール等。
+- Homebrew / Arch: GUI、OS 統合、シェル、コンパイラー等。
 
-Nix で移したコマンドは、通常 `~/.local/state/nix/profiles/home-manager/home-path/bin/` が選ばれる。
-`~/.local/bin` に同名のラッパーがある場合や、プロジェクトの mise 設定に明示した場合はそちらが優先される。
-すでに起動中のアプリやサーバーは、再起動するまで既存の実行ファイルを使い続ける。
+新規端末の OS パッケージ・Rustup・mise・herdr 統合は、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
+WSLg のパッチ適用と Windows ランチャー登録は `scripts/setup-wslg.sh` に残している。
 
-## 評価・ビルド・更新
+GPG agent・memo・fcitx のリポジトリ内設定は認証情報を含まない通常の設定として管理する。`private_` という旧ファイル名だけを根拠とする権限変更は廃止した。Nix store のファイルは読み取り可能なので、今後秘密鍵・トークンをこの構成に埋め込まない。
 
-Nix が現在のシェルの PATH にない場合は `export PATH="$HOME/.nix-profile/bin:$PATH"` を先に実行する。
-
-```sh
-nix --extra-experimental-features 'nix-command flakes' flake check --all-systems --no-build
-nix --extra-experimental-features 'nix-command flakes' build
-./result/bin/rg --version
-```
-
-`flake check --no-build` は定義の評価。実際のビルド・起動確認は各 OS 上で別途行う。
-`nix develop` でも同じ CLI 一式を使える。
+## 更新と検証
 
 ```sh
-nix --extra-experimental-features 'nix-command flakes' flake update nixpkgs home-manager
+nix flake update nixpkgs home-manager
+# 外部プラグインも更新する場合は nix flake update
 git diff -- flake.lock
-sh script_home-apply.sh
+home-manager switch --flake .#oyoshot-linux
 ```
 
-通常の適用ではロックファイルを更新しない。`nixpkgs` と Home Manager は同じ `flake.lock` で固定され、Home Manager はこの flake の `nixpkgs` を共有する。
-
-## 戻す
-
-過去の世代を表示する:
+更新前の世代は `home-manager generations` で確認し、表示された過去のストアパスの `activate` を実行して戻せる。
 
 ```sh
-home-manager generations
+nix flake check --all-systems --no-build
+nix build .#homeConfigurations.oyoshot-linux.activationPackage --no-link
 ```
 
-一覧に表示された過去の世代の `activate` を実行すると、その CLI 世代へ戻せる。
-設定も戻す場合は、動作確認済みの `flake.nix`、`flake.lock` と設定ファイルに戻し、`sh script_home-apply.sh` を実行する。
-移行全体を取り消す場合は、移行前の mise / Brew / Arch の宣言とシェル設定を復元する。
+`flake check` だけでは任意の `homeConfigurations` 全体を評価しないため、CI では4構成それぞれの `activationPackage.drvPath` も評価する。Linux と macOS の新規環境は、それぞれ `ci-linux`（builder）と `ci-darwin`（runner）を適用し、ホストのセットアップと CLI 起動を検証する。
 
-## 今回の検証（2026-09-10）
+Home Manager の基本操作は [公式マニュアル](https://nix-community.github.io/home-manager/usage/configuration.html) を参照。
 
-- Linux: 64 パッケージの実ビルドと、各パッケージの代表コマンドによるバージョン表示またはヘルプ起動。
-- Linux: Home Manager の activation、Zsh のコマンド選択、mise 有効化後の Node / Terraform との共存、現在の設定による Neovim の起動と pyright の参照先。
-- Linux / macOS: Home Manager 構成を含む flake の定義評価。ShellCheck、actionlint、シェル構文確認。
+## この移行で確認した範囲
 
-macOS の実ビルド・実機動作と、更新した CI 全体の実行は未確認。CI には Nix 導入と代表 CLI の起動確認を追加した。
+- Linux 実機への初回切り替えと、バックアップ指定なしの再適用。
+- CLI の参照先、Zsh と zacrs、fcitx とログローテーションの systemd 有効化・稼働状態。
+- Linux CI 用世代のビルドと、空のホーム向け世代内の設定・外部ソース・実行権限。
+- macOS を含む4構成の評価、ShellCheck、Zsh 構文、actionlint。
+
+macOS 実機での適用と GitHub Actions 全体の実行は、この作業環境では未実施。

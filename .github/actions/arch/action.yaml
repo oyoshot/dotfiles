@@ -1,21 +1,18 @@
 name: Arch Linux Setup
-description: Bootstrap Arch environment, restore caches, install pinned chezmoi, and apply dotfiles
+description: Bootstrap Arch environment, restore caches, activate Home Manager, and provision host tools
 
 inputs:
   arch-extra-packages-path:
     description: "Path to Arch extra packages list"
-    default: dot_config/yay/extra-packages
+    default: config/yay/extra-packages
   mise-config-path:
     description: "Path to mise config"
-    default: dot_config/mise/config.toml
+    default: config/mise/config.toml
   cache-epoch:
     description: "Cache generation identifier"
     required: true
-  chezmoi-version:
-    description: "Pinned chezmoi version"
-    required: true
   github-token:
-    description: "GitHub token passed only to chezmoi apply step"
+    description: "GitHub token for explicit host provisioning"
     default: ""
 
 runs:
@@ -75,26 +72,6 @@ runs:
         pacman -Syu --noconfirm archlinux-keyring
         pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip pacman-contrib
 
-    - name: Install pinned chezmoi
-      shell: bash
-      run: |
-        set -euo pipefail
-        version="${{ inputs.chezmoi-version }}"
-        archive="chezmoi_${version}_linux_amd64.tar.gz"
-        checksums="chezmoi_${version}_checksums.txt"
-
-        tmpdir="$(mktemp -d)"
-        trap 'rm -rf "${tmpdir}"' EXIT
-
-        curl -fsSLo "${tmpdir}/${archive}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${archive}"
-        curl -fsSLo "${tmpdir}/${checksums}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${checksums}"
-
-        grep "  ${archive}$" "${tmpdir}/${checksums}" | (cd "${tmpdir}" && sha256sum -c -)
-        tar -xzf "${tmpdir}/${archive}" -C "${tmpdir}" chezmoi
-
-        install -m 0755 "${tmpdir}/chezmoi" /usr/local/bin/chezmoi
-        chezmoi --version
-
     - name: Create builder user
       shell: bash
       run: |
@@ -117,11 +94,14 @@ runs:
       shell: bash
       run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/install-nix.sh"
 
-    - name: Activate Home Manager CLI environment (builder)
+    - name: Activate Home Manager (builder)
       shell: bash
-      run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/script_home-apply.sh"
+      run: |
+        sudo -Hu builder /home/builder/.nix-profile/bin/nix \
+          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
+          switch --flake .#ci-linux
 
-    - name: Apply chezmoi (builder)
+    - name: Provision host tools (builder)
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
@@ -137,7 +117,7 @@ runs:
           MISE_HTTP_TIMEOUT="${MISE_HTTP_TIMEOUT}" \
           MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \
           MISE_JOBS="${MISE_JOBS}" \
-          chezmoi init --apply -S "${GITHUB_WORKSPACE}"
+          sh "${GITHUB_WORKSPACE}/scripts/bootstrap-host.sh"
 
     - name: Check Nix CLI environment (builder)
       shell: bash

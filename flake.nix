@@ -11,8 +11,19 @@
     flake = false;
   };
 
+  inputs.tpm = { url = "github:tmux-plugins/tpm"; flake = false; };
+  inputs.zsh-defer = { url = "github:romkatv/zsh-defer"; flake = false; };
+  inputs.zsh-completions = { url = "github:zsh-users/zsh-completions"; flake = false; };
+  inputs.anyframe = { url = "github:mollifier/anyframe"; flake = false; };
+  inputs.autosuggestions = { url = "github:zsh-users/zsh-autosuggestions"; flake = false; };
+  inputs.syntax-highlighting = { url = "github:zdharma-continuum/fast-syntax-highlighting"; flake = false; };
+  inputs.zsh-history = { url = "github:zsh-users/zsh-history-substring-search"; flake = false; };
+  inputs.ni-zsh = { url = "github:azu/ni.zsh"; flake = false; };
+  inputs.prh-rules = { url = "github:prh/rules"; flake = false; };
+  inputs.alacritty-theme = { url = "github:alacritty/alacritty-theme"; flake = false; };
+
   outputs =
-    { self, nixpkgs, home-manager, zacrs-src, ... }:
+    inputs@{ self, nixpkgs, home-manager, zacrs-src, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -142,24 +153,49 @@
             system = "x86_64-linux";
             config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
           };
+          extraSpecialArgs = { inherit inputs; };
           modules = [
             ./home.nix
-            ./dotfiles.nix
             {
               home.username = "oyoshot";
               home.homeDirectory = "/home/oyoshot";
+              dotfiles.wsl = true;
               home.packages = [ self.packages.x86_64-linux.default ];
             }
           ];
+        };
+        ci-linux = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          };
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./home.nix {
+            home.username = "builder";
+            home.homeDirectory = "/home/builder";
+            home.packages = [ self.packages.x86_64-linux.default ];
+          } ];
+        };
+        ci-darwin = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "aarch64-darwin";
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          };
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./home.nix {
+            home.username = "runner";
+            home.homeDirectory = "/Users/runner";
+            home.packages = [ self.packages.aarch64-darwin.default ];
+          } ];
         };
         oyoshot-darwin = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "aarch64-darwin";
             config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
           };
+          extraSpecialArgs = { inherit inputs; };
           modules = [
             ./home.nix
-            ./dotfiles.nix
             {
               home.username = "oyoshot";
               home.homeDirectory = "/Users/oyoshot";

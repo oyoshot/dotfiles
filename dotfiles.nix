@@ -1,123 +1,156 @@
 { config, lib, pkgs, ... }:
 
-let
-  inherit (lib) hasPrefix hasSuffix removePrefix removeSuffix;
-
-  decodeName = name:
-    if hasPrefix "dot_" name then ".${removePrefix "dot_" name}"
-    else if hasPrefix "private_" name then removePrefix "private_" name
-    else if hasPrefix "executable_" name then removePrefix "executable_" name
-    else name;
-
-  decodePath = path:
-    lib.concatStringsSep "/" (map decodeName (lib.splitString "/" path));
-
-  collectFiles = sourceRoot: targetRoot:
-    let
-      walk = relative: dir:
-        lib.concatMap
-          (name:
-            let
-              kind = (builtins.readDir dir).${name};
-              source = dir + "/${name}";
-              child = if relative == "" then name else "${relative}/${name}";
-            in
-            if kind == "directory" then walk child source
-            else if hasSuffix ".tmpl" name || hasPrefix "symlink_" name then [ ]
-            else [ {
-              name = "${targetRoot}/${decodePath child}";
-              value = {
-                inherit source;
-                force = true;
-                executable = hasPrefix "executable_" name;
-              };
-            } ])
-          (builtins.attrNames (builtins.readDir dir));
-    in
-    walk "" sourceRoot;
-
-  commonFiles =
-    collectFiles ./dot_config ".config"
-    ++ collectFiles ./dot_local ".local";
-  darwinFiles = collectFiles ./private_Library "Library";
-
-  fcitxProfile = pkgs.writeText "fcitx5-profile" (builtins.replaceStrings
-    [ ''{{ "\n" -}}'' ]
-    [ "" ]
-    (builtins.readFile ./dot_config/private_fcitx5/private_profile.tmpl));
-  gpgAgentConfig = pkgs.writeText "gpg-agent.conf"
-    (lib.optionalString pkgs.stdenv.hostPlatform.isDarwin
-      "pinentry-program /opt/homebrew/bin/pinentry-mac\n");
-
-  keepForPlatform = entry:
-    let target = entry.name;
-    in
-    if pkgs.stdenv.hostPlatform.isDarwin then
-      !(hasPrefix ".config/fcitx5/" target
-        || hasPrefix ".config/systemd/" target
-        || hasPrefix ".config/yay/" target
-        || hasPrefix ".local/share/applications/" target)
-    else
-      !(hasPrefix ".config/homebrew/" target
-        || hasPrefix ".config/skhd/" target
-        || hasPrefix ".config/yabai/" target);
-
-  generatedFiles = {
-    ".zshenv" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/zsh/.zshenv";
-      force = true;
+{
+  xdg.configFile = {
+    "alacritty" = {
+      source = ./config/alacritty;
+      recursive = true;
     };
-    ".textlintrc" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/textlint/textlintrc";
-      force = true;
+    "atcoder-cli-nodejs" = {
+      source = ./config/atcoder-cli-nodejs;
+      recursive = true;
     };
-    ".config/fcitx5/profile" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      source = fcitxProfile;
-      force = true;
+    "claude" = {
+      source = ./config/claude;
+      recursive = true;
     };
-    ".config/gnupg/gpg-agent.conf" = {
-      source = gpgAgentConfig;
-      force = true;
+    "codex" = {
+      source = ./config/codex;
+      recursive = true;
     };
-    ".config/textlint/textlintrc" = {
+    "cspell" = {
+      source = ./config/cspell;
+      recursive = true;
+    };
+    "ghostty" = {
+      source = ./config/ghostty;
+      recursive = true;
+    };
+    "git" = {
+      source = ./config/git;
+      recursive = true;
+    };
+    "gwq" = {
+      source = ./config/gwq;
+      recursive = true;
+    };
+    "herdr" = {
+      source = ./config/herdr;
+      recursive = true;
+    };
+    "homebrew" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      source = ./config/homebrew;
+      recursive = true;
+    };
+    "keras" = {
+      source = ./config/keras;
+      recursive = true;
+    };
+    "mcphub" = {
+      source = ./config/mcphub;
+      recursive = true;
+    };
+    "memo" = {
+      source = ./config/memo;
+      recursive = true;
+    };
+    "mise" = {
+      source = ./config/mise;
+      recursive = true;
+    };
+    "npm" = {
+      source = ./config/npm;
+      recursive = true;
+    };
+    "nvim" = {
+      source = ./config/nvim;
+      recursive = true;
+    };
+    "ripgrep" = {
+      source = ./config/ripgrep;
+      recursive = true;
+    };
+    "ruff" = {
+      source = ./config/ruff;
+      recursive = true;
+    };
+    "rye" = {
+      source = ./config/rye;
+      recursive = true;
+    };
+    "skhd" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      source = ./config/skhd;
+      recursive = true;
+    };
+    "starship.toml" = {
+      source = ./config/starship.toml;
+    };
+    "tmux" = {
+      source = ./config/tmux;
+      recursive = true;
+    };
+    "typos" = {
+      source = ./config/typos;
+      recursive = true;
+    };
+    "yabai" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      source = ./config/yabai;
+      recursive = true;
+    };
+    "yay" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      source = ./config/yay;
+      recursive = true;
+    };
+    "yazi" = {
+      source = ./config/yazi;
+      recursive = true;
+    };
+    "zacrs" = {
+      source = ./config/zacrs;
+      recursive = true;
+    };
+    "zsh" = {
+      source = ./config/zsh;
+      recursive = true;
+    };
+    "fcitx5" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      source = ./config/fcitx5;
+      recursive = true;
+    };
+    "gnupg/gpg-agent.conf".text =
+      lib.optionalString pkgs.stdenv.hostPlatform.isDarwin
+        "pinentry-program /opt/homebrew/bin/pinentry-mac\n";
+    "textlint/textlintrc".text = builtins.replaceStrings
+      [ "@homeDirectory@" ] [ config.home.homeDirectory ]
+      (builtins.readFile ./config/textlint/textlintrc.tmpl);
+  };
+
+  home.file = {
+    ".zshenv".source = ./config/zsh/.zshenv;
+    ".textlintrc".source = config.xdg.configFile."textlint/textlintrc".source;
+    ".local/bin/acm" = { source = ./local/bin/acm; };
+    ".local/bin/ghostty" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) { source = ./local/bin/ghostty; };
+    ".local/bin/nvim-lsp-logrotate.sh" = { source = ./local/bin/nvim-lsp-logrotate.sh; };
+    ".local/bin/pbcopy" = { source = ./local/bin/pbcopy; };
+    ".local/bin/pbpaste" = { source = ./local/bin/pbpaste; };
+    ".local/share/cargo/config.toml" = { source = ./local/share/cargo/config.toml; };
+    ".local/bin/explorer.exe" = lib.mkIf config.dotfiles.wsl {
+      source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Windows/explorer.exe";
+    };
+    ".local/bin/rundll32.exe" = lib.mkIf config.dotfiles.wsl {
+      source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Windows/System32/rundll32.exe";
+    };
+    ".local/share/applications/com.mitchellh.ghostty.desktop" = lib.mkIf config.dotfiles.wsl {
       text = builtins.replaceStrings
-        [ "{{ .chezmoi.homeDir }}" ]
-        [ config.home.homeDirectory ]
-        (builtins.readFile ./dot_config/textlint/textlintrc.tmpl);
-      force = true;
-    };
-    ".local/share/applications/com.mitchellh.ghostty.desktop" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      text = builtins.replaceStrings
-        [ "{{ .chezmoi.homeDir }}" ]
-        [ config.home.homeDirectory ]
-        (builtins.readFile ./dot_local/share/applications/com.mitchellh.ghostty.desktop.tmpl);
-      force = true;
-    };
-    "Library/LaunchAgents/com.oyoshot.nvim-lsp-logrotate.plist" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      source = ./private_Library/LaunchAgents/com.oyoshot.nvim-lsp-logrotate.plist.tmpl;
-      force = true;
+        [ "@homeDirectory@" ] [ config.home.homeDirectory ]
+        (builtins.readFile ./local/share/applications/com.mitchellh.ghostty.desktop.tmpl);
     };
     "Library/Preferences/atcoder-cli" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/atcoder-cli-nodejs";
-      force = true;
+      source = ./config/atcoder-cli-nodejs;
+      recursive = true;
     };
     "Library/Application Support/ruff/pyproject.toml" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/ruff/pyproject.toml";
-      force = true;
+      source = ./config/ruff/pyproject.toml;
     };
   };
-in
-{
-  home.file = builtins.listToAttrs
-    (builtins.filter keepForPlatform (commonFiles ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin darwinFiles))
-    // generatedFiles;
-
-  home.activation.dotfilePermissions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    chmod 700 "$HOME/.config/gnupg" "$HOME/.config/memo" 2>/dev/null || true
-    install -m 600 ${./dot_config/private_memo/config.toml} "$HOME/.config/memo/config.toml"
-    install -m 600 ${gpgAgentConfig} "$HOME/.config/gnupg/gpg-agent.conf"
-    ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-      install -m 600 ${fcitxProfile} "$HOME/.config/fcitx5/profile"
-    ''}
-  '';
 }
