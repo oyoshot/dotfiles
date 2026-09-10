@@ -72,7 +72,7 @@ jobs:
           set -euo pipefail
           git diff --no-renames --name-only "${BASE_SHA}...${HEAD_SHA}" >/tmp/changed-files
 
-          provisioning_pattern='^(\.chezmoiignore$|\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|dot_config/homebrew/Brewfile$|dot_config/yay/extra-packages$|\.github/actions/(mac|arch)/|\.github/workflows/ci\.yaml$)'
+          provisioning_pattern='^(flake\.(nix|lock)$|script_nix-apply\.sh$|\.github/scripts/(install|check)-nix\.sh$|\.chezmoiignore$|\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|dot_config/homebrew/Brewfile$|dot_config/yay/extra-packages$|\.github/actions/(mac|arch)/|\.github/workflows/ci\.yaml$)'
           run=false
           if grep -Eq "${provisioning_pattern}" /tmp/changed-files; then
             run=true

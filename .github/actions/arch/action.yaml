@@ -113,6 +113,10 @@ runs:
           /home/builder/.cache \
           /home/builder/.local
 
+    - name: Install pinned Nix (builder)
+      shell: bash
+      run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/install-nix.sh"
+
     - name: Apply chezmoi (builder)
       shell: bash
       env:
@@ -130,6 +134,10 @@ runs:
           MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \
           MISE_JOBS="${MISE_JOBS}" \
           chezmoi init --apply -S "${GITHUB_WORKSPACE}"
+
+    - name: Check Nix CLI environment (builder)
+      shell: bash
+      run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/check-nix.sh"
 
     - name: Save pacman cache
       if: success()

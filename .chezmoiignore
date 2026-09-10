@@ -3,6 +3,12 @@ theme.png
 images
 .workarounds
 
+# Repository-local Nix definitions (built by the before script)
+flake.nix
+flake.lock
+result
+result-*
+
 .vscode
 .github
 .editorconfig

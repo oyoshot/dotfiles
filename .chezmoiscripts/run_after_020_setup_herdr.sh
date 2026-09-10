@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/dotfiles/bin:$PATH"
+
 if ! command -v herdr >/dev/null 2>&1; then
     exit 0
 fi

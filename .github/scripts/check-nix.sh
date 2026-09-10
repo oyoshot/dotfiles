@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eu
+
+profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/dotfiles"
+export PATH="$profile/bin:$PATH"
+for tool in rg fd jq nvim herdr pyright stylua zsh-autocomplete-rs; do
+    actual=$(command -v "$tool")
+    [ "$actual" = "$profile/bin/$tool" ] || {
+        echo "Unexpected $tool path: $actual" >&2
+        exit 1
+    }
+done
+rg --version
+fd --version
+jq --version
+herdr --version
+pyright --version
+stylua --version
+zacrs_init="${TMPDIR:-/tmp}/zacrs-init.$$"
+trap 'rm -f "$zacrs_init"' EXIT HUP INT TERM
+zsh-autocomplete-rs init zsh > "$zacrs_init"
+zsh -n "$zacrs_init"
+nvim --headless -u NONE -i NONE \
+    '+lua assert(vim.fn.executable("pyright") == 1)' +qa
+
+# Interactive activation used to prepend stale mise shims over Nix tools.
+zsh -ic '
+    __mise_activate_once
+    for pass in 1 2; do
+        for tool in rg nvim herdr pyright; do
+            [[ $(command -v "$tool") == "$XDG_STATE_HOME/nix/profiles/dotfiles/bin/$tool" ]] || exit 1
+        done
+        _mise_hook
+    done
+'

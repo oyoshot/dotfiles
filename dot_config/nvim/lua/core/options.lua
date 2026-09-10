@@ -64,8 +64,15 @@ vim.o.incsearch = true
 vim.o.autoindent = true
 vim.o.laststatus = 2
 
--- Prepend mise shims to PATH
-vim.env.PATH = vim.env.HOME .. "/.local/share/mise/shims:" .. vim.env.PATH
+-- Preserve the shell's project-specific mise activation and Nix precedence.
+-- GUI launches also need fallback paths for the global CLI environment.
+vim.env.PATH = vim.env.PATH
+	.. ":"
+	.. (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state"))
+	.. "/nix/profiles/dotfiles/bin"
+	.. ":"
+	.. (vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share"))
+	.. "/mise/shims"
 
 vim.filetype.add({
 	extension = {

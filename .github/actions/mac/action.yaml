@@ -57,6 +57,10 @@ runs:
         sudo install -m 0755 "${tmpdir}/chezmoi" /usr/local/bin/chezmoi
         chezmoi --version
 
+    - name: Install pinned Nix
+      shell: bash
+      run: sh .github/scripts/install-nix.sh
+
     - name: Apply dotfiles with chezmoi
       shell: bash
       env:
@@ -68,6 +72,10 @@ runs:
       run: |
         set -euo pipefail
         chezmoi init --apply -S "${{ github.workspace }}"
+
+    - name: Check Nix CLI environment
+      shell: bash
+      run: sh .github/scripts/check-nix.sh
 
     - name: Save Homebrew cache
       if: success()

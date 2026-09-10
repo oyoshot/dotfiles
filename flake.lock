@@ -1,0 +1,45 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1788775869,
+        "narHash": "sha256-JRf1lSypbvKj6AzUZHpUA6YC1DirVuitZWOnRwcm+Ww=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "58973d74f1893afe13f5902919803a0e99da0ca4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "zacrs-src": "zacrs-src"
+      }
+    },
+    "zacrs-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788458571,
+        "narHash": "sha256-kaU+nFNQXlmdoW58nwcD7YnfyuKWFuYY1zbt5eF1vzw=",
+        "owner": "oyoshot",
+        "repo": "zsh-autocomplete-rs-proto",
+        "rev": "e0a41c3c46d0c8f36b1fbd7bc27b31bf14e6d575",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oyoshot",
+        "repo": "zsh-autocomplete-rs-proto",
+        "rev": "e0a41c3c46d0c8f36b1fbd7bc27b31bf14e6d575",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
