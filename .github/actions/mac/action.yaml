@@ -40,6 +40,8 @@ runs:
 
     - name: Activate Home Manager
       shell: bash
+      env:
+        NIX_CONFIG: "experimental-features = nix-command flakes"
       run: |
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
         nix \

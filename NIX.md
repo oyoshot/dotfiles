@@ -18,7 +18,8 @@ home-manager switch --flake '.#oyoshot-darwin'
 新しい端末では先に Nix を導入し、Home Manager 本体がまだなければ次で初回適用できる:
 
 ```sh
-nix --extra-experimental-features 'nix-command flakes' run '.#home-manager' -- switch --flake '.#oyoshot-linux'
+export NIX_CONFIG='experimental-features = nix-command flakes'
+nix run '.#home-manager' -- switch --flake '.#oyoshot-linux'
 ```
 
 macOS では末尾を `.#oyoshot-darwin` にする。ユーザー名・ホームディレクトリが異なる場合は `flake.nix` にその端末の構成を追加する。
