@@ -7,8 +7,8 @@
     home.stateVersion = "25.11";
     home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       if [ "${lib.boolToString pkgs.stdenv.hostPlatform.isDarwin}" = true ] && [ -e "$HOME/.nix-profile" ]; then
-        ${pkgs.coreutils}/bin/mkdir -p "$XDG_STATE_HOME/nix/profiles/home-manager"
-        ${pkgs.coreutils}/bin/ln -sfn "$HOME/.nix-profile" "$XDG_STATE_HOME/nix/profiles/home-manager/home-path"
+        ${pkgs.coreutils}/bin/mkdir -p "${config.xdg.stateHome}/nix/profiles/home-manager"
+        ${pkgs.coreutils}/bin/ln -sfn "$HOME/.nix-profile" "${config.xdg.stateHome}/nix/profiles/home-manager/home-path"
       fi
       run ${pkgs.coreutils}/bin/env \
         XDG_CONFIG_HOME=${lib.escapeShellArg config.xdg.configHome} \
