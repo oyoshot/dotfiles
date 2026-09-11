@@ -12,7 +12,7 @@
         XDG_STATE_HOME=${lib.escapeShellArg config.xdg.stateHome} \
         CODEX_HOME=${lib.escapeShellArg "${config.xdg.configHome}/codex"} \
         CLAUDE_CONFIG_DIR=${lib.escapeShellArg "${config.xdg.configHome}/claude"} \
-        PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep ]}:$PATH \
+        PATH=${config.home.path}/bin:${lib.makeBinPath [ pkgs.coreutils pkgs.gnugrep ]}:$PATH \
         ${pkgs.runtimeShell} ${./scripts/setup-herdr.sh}
     '';
   };
