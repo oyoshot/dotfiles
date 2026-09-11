@@ -86,6 +86,7 @@
         pkgs.eza
         pkgs.fd
         pkgs.fzf
+        pkgs.gh
         pkgs.ghq
         pkgs.git-wt
         pkgs.gopls

@@ -51,6 +51,8 @@ runs:
     - name: Provision host tools
       shell: bash
       env:
+        # The workflow token cannot read personal private repositories.
+        DOTFILES_SKIP_PRIVATE_PLUGINS: "1"
         GITHUB_TOKEN: ${{ inputs.github-token }}
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
         MISE_HTTP_TIMEOUT: 120s

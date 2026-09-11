@@ -3,7 +3,7 @@ set -eu
 
 profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path"
 export PATH="$profile/bin:$PATH"
-for tool in rg fd jq nvim herdr pyright stylua zsh-autocomplete-rs; do
+for tool in rg fd jq gh nvim herdr pyright stylua zsh-autocomplete-rs; do
     actual=$(command -v "$tool")
     [ "$actual" = "$profile/bin/$tool" ] || {
         echo "Unexpected $tool path: $actual" >&2

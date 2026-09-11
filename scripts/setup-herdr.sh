@@ -14,7 +14,9 @@ unset CARGO_TARGET_DIR
 plugin_list="$(herdr plugin list)"
 title_plugin="herdr-plugin-agent-title"
 
-if ! printf '%s\n' "$plugin_list" | grep -Fq "$title_plugin"; then
+if [ "${DOTFILES_SKIP_PRIVATE_PLUGINS:-0}" = 1 ]; then
+    echo "Skipping private herdr plugin (DOTFILES_SKIP_PRIVATE_PLUGINS=1)"
+elif ! printf '%s\n' "$plugin_list" | grep -Fq "$title_plugin"; then
     herdr plugin install oyoshot/herdr-plugin-agent-title --yes
 fi
 
