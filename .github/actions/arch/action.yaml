@@ -102,6 +102,7 @@ runs:
       run: |
         sudo -Hu builder env \
           PATH="/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin" \
+          XDG_STATE_HOME="/home/builder/.local/state" \
           NIX_CONFIG="experimental-features = nix-command flakes" nix \
           --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
           switch --flake .#ci-linux
@@ -118,6 +119,7 @@ runs:
         set -euo pipefail
         sudo -Hu builder env \
           GITHUB_TOKEN="${GITHUB_TOKEN}" \
+          XDG_STATE_HOME="/home/builder/.local/state" \
           MISE_FETCH_REMOTE_VERSIONS_TIMEOUT="${MISE_FETCH_REMOTE_VERSIONS_TIMEOUT}" \
           MISE_HTTP_TIMEOUT="${MISE_HTTP_TIMEOUT}" \
           MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \

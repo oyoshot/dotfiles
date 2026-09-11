@@ -45,6 +45,7 @@ runs:
       shell: bash
       env:
         NIX_CONFIG: "experimental-features = nix-command flakes"
+        XDG_STATE_HOME: "$HOME/.local/state"
       run: |
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
         nix \
@@ -55,6 +56,7 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        XDG_STATE_HOME: "$HOME/.local/state"
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
         MISE_HTTP_TIMEOUT: 120s
         MISE_HTTP_RETRIES: "5"

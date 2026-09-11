@@ -2,6 +2,8 @@
 set -eu
 
 profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path"
+echo "Checking XDG Home Manager profile: $profile"
+[ -d "$profile/bin" ] || { echo "Missing XDG Home Manager profile: $profile" >&2; exit 1; }
 export PATH="$profile/bin:$PATH"
 for tool in rg fd jq gh nvim herdr herdr-plugin-agent-title codex claude pyright stylua zsh-autocomplete-rs; do
     actual=$(command -v "$tool")

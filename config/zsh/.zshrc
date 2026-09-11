@@ -97,9 +97,10 @@ _zsh_find_command mise && __MISE_BIN=$REPLY
 
 _dotfiles_mise_fallback_path() {
   local nix_dir="$XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin"
-  if (( ${path[(Ie)$nix_dir]} == 0 )); then
-    nix_dir="$HOME/.nix-profile/bin"
-  fi
+  [[ -d $nix_dir ]] || {
+    print -u2 -r -- "Home Manager XDG profile is missing: $nix_dir"
+    return 1
+  }
   local shim_dir="${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims"
   (( ${path[(Ie)$nix_dir]} )) || return 0
   path=( ${path:#$shim_dir} )
