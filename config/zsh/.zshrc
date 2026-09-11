@@ -102,6 +102,7 @@ _dotfiles_mise_fallback_path() {
     return 1
   }
   local shim_dir="${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims"
+  path=( ${path:#$HOME/.nix-profile/bin} )
   (( ${path[(Ie)$nix_dir]} )) || return 0
   path=( ${path:#$shim_dir} )
   local -i nix_index=${path[(Ie)$nix_dir]}
