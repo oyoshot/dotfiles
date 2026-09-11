@@ -27,6 +27,9 @@ height = "70%"
 # indexed agent navigation.
 agent_panel_sort = "priority"
 
+# The default of 3 lines per wheel notch feels sluggish.
+mouse_scroll_lines = 5
+
 [ui.sidebar.agents]
 # Show the native Claude Code / Codex session title. Until the agent generates
 # one, this falls back to the detected agent name.
