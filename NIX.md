@@ -70,7 +70,7 @@ nix build '.#homeConfigurations.oyoshot-linux.activationPackage' --no-link
 
 `flake check` だけでは任意の `homeConfigurations` 全体を評価しないため、CI では4構成それぞれの `activationPackage.drvPath` も評価する。Linux と macOS の新規環境は、それぞれ `ci-linux`（builder）と `ci-darwin`（runner）を適用し、ホストのセットアップと CLI 起動を検証する。
 
-CI のトークンは非公開の `oyoshot/herdr-plugin-agent-title` を取得できないため、`DOTFILES_SKIP_PRIVATE_PLUGINS=1` でこのプラグインの導入だけを省略する。herdr の Codex / Claude 統合は CI でも実行する。個人端末の通常の bootstrap はプラグインも導入するため、事前に `gh auth login` で認証しておく。
+CI でも個人端末と同様に、公開リポジトリ `oyoshot/herdr-plugin-agent-title` からプラグインを導入し、herdr の Codex / Claude 統合を実行する。
 
 Home Manager の基本操作は [公式マニュアル](https://nix-community.github.io/home-manager/usage/configuration.html) を参照。
 

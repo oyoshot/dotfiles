@@ -115,7 +115,6 @@ runs:
         set -euo pipefail
         sudo -Hu builder env \
           GITHUB_TOKEN="${GITHUB_TOKEN}" \
-          DOTFILES_SKIP_PRIVATE_PLUGINS=1 \
           MISE_FETCH_REMOTE_VERSIONS_TIMEOUT="${MISE_FETCH_REMOTE_VERSIONS_TIMEOUT}" \
           MISE_HTTP_TIMEOUT="${MISE_HTTP_TIMEOUT}" \
           MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \
