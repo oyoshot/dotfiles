@@ -48,6 +48,23 @@
         "type": "github"
       }
     },
+    "herdr-agent-title-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787788157,
+        "narHash": "sha256-dfW4F12DhfTiPTshAPbiiHUkwpQN3oaW14MFBbe1ZoY=",
+        "owner": "oyoshot",
+        "repo": "herdr-plugin-agent-title",
+        "rev": "f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oyoshot",
+        "repo": "herdr-plugin-agent-title",
+        "rev": "f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -122,6 +139,7 @@
         "alacritty-theme": "alacritty-theme",
         "anyframe": "anyframe",
         "autosuggestions": "autosuggestions",
+        "herdr-agent-title-src": "herdr-agent-title-src",
         "home-manager": "home-manager",
         "ni-zsh": "ni-zsh",
         "nixpkgs": "nixpkgs",

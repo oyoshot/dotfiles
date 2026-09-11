@@ -3,7 +3,7 @@ set -eu
 
 profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path"
 export PATH="$profile/bin:$PATH"
-for tool in rg fd jq gh nvim herdr pyright stylua zsh-autocomplete-rs; do
+for tool in rg fd jq gh nvim herdr herdr-plugin-agent-title codex claude pyright stylua zsh-autocomplete-rs; do
     actual=$(command -v "$tool")
     [ "$actual" = "$profile/bin/$tool" ] || {
         echo "Unexpected $tool path: $actual" >&2
@@ -36,6 +36,16 @@ zsh -ic '
 
 # A fresh runner must receive dotfiles and external sources from Home Manager.
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
+export CODEX_HOME="$config_dir/codex"
+export CLAUDE_CONFIG_DIR="$config_dir/claude"
+integration_status=$(herdr integration status)
+for agent in codex claude; do
+    printf '%s\n' "$integration_status" | grep -Eq "^${agent}: (installed|current) \\("
+done
+for settings in "$CODEX_HOME/hooks.json" "$CLAUDE_CONFIG_DIR/settings.json"; do
+    jq -e '[.hooks.SessionStart[], .hooks.UserPromptSubmit[], .hooks.Stop[] |
+        .hooks[] | select(.command | contains("herdr-plugin-agent-title-managed"))] | length == 3' "$settings"
+done
 for file in \
     zsh/.zshrc nvim/init.lua git/config textlint/textlintrc \
     zsh/plugins/zsh-defer/zsh-defer.plugin.zsh \

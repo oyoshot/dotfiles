@@ -10,6 +10,10 @@
     url = "github:oyoshot/zsh-autocomplete-rs-proto/e0a41c3c46d0c8f36b1fbd7bc27b31bf14e6d575";
     flake = false;
   };
+  inputs.herdr-agent-title-src = {
+    url = "github:oyoshot/herdr-plugin-agent-title/f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03";
+    flake = false;
+  };
 
   inputs.tpm = { url = "github:tmux-plugins/tpm"; flake = false; };
   inputs.zsh-defer = { url = "github:romkatv/zsh-defer"; flake = false; };
@@ -60,6 +64,7 @@
       };
       cliPackages = pkgs: [
         (zacrsPackage pkgs)
+        (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
         pkgs.awscli2
         pkgs.bash-language-server
         pkgs.bat
@@ -130,6 +135,9 @@
       packages = forAllSystems (pkgs: {
         home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
         zsh-autocomplete-rs = zacrsPackage pkgs;
+        herdr-plugin-agent-title = pkgs.callPackage ./packages/herdr-agent-title.nix {
+          src = inputs.herdr-agent-title-src;
+        };
         default = pkgs.buildEnv {
           name = "dotfiles-cli";
           paths = cliPackages pkgs;

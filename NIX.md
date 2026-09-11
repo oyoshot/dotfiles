@@ -39,7 +39,9 @@ Neovim の lazy.nvim は初回起動時に配布用ロックを `~/.local/state/
 - mise: ランタイム、Terraform の複数バージョン、未移行 CLI、textlint のルール等。
 - Homebrew / Arch: GUI、OS 統合、シェル、コンパイラー等。
 
-新規端末の OS パッケージ・Rustup・mise・herdr 統合は、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
+新規端末の OS パッケージ・Rustup・mise は、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
+
+herdr のタイトルプラグインは固定したソースと Cargo.lock から Nix でビルドする。Home Manager は CLI と設定の配置後に、`CODEX_HOME` と `CLAUDE_CONFIG_DIR` を明示してタイトルフックと herdr 統合を登録する。初回起動や mise / Rustup は不要。設定ファイルは他のフックを保持したまま更新するため、書き込み可能なユーザー設定として残す。プラグインの機能はフックのみなので、`herdr plugin install` のビルド・登録経路は使わず、Nix のバイナリから `install-hooks` を実行する。
 WSLg のパッチ適用と Windows ランチャー登録は `scripts/setup-wslg.sh` に残している。
 
 GPG agent・memo・fcitx のリポジトリ内設定は認証情報を含まない通常の設定として管理する。`private_` という旧ファイル名だけを根拠とする権限変更は廃止した。Nix store のファイルは読み取り可能なので、今後秘密鍵・トークンをこの構成に埋め込まない。
@@ -70,7 +72,9 @@ nix build '.#homeConfigurations.oyoshot-linux.activationPackage' --no-link
 
 `flake check` だけでは任意の `homeConfigurations` 全体を評価しないため、CI では4構成それぞれの `activationPackage.drvPath` も評価する。Linux と macOS の新規環境は、それぞれ `ci-linux`（builder）と `ci-darwin`（runner）を適用し、ホストのセットアップと CLI 起動を検証する。
 
-CI でも個人端末と同様に、公開リポジトリ `oyoshot/herdr-plugin-agent-title` からプラグインを導入し、herdr の Codex / Claude 統合を実行する。
+CI でも個人端末と同じ Home Manager activation で herdr の Codex / Claude 統合を実行し、両方の設定先とタイトルフックを検証する。
+
+zacrs とタイトルプラグインは、Nix でビルドした実行時依存一式を `nix-store --export` で保存し、次回 `--import` する。GitHub Actions キャッシュは OS・アーキテクチャ・flake とパッケージ定義のハッシュで分け、定義が変わった場合も以前のキャッシュを復元して Nix が一致する成果物だけを再利用する。保存はホストセットアップより前に行う。公式パッケージは引き続き `cache.nixos.org` を使う。このキャッシュは CI 用で、個人端末へのバイナリ配布は行わない。
 
 Home Manager の基本操作は [公式マニュアル](https://nix-community.github.io/home-manager/usage/configuration.html) を参照。
 

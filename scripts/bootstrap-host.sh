@@ -19,7 +19,6 @@ case "$(uname -s)" in
         ;;
 esac
 zsh "$source_dir/scripts/install-runtimes.zsh"
-sh "$source_dir/scripts/setup-herdr.sh"
 if [ "$(uname -s)" = Linux ] && [ -e /dev/dxg ]; then
     sh "$source_dir/scripts/setup-wslg.sh"
 fi

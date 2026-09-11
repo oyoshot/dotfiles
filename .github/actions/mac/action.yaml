@@ -38,6 +38,9 @@ runs:
       shell: bash
       run: sh .github/scripts/install-nix.sh
 
+    - name: Build and cache custom Nix packages
+      uses: ./.github/actions/nix-build-cache
+
     - name: Activate Home Manager
       shell: bash
       env:

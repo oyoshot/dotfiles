@@ -2,21 +2,14 @@
 set -eu
 
 export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path/bin:$PATH"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export CODEX_HOME="${CODEX_HOME:-$XDG_CONFIG_HOME/codex}"
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$XDG_CONFIG_HOME/claude}"
 
-if ! command -v herdr >/dev/null 2>&1; then
-    exit 0
-fi
-
-# Herdr plugin manifests build below their own checkout. Do not redirect those
-# artifacts into the shared Cargo target directory.
-unset CARGO_TARGET_DIR
-
-plugin_list="$(herdr plugin list)"
-title_plugin="herdr-plugin-agent-title"
-
-if ! printf '%s\n' "$plugin_list" | grep -Fq "$title_plugin"; then
-    herdr plugin install oyoshot/herdr-plugin-agent-title --yes
-fi
+# Nix builds the binary. Only registration of mutable user settings happens here.
+# This plugin's manifest has no runtime events; its functionality is these hooks.
+mkdir -p "$CODEX_HOME" "$CLAUDE_CONFIG_DIR"
+herdr-plugin-agent-title install-hooks
 
 integration_status="$(herdr integration status)"
 
