@@ -41,7 +41,8 @@ runs:
     - name: Activate Home Manager
       shell: bash
       run: |
-        /nix/var/nix/profiles/default/bin/nix \
+        export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+        nix \
           --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
           switch --flake .#ci-darwin
 

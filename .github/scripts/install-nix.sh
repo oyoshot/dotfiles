@@ -21,3 +21,7 @@ case "$(uname -s)" in
 esac
 [ "$actual" = "$checksum" ] || { echo 'Nix installer checksum mismatch' >&2; exit 1; }
 sh "$temp_dir/install" "$mode" --yes --no-channel-add --no-modify-profile
+
+# Standalone Home Manager needs a profile directory before its first switch.
+# Use the XDG location that our shell and CLI checks reference on both OSes.
+mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"

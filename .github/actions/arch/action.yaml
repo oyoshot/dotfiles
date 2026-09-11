@@ -97,7 +97,7 @@ runs:
     - name: Activate Home Manager (builder)
       shell: bash
       run: |
-        sudo -Hu builder /home/builder/.nix-profile/bin/nix \
+        sudo -Hu builder env PATH="/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin" nix \
           --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
           switch --flake .#ci-linux
 
