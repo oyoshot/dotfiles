@@ -5,8 +5,8 @@ cache_dir=/tmp/dotfiles-nix-cache
 mkdir -p "$cache_dir"
 export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
 export NIX_CONFIG='experimental-features = nix-command flakes'
-executor=()
-importer=()
+# Keep the command array nonempty for macOS's system Bash with nounset.
+executor=(env)
 if [[ $(uname -s) == Linux ]]; then
     executor=(sudo -Hu builder env
         PATH=/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin
