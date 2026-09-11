@@ -14,7 +14,19 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Home Manager's config is read-only. Seed a writable lock for Lazy updates.
+local lockfile = vim.fn.stdpath("state") .. "/lazy-lock.json"
+if not vim.uv.fs_stat(lockfile) then
+	vim.fn.mkdir(vim.fn.stdpath("state"), "p")
+	local seed = vim.fn.stdpath("config") .. "/lazy-lock.json"
+	if vim.uv.fs_stat(seed) then
+		assert(vim.uv.fs_copyfile(seed, lockfile))
+		assert(vim.uv.fs_chmod(lockfile, 384)) -- 0600, including a read-only Nix seed.
+	end
+end
+
 require("lazy").setup({
+	lockfile = lockfile,
 	spec = {
 		-- add LazyVim and import its plugins
 		--{ "LazyVim/LazyVim", import = "lazyvim.plugins" },

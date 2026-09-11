@@ -25,7 +25,8 @@ macOS では末尾を `.#oyoshot-darwin` にする。ユーザー名・ホーム
 初回に既存ファイルとの衝突が出たら、差分を確認して `home-manager -b before-home-manager switch --flake '.#oyoshot-linux'` で退避する。通常の定義に `force = true` は入れない。
 
 反映後にシェルを開き直すか `exec zsh -l` を実行する。
-設定を編集するときはホームの管理リンクではなく、このリポジトリの `config/`・`local/` を編集して再適用する。アプリが書き換えるロックファイルなどは、変更内容をリポジトリへ取り込んでから再適用する。
+設定を編集するときはホームの管理リンクではなく、このリポジトリの `config/`・`local/` を編集して再適用する。
+Neovim の lazy.nvim は初回起動時に配布用ロックを `~/.local/state/nvim/lazy-lock.json` へコピーし、以後そこへ更新を保存する。更新結果を他の端末にも配布する場合は、このファイルを `config/nvim/lazy-lock.json` へ取り込んでコミットする。通常の再適用・再起動では更新済みロックを上書きしない。
 
 ## 分担
 
