@@ -1,9 +1,14 @@
 #!/bin/sh
 set -eu
 
-profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path"
+profile="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile"
 echo "Checking XDG Home Manager profile: $profile"
 [ -d "$profile/bin" ] || { echo "Missing XDG Home Manager profile: $profile" >&2; exit 1; }
+# Check the actual generation location, not just an alias to ~/.nix-profile.
+case "$(readlink "$profile")" in
+    "${profile%/profile}/profiles/profile"|profiles/profile) ;;
+    *) echo "Profile is not backed by XDG generations: $profile" >&2; exit 1 ;;
+esac
 export PATH="$profile/bin:$PATH"
 for tool in rg fd jq gh nvim herdr herdr-plugin-agent-title codex claude pyright stylua zsh-autocomplete-rs; do
     actual=$(command -v "$tool")
@@ -34,7 +39,7 @@ zsh -ic '
     for pass in 1 2; do
         for tool in rg nvim herdr pyright; do
             actual=$(command -v "$tool")
-            expected="$XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin/$tool"
+            expected="$XDG_STATE_HOME/nix/profile/bin/$tool"
             if [[ $actual != $expected ]]; then
                 print -u2 -r -- "Unexpected $tool path on pass $pass: $actual (expected $expected)"
                 exit 1

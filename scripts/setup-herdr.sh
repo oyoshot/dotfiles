@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path/bin:$PATH"
+export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/bin:$PATH"
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export CODEX_HOME="${CODEX_HOME:-$XDG_CONFIG_HOME/codex}"
 export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$XDG_CONFIG_HOME/claude}"

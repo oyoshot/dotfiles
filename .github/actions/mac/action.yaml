@@ -45,8 +45,8 @@ runs:
       shell: bash
       env:
         NIX_CONFIG: "experimental-features = nix-command flakes"
-        XDG_STATE_HOME: "$HOME/.local/state"
       run: |
+        export XDG_STATE_HOME="$HOME/.local/state"
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
         nix \
           --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
@@ -56,13 +56,13 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        XDG_STATE_HOME: "$HOME/.local/state"
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 120s
         MISE_HTTP_TIMEOUT: 120s
         MISE_HTTP_RETRIES: "5"
         MISE_JOBS: 2
       run: |
         set -euo pipefail
+        export XDG_STATE_HOME="$HOME/.local/state"
         sh scripts/bootstrap-host.sh
 
     - name: Save Homebrew cache

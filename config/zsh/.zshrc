@@ -49,7 +49,7 @@ fpath=(
   $ZDOTDIR/plugins/zsh-completions/src(N-/)
   $ZDOTDIR/plugins/anyframe(N-/)
   $ZDOTDIR/zfunc(N-/)
-  $XDG_STATE_HOME/nix/profiles/home-manager/home-path/share/zsh/site-functions(N-/)
+  $XDG_STATE_HOME/nix/profile/share/zsh/site-functions(N-/)
   ~/.asdf/completions(N-/)
   $GHRED_DATA_HOME/completions(N-/)
   $XDG_DATA_HOME/zsh/completions(N-/)
@@ -96,7 +96,7 @@ _zsh_find_command() {
 _zsh_find_command mise && __MISE_BIN=$REPLY
 
 _dotfiles_mise_fallback_path() {
-  local nix_dir="$XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin"
+  local nix_dir="$XDG_STATE_HOME/nix/profile/bin"
   [[ -d $nix_dir ]] || {
     print -u2 -r -- "Home Manager XDG profile is missing: $nix_dir"
     return 1

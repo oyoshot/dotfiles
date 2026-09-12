@@ -21,8 +21,7 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 typeset -gU path
 path=(
   $HOME/.local/bin(N-/)
-  $XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin(N-/)
-  $HOME/.nix-profile/bin(N-/)
+  $XDG_STATE_HOME/nix/profile/bin(N-/)
   /nix/var/nix/profiles/default/bin(N-/)
   /opt/homebrew/bin(N-/) # macOS/Apple Silicon
   /usr/local/bin(N-/) # macOS/Intel
@@ -53,8 +52,8 @@ fi
 export PATH
 
 # Keep the default man search path with a trailing colon.
-if [[ -d $XDG_STATE_HOME/nix/profiles/home-manager/home-path/share/man ]]; then
-  export MANPATH="$XDG_STATE_HOME/nix/profiles/home-manager/home-path/share/man:${MANPATH:-}"
+if [[ -d $XDG_STATE_HOME/nix/profile/share/man ]]; then
+  export MANPATH="$XDG_STATE_HOME/nix/profile/share/man:${MANPATH:-}"
 fi
 
 # Rust
@@ -115,7 +114,7 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 # 維持しているため走査が重い。実ファイルを直接見て EDITOR を決める。
 typeset -gx EDITOR=vi
 for _ed in nvim vim; do
-  if [[ -x $XDG_STATE_HOME/nix/profiles/home-manager/home-path/bin/$_ed || -x $HOME/.nix-profile/bin/$_ed || -x /usr/bin/$_ed || -x /usr/local/bin/$_ed || -x /opt/homebrew/bin/$_ed || -x $HOME/.local/bin/$_ed ]]; then
+  if [[ -x $XDG_STATE_HOME/nix/profile/bin/$_ed || -x /usr/bin/$_ed || -x /usr/local/bin/$_ed || -x /opt/homebrew/bin/$_ed || -x $HOME/.local/bin/$_ed ]]; then
     typeset -gx EDITOR=$_ed
     break
   fi

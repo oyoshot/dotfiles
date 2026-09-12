@@ -5,11 +5,18 @@
   config = {
     programs.home-manager.enable = true;
     home.stateVersion = "25.11";
-    home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      if [ "${lib.boolToString pkgs.stdenv.hostPlatform.isDarwin}" = true ] && [ -e "$HOME/.nix-profile" ]; then
-        ${pkgs.coreutils}/bin/mkdir -p "${config.xdg.stateHome}/nix/profiles/home-manager"
-        ${pkgs.coreutils}/bin/ln -sfn "$HOME/.nix-profile" "${config.xdg.stateHome}/nix/profiles/home-manager/home-path"
-      fi
+    nix.package = pkgs.nix;
+    nix.settings.use-xdg-base-directories = true;
+    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    # The new nix.conf is linked after package installation on the first switch.
+    home.activation.nixXdg = lib.hm.dag.entryBetween [ "installPackages" "linkGeneration" ] [ "writeBoundary" ] ''
+      export XDG_STATE_HOME=${lib.escapeShellArg config.xdg.stateHome}
+      unset NIX_PROFILE
+      export NIX_CONFIG="''${NIX_CONFIG-}
+      use-xdg-base-directories = true"
+      run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg "${config.xdg.stateHome}/nix/profiles"}
+    '';
+    home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "linkGeneration" "installPackages" ] ''
       run ${pkgs.coreutils}/bin/env \
         XDG_CONFIG_HOME=${lib.escapeShellArg config.xdg.configHome} \
         XDG_DATA_HOME=${lib.escapeShellArg config.xdg.dataHome} \

@@ -7,7 +7,7 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
-export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager/home-path/bin:$CARGO_HOME/bin:$HOME/.nix-profile/bin:/opt/homebrew/bin:$PATH"
+export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/bin:$CARGO_HOME/bin:/opt/homebrew/bin:$PATH"
 case "$(uname -s)" in
     Darwin) sh "$source_dir/scripts/install-mac.sh" ;;
     Linux)

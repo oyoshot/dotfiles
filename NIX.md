@@ -39,6 +39,8 @@ Neovim の lazy.nvim は初回起動時に配布用ロックを `~/.local/state/
 - mise: ランタイム、Terraform の複数バージョン、未移行 CLI、textlint のルール等。
 - Homebrew / Arch: GUI、OS 統合、シェル、コンパイラー等。
 
+Linux / macOS とも `nix.settings.use-xdg-base-directories = true` を使う。ユーザーのパッケージプロファイルは `~/.local/state/nix/profile`、その世代は `~/.local/state/nix/profiles/profile-*-link` に保存する。Home Manager 自身の世代は同じ `profiles` 内の `home-manager-*-link`。シェルは `nix/profile/bin` を参照し、`~/.nix-profile` への互換リンクは作らない。初回 switch では nix.conf の配置前からこの設定を有効にする。旧 `~/.nix-profile` と旧世代は削除しない。
+
 新規端末の OS パッケージ・Rustup・mise は、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
 
 herdr のタイトルプラグインは固定したソースと Cargo.lock から Nix でビルドする。Home Manager は CLI と設定の配置後に、`CODEX_HOME` と `CLAUDE_CONFIG_DIR` を明示してタイトルフックと herdr 統合を登録する。初回起動や mise / Rustup は不要。設定ファイルは他のフックを保持したまま更新するため、書き込み可能なユーザー設定として残す。プラグインの機能はフックのみなので、`herdr plugin install` のビルド・登録経路は使わず、Nix のバイナリから `install-hooks` を実行する。
