@@ -52,7 +52,7 @@ echo 'Checking interactive Zsh PATH after mise activation'
 zsh -ic '
     __mise_activate_once
     for pass in 1 2; do
-        for tool in rg nvim herdr; do
+        for tool in rg nvim herdr zsh-autocomplete-rs; do
             actual=$(command -v "$tool")
             expected="$XDG_STATE_HOME/nix/profile/bin/$tool"
             # The HM home-path and user profile can point at the same binary.

@@ -7,7 +7,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
   inputs.zacrs-src = {
-    url = "github:oyoshot/zsh-autocomplete-rs-proto/e0a41c3c46d0c8f36b1fbd7bc27b31bf14e6d575";
+    url = "git+https://github.com/oyoshot/zsh-autocomplete-rs-proto.git";
     flake = false;
   };
   inputs.herdr-agent-title-src = {
