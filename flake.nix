@@ -93,6 +93,7 @@
         pkgs.uv
         pkgs.vim-startuptime
         pkgs.zoxide
+        pkgs.zsh
       ];
     in
     {

@@ -22,8 +22,12 @@ scala = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
 # Project tooling follows the original rolling-version policy.
 helm = "latest"
+kubectl = "latest"
+oc = "latest"
+odo = "latest"
 opentofu = "latest"
 pulumi = "latest"
+tekton = "latest"
 terraform-ls = "latest"
 tflint = "latest"
 tfsec = "latest"
