@@ -21,7 +21,6 @@ logrotate
 luarocks
 man-db
 man-pages
-mise
 mold
 nfs-utils
 noto-fonts-cjk

@@ -36,12 +36,34 @@ Neovim の lazy.nvim は初回起動時に配布用ロックを `~/.local/state/
 - `dotfiles.nix`: 設定ファイルの配置。OS 別の配置先とホーム依存のテンプレートもここで指定する。
 - `externals.nix`: Zsh プラグイン、tmux plugin manager、Alacritty テーマ、校正ルール、WSL クリップボード。ソースは `flake.lock` またはハッシュで固定する。
 - `services.nix`: Neovim ログローテーションと WSLg fcitx の systemd／launchd 定義。
-- mise: ランタイム、Terraform の複数バージョン、未移行 CLI、textlint のルール等。
+- mise: プロジェクトによってバージョンが変わる開発ツール。ランタイムだけでなく Terraform 等の CLI も含む。本体と共通設定は Home Manager が管理する。
 - Homebrew / Arch: GUI、OS 統合、シェル、コンパイラー等。
 
 Linux / macOS とも `nix.settings.use-xdg-base-directories = true` を使う。ユーザーのパッケージプロファイルは `~/.local/state/nix/profile`、その世代は `~/.local/state/nix/profiles/profile-*-link` に保存する。Home Manager 自身の世代は同じ `profiles` 内の `home-manager-*-link`。シェルは `nix/profile/bin` を参照し、`~/.nix-profile` への互換リンクは作らない。初回 switch では nix.conf の配置前からこの設定を有効にする。旧 `~/.nix-profile` と旧世代は削除しない。
 
-新規端末の OS パッケージ・Rustup・mise は、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
+新規端末の OS パッケージ・Rustup・mise 管理ツールは、Home Manager 適用後に `sh scripts/bootstrap-host.sh` で導入する。mise 本体はこの時点ですでに Home Manager が提供する。この処理はホストのパッケージをインストールし、Arch ではシステム更新も行うため、通常の Home Manager activation からは呼ばない。
+
+### mise の設定と段階移行
+
+`home.nix` の `programs.mise` は共通設定を `~/.config/mise/conf.d/50-home-manager.toml` に配置する。`~/.config/mise/config.toml` は書き込み可能とし、初回のみ `config/mise/config.toml` のツール指定をコピーする。以後の `mise use --global` による変更は再適用で上書きしない。共通設定と同じキーを mutable な設定に重複して書かない。以前の HM 管理リンクは切り替え時に除去してから初期化し、既存の通常ファイルは保持する。
+
+`.tool-versions` に加え、Terraform・Node・Python・Rust の idiomatic version files を有効にする。既存 repo の指定を優先し、未導入のバージョンはその repo で `mise install` する。
+
+既存 `.zshrc` が mise と direnv を一つの遅延 hook で調停するため、両者の HM `enableZshIntegration` は無効。最初のコマンド実行時に `project-environment.zsh` を読み込み、以後はディレクトリ移動・プロンプト表示時に反映する。起動時に mise/direnv を実行したり `$commands` 全体を構築したりしない。以前の「Nix の直後に shims を挿入する」補正は削除した。
+
+最終的な分担は machine/user scope → Nix/Home Manager、project scope → mise。repo が正式な devShell を提供する場合のみ、その repo の開発環境を Nix に任せる。単に `flake.nix` があるだけでは切り替えない。
+
+切り替えの事前検証（Linux、mise 2026.8.6 / direnv 2.37.1 / nix-direnv 3.2.0）では、両方の標準 hook を動かすと、Nix の executable が選ばれていても devShell の環境変数を mise が上書きした。一時環境で mise を解除してから direnv を反映し、`IN_NIX_SHELL` がない場合だけ mise を有効にする順序を試すと、出入り・繰り返し実行・通常環境への復帰が成功した。flake の存在だけでは切り替えず、`use flake` の成功で実際に得られた環境を使う。検証では `nix_direnv_disallow_fallback` により失敗時の旧 devShell 再利用を無効にした。
+
+直接 `nix develop` / `nix shell` する場合は、小さな zsh 関数が子プロセス内で mise を解除してから実行する。オプションは `nix develop --offline ...` のようにサブコマンドの後に置く。`command nix` や Nix バイナリの絶対パス呼び出しはこの関数を通らない。Nix 環境内の子 zsh は引き継いだ PATH と `CARGO_TARGET_DIR` を尊重する。Neovim も shims を追加せず、GUI 起動時に不足する共通ツールのプロファイルだけを通常環境で末尾へ補う。
+
+正式な devShell がある repo では、README・既存 `.envrc` の指示を確認し、未設定なら `.envrc` に `use flake` を書いて `direnv allow` する。この dotfiles は repo の `.envrc` を自動作成・自動許可しない。Home Manager の nix-direnv 設定は、ビルド失敗時の古い devShell への fallback を無効にする。
+
+段階移行の例外として、手動 rustup 等の Cargo・Deno・Gem 用 PATH は通常環境でのみ残し、Nix に渡す前に除く。開発用 CLI の Nix から mise への移行はまだ残っている。GUI Neovim の project toolchain は、環境を有効にした端末から起動して渡す。すでに起動済みの Neovim 内での別 project への切り替えは、この shell integration の対象外。
+
+2026-09-12 の Linux 検証では、実装した hook による devShell への出入り・繰り返し・子 zsh・読み込み失敗・直接 `nix develop` 後の親環境保持を確認した。起動時間は適用前後の設定を同じ条件の一時 ZDOTDIR から読み、`hyperfine -w 100 -m 500` で比較。計測順を反転した比較は `zsh -ic exit` が 6.8 → 6.9 ms、`zsh -lic exit` が 13.3 → 13.4 ms。実機への switch 前の計測であり、最初のコマンドで遅延実行する mise/direnv の処理時間は含まない。
+
+同日の Arch WSL 実機への switch も成功。mutable な mise 設定、Nix のバイナリ参照先、Neovim、herdr 統合、zacrs daemon を確認した。適用後の同じ起動ベンチマークは 6.7 / 13.4 ms（ログイン側に一度 199 ms の外れ値あり）。Tab / Enter による補完選択の操作確認は別途行う。
 
 herdr のタイトルプラグインは固定したソースと Cargo.lock から Nix でビルドする。Home Manager は CLI と設定の配置後に、`CODEX_HOME` と `CLAUDE_CONFIG_DIR` を明示してタイトルフックと herdr 統合を登録する。初回起動や mise / Rustup は不要。設定ファイルは他のフックを保持したまま更新するため、書き込み可能なユーザー設定として残す。プラグインの機能はフックのみなので、`herdr plugin install` のビルド・登録経路は使わず、Nix のバイナリから `install-hooks` を実行する。
 WSLg のパッチ適用と Windows ランチャー登録は `scripts/setup-wslg.sh` に残している。

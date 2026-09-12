@@ -54,10 +54,6 @@
       source = ./config/memo;
       recursive = true;
     };
-    "mise" = {
-      source = ./config/mise;
-      recursive = true;
-    };
     "npm" = {
       source = ./config/npm;
       recursive = true;

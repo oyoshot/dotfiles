@@ -95,59 +95,31 @@ _zsh_find_command() {
 
 _zsh_find_command mise && __MISE_BIN=$REPLY
 
-_dotfiles_mise_fallback_path() {
-  local nix_dir="$XDG_STATE_HOME/nix/profile/bin"
-  [[ -d $nix_dir ]] || {
-    print -u2 -r -- "Home Manager XDG profile is missing: $nix_dir"
-    return 1
-  }
-  local shim_dir="${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims"
-  path=( ${path:#$HOME/.nix-profile/bin} )
-  (( ${path[(Ie)$nix_dir]} )) || return 0
-  path=( ${path:#$shim_dir} )
-  local -i nix_index=${path[(Ie)$nix_dir]}
-  # Nix wins over stale shims; shims still win over old Cargo/OS installs.
-  # Explicit mise tool paths before the profile keep their priority.
-  path=( ${path[1,$nix_index]} "$shim_dir" ${path[$(( nix_index + 1 )),-1]} )
-}
-
 __mise_activate_once() {
   (( __MISE_ACTIVATED )) && return 0
   __MISE_ACTIVATED=1
-
-  export MISE_JOBS=$(( $(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1) + 1 ))
-  # exec zsh can inherit mise's baseline from before our PATH changed.
-  export __MISE_ORIG_PATH=$PATH
-  eval "$("$__MISE_BIN" activate zsh)"
-  # activate prepends shims even when using direct tool paths.
-  functions[_dotfiles_mise_hook]="$functions[_mise_hook]"
-  _mise_hook() {
-    _dotfiles_mise_hook "$@"
-    _dotfiles_mise_fallback_path
-  }
-  _dotfiles_mise_fallback_path
-  if (( $+functions[mise] )); then
-    # Keep a single wrapper here so token loading happens only on actual mise runs.
-    functions[_mise_internal]="$functions[mise]"
-    mise() {
-      (( $+functions[__load_github_token_once] )) && __load_github_token_once
-      _mise_internal "$@"
-    }
-  fi
-  unset __MISE_BIN
+  source "$ZDOTDIR/project-environment.zsh"
+  _dotfiles_environment_init
 }
 
+# Keep parsing and subprocesses off the startup path, including zsh -ic exit.
 if [[ -n $__MISE_BIN ]]; then
   if [[ -o interactive ]]; then
     __mise_preexec_once() {
       __mise_activate_once
-      add-zsh-hook -d preexec __mise_preexec_once 2>/dev/null || true
+      add-zsh-hook -d preexec __mise_preexec_once
     }
     add-zsh-hook preexec __mise_preexec_once
   else
     __mise_activate_once
   fi
 fi
+
+# Also covers non-terminal invocations such as zsh -ic 'nix develop ...'.
+nix() {
+  __mise_activate_once
+  _dotfiles_nix "$@"
+}
 
 # 遅延ロードしない方が安全
 # Starship

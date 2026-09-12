@@ -64,15 +64,14 @@ vim.o.incsearch = true
 vim.o.autoindent = true
 vim.o.laststatus = 2
 
--- Preserve the shell's project-specific mise activation and Nix precedence.
--- GUI launches also need fallback paths for the global CLI environment.
-vim.env.PATH = vim.env.PATH
-	.. ":"
-	.. (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state"))
-	.. "/nix/profiles/home-manager/home-path/bin"
-	.. ":"
-	.. (vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share"))
-	.. "/mise/shims"
+-- Inherit the selected project environment; adding shims here bypasses Nix shells.
+-- GUI launches may lack the user profile, so append only the common tools path.
+if not vim.env.IN_NIX_SHELL and not vim.env.DOTFILES_NIX_SHELL then
+	local profile = (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state")) .. "/nix/profile/bin"
+	if not (":" .. vim.env.PATH .. ":"):find(":" .. profile .. ":", 1, true) then
+		vim.env.PATH = vim.env.PATH .. ":" .. profile
+	end
+end
 
 vim.filetype.add({
 	extension = {

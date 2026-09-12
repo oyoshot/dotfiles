@@ -40,12 +40,13 @@ zsh -ic '
         for tool in rg nvim herdr pyright; do
             actual=$(command -v "$tool")
             expected="$XDG_STATE_HOME/nix/profile/bin/$tool"
-            if [[ $actual != $expected ]]; then
+            # The HM home-path and user profile can point at the same binary.
+            if [[ ! $actual -ef $expected ]]; then
                 print -u2 -r -- "Unexpected $tool path on pass $pass: $actual (expected $expected)"
                 exit 1
             fi
         done
-        _mise_hook
+        _dotfiles_environment_hook
     done
     exit 0
 '
