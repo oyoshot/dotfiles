@@ -42,8 +42,8 @@ path=(
 path=( ${path:#${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims} )
 path=( ${path:#$HOME/.nix-profile/bin} )
 if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
-  # Temporary fallback until the existing rustup/standalone installs are migrated.
-  path+=( $XDG_DATA_HOME/cargo/bin(N-/) $XDG_DATA_HOME/deno/bin(N-/) $XDG_DATA_HOME/gem/bin(N-/) )
+  # Temporary fallbacks until the remaining standalone installs are migrated.
+  path+=( $XDG_DATA_HOME/deno/bin(N-/) $XDG_DATA_HOME/gem/bin(N-/) )
 fi
 
 # WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると

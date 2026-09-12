@@ -59,7 +59,7 @@ Linux / macOS とも `nix.settings.use-xdg-base-directories = true` を使う。
 
 正式な devShell がある repo では、README・既存 `.envrc` の指示を確認し、未設定なら `.envrc` に `use flake` を書いて `direnv allow` する。この dotfiles は repo の `.envrc` を自動作成・自動許可しない。Home Manager の nix-direnv 設定は、ビルド失敗時の古い devShell への fallback を無効にする。
 
-段階移行の例外として、手動 rustup 等の Cargo・Deno・Gem 用 PATH は通常環境でのみ残し、Nix に渡す前に除く。Helm・OpenTofu・Pulumi・terraform-ls・TFLint・tfsec は mise に移した。その他の開発用 CLI の移行はまだ残っている。GUI Neovim の project toolchain は、環境を有効にした端末から起動して渡す。すでに起動済みの Neovim 内での別 project への切り替えは、この shell integration の対象外。
+段階移行の例外として、Deno・Gem の手動インストール用 PATH は通常環境でのみ残し、Nix に渡す前に除く。Helm・OpenTofu・Pulumi・terraform-ls・TFLint・tfsec は mise に移した。その他の開発用 CLI の移行はまだ残っている。GUI Neovim の project toolchain は、環境を有効にした端末から起動して渡す。すでに起動済みの Neovim 内での別 project への切り替えは、この shell integration の対象外。
 
 この6ツールは移行前の運用に合わせて `latest` を既定とする。Node・Python・Terraform の既存の明示バージョンは維持する。repo にバージョン指定があればそちらで解決する。
 
@@ -80,7 +80,22 @@ mise use --global npm:pyright@latest go:golang.org/x/tools/gopls@latest \
   cspell@latest shellcheck@latest shfmt@latest tree-sitter@latest
 ```
 
-Ruff は移行前と同じ `pipx:ruff` を使う。今回の Aqua 配布経路では署名検証に失敗したため、検証を無効化せず、[mise の pipx backend](https://mise.jdx.dev/dev-tools/backends/pipx.html) で PyPI パッケージを導入した。uv は引き続き現在の Nix パッケージが提供する。Markdown Oxide と typos-lsp は Cargo 経由の導入を Rust/Cargo の段階で確認してから移す。
+Ruff は移行前と同じ `pipx:ruff` を使う。今回の Aqua 配布経路では署名検証に失敗したため、検証を無効化せず、[mise の pipx backend](https://mise.jdx.dev/dev-tools/backends/pipx.html) で PyPI パッケージを導入した。uv は引き続き現在の Nix パッケージが提供する。
+
+Rust toolchain と Cargo で導入する開発 CLI、Markdown Oxide、typos-lsp も mise に移した。`rust = "latest"` は mise の Rust core backend が管理し、repo の `rust-toolchain.toml` 等を優先する。mise 2026.8.6 は tool option に component を宣言すると導入済み toolchain を missing と誤判定するため、bootstrap の mise install 後に、その toolchain の rustup で `rust-analyzer`、`llvm-tools-preview`、`rust-src` を揃える。修正版が nixpkgs に入ったら宣言へ戻せる。既存端末では Home Manager の switch 前に次を実行する:
+
+```console
+mise use --global rust@latest cargo:cargo-audit@latest cargo:cargo-chef@latest \
+  cargo:cargo-crev@latest cargo:cargo-deny@latest cargo:cargo-expand@latest \
+  cargo:cargo-features-manager@latest cargo:cargo-generate@latest cargo:cargo-lambda@latest \
+  cargo:cargo-llvm-cov@latest cargo:cargo-machete@latest cargo:cargo-make@latest \
+  cargo:cargo-nextest@latest cargo:cargo-sort@latest cargo:cargo-udeps@latest \
+  cargo:cargo-update@latest cargo:typos-lsp@latest \
+  cargo:https://github.com/Feel-ix-343/markdown-oxide.git@latest
+mise exec -- rustup component add rust-analyzer llvm-tools-preview rust-src
+```
+
+CI は mise の download cache に加え、設定ファイルの hash と OS ごとに install directory を保存する。Cargo CLI 群を設定が変わらない実行のたびに再コンパイルしない。
 
 Neovim は起動元の project 環境を使い、pyright の `.venv` 優先と Deno 判定は維持する。非対話スクリプトや GUI から開く場合も、その repo で `mise exec -- nvim` を使えば明示的に環境を渡せる。正式な devShell のある repo では、その環境から起動する。
 

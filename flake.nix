@@ -67,21 +67,6 @@
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
         pkgs.awscli2
         pkgs.bat
-        pkgs.cargo-audit
-        pkgs.cargo-chef
-        pkgs.cargo-crev
-        pkgs.cargo-deny
-        pkgs.cargo-expand
-        pkgs.cargo-features-manager
-        pkgs.cargo-generate
-        pkgs.cargo-lambda
-        pkgs.cargo-llvm-cov
-        pkgs.cargo-machete
-        pkgs.cargo-make
-        pkgs.cargo-nextest
-        pkgs.cargo-sort
-        pkgs.cargo-udeps
-        pkgs.cargo-update
         pkgs.claude-code
         pkgs.codex
         pkgs.delta
@@ -96,7 +81,6 @@
         pkgs.herdr
         pkgs.hyperfine
         pkgs.jq
-        pkgs.markdown-oxide
         pkgs.marp-cli
         pkgs.neovim
         pkgs.ni
@@ -105,7 +89,6 @@
         pkgs.starship
         pkgs.tmux
         pkgs.trash-cli
-        pkgs.typos-lsp
         pkgs.usage
         pkgs.uv
         pkgs.vim-startuptime

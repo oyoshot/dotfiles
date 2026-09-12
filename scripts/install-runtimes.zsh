@@ -5,21 +5,7 @@ export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/bin:$PATH"
 
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
-export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
-
-if [[ ! -f "$CARGO_HOME/env" ]]; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
-        sh -s -- -y --no-modify-path
-fi
-
-source "$CARGO_HOME/env"
-
-rustup default stable &&
-    rustup component add rust-analyzer &&
-    rustup component add llvm-tools-preview
-
-# Install Mise dependency
+# Install project-scoped runtimes and development tools.
 if type mise >/dev/null 2>&1; then
     # mise's HTTP retry covers receiving a response, but not a timeout while
     # reading its body. Retry the whole install for transient crates.io index
@@ -39,4 +25,9 @@ if type mise >/dev/null 2>&1; then
         (( attempt += 1 ))
         (( retry_delay *= 2 ))
     done
+
+    # mise 2026.8.6 repeatedly treats an existing Rust toolchain as missing
+    # when components are declared as tool options. Reconcile them through the
+    # rustup installed by mise until the fixed mise release reaches nixpkgs.
+    mise exec -- rustup component add rust-analyzer llvm-tools-preview rust-src
 fi

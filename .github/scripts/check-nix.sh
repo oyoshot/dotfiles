@@ -30,6 +30,14 @@ mise exec -- pulumi version
 mise exec -- terraform-ls --version
 mise exec -- tflint --version
 mise exec -- tfsec --version
+mise exec -- rustc --version
+mise exec -- rustup component list --installed | grep -q '^rust-analyzer-'
+mise exec -- rustup component list --installed | grep -q '^llvm-tools-'
+mise exec -- rustup component list --installed | grep -q '^rust-src$'
+mise exec -- cargo-nextest --version
+mise exec -- cargo-crev --version
+mise exec -- markdown-oxide --version
+mise exec -- typos-lsp --version
 zacrs_init="${TMPDIR:-/tmp}/zacrs-init.$$"
 trap 'rm -f "$zacrs_init"' EXIT HUP INT TERM
 zsh-autocomplete-rs init zsh > "$zacrs_init"
@@ -60,6 +68,16 @@ zsh -ic '
             expected=$(mise which "$tool") || exit 1
             if [[ ! $actual -ef $expected ]]; then
                 print -u2 -r -- "Unexpected project tool: $tool ($actual; expected $expected)"
+                exit 1
+            fi
+        done
+        for tool in cargo-audit cargo-chef cargo-crev cargo-deny cargo-expand cargo-features \
+            cargo-generate cargo-lambda cargo-llvm-cov cargo-machete cargo-make cargo-nextest \
+            cargo-sort cargo-udeps cargo-install-update markdown-oxide typos-lsp; do
+            actual=$(command -v "$tool")
+            expected=$(mise which "$tool") || exit 1
+            if [[ ! $actual -ef $expected ]]; then
+                print -u2 -r -- "Unexpected Cargo tool: $tool ($actual; expected $expected)"
                 exit 1
             fi
         done
