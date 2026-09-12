@@ -23,6 +23,13 @@ jq --version
 herdr --version
 pyright --version
 stylua --version
+# Project tools are installed by bootstrap-host through mise, not home.packages.
+mise exec -- helm version --short
+mise exec -- tofu --version
+mise exec -- pulumi version
+mise exec -- terraform-ls --version
+mise exec -- tflint --version
+mise exec -- tfsec --version
 zacrs_init="${TMPDIR:-/tmp}/zacrs-init.$$"
 trap 'rm -f "$zacrs_init"' EXIT HUP INT TERM
 zsh-autocomplete-rs init zsh > "$zacrs_init"
@@ -43,6 +50,14 @@ zsh -ic '
             # The HM home-path and user profile can point at the same binary.
             if [[ ! $actual -ef $expected ]]; then
                 print -u2 -r -- "Unexpected $tool path on pass $pass: $actual (expected $expected)"
+                exit 1
+            fi
+        done
+        for tool in helm tofu pulumi terraform-ls tflint tfsec; do
+            actual=$(command -v "$tool")
+            expected=$(mise which "$tool") || exit 1
+            if [[ ! $actual -ef $expected ]]; then
+                print -u2 -r -- "Unexpected project tool: $tool ($actual; expected $expected)"
                 exit 1
             fi
         done

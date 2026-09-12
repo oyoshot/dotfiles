@@ -19,6 +19,13 @@ ruby = "latest"
 rye = "latest"
 scala = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
+# Project tooling follows the original rolling-version policy.
+helm = "latest"
+opentofu = "latest"
+pulumi = "latest"
+terraform-ls = "latest"
+tflint = "latest"
+tfsec = "latest"
 zig = "latest"
 
 "cargo:cargo-compete" = "latest"

@@ -59,7 +59,17 @@ Linux / macOS とも `nix.settings.use-xdg-base-directories = true` を使う。
 
 正式な devShell がある repo では、README・既存 `.envrc` の指示を確認し、未設定なら `.envrc` に `use flake` を書いて `direnv allow` する。この dotfiles は repo の `.envrc` を自動作成・自動許可しない。Home Manager の nix-direnv 設定は、ビルド失敗時の古い devShell への fallback を無効にする。
 
-段階移行の例外として、手動 rustup 等の Cargo・Deno・Gem 用 PATH は通常環境でのみ残し、Nix に渡す前に除く。開発用 CLI の Nix から mise への移行はまだ残っている。GUI Neovim の project toolchain は、環境を有効にした端末から起動して渡す。すでに起動済みの Neovim 内での別 project への切り替えは、この shell integration の対象外。
+段階移行の例外として、手動 rustup 等の Cargo・Deno・Gem 用 PATH は通常環境でのみ残し、Nix に渡す前に除く。Helm・OpenTofu・Pulumi・terraform-ls・TFLint・tfsec は mise に移した。その他の開発用 CLI の移行はまだ残っている。GUI Neovim の project toolchain は、環境を有効にした端末から起動して渡す。すでに起動済みの Neovim 内での別 project への切り替えは、この shell integration の対象外。
+
+この6ツールは移行前の運用に合わせて `latest` を既定とする。Node・Python・Terraform の既存の明示バージョンは維持する。repo にバージョン指定があればそちらで解決する。
+
+既存端末の mutable config は再適用で変更しないため、今回の変更を別端末に適用する際は、先に以下で6ツールを導入してから Home Manager を switch する（個別に固定したいものは指定を変更する）:
+
+```sh
+mise use --global helm@latest opentofu@latest pulumi@latest terraform-ls@latest tflint@latest tfsec@latest
+```
+
+新規端末では初期設定に含まれるため、従来どおり Home Manager 適用後の `scripts/bootstrap-host.sh` が導入する。バージョン指定が `latest` でも既存の導入済みバイナリが自動更新されるわけではない。更新時は `mise upgrade` を使う。
 
 2026-09-12 の Linux 検証では、実装した hook による devShell への出入り・繰り返し・子 zsh・読み込み失敗・直接 `nix develop` 後の親環境保持を確認した。起動時間は適用前後の設定を同じ条件の一時 ZDOTDIR から読み、`hyperfine -w 100 -m 500` で比較。計測順を反転した比較は `zsh -ic exit` が 6.8 → 6.9 ms、`zsh -lic exit` が 13.3 → 13.4 ms。実機への switch 前の計測であり、最初のコマンドで遅延実行する mise/direnv の処理時間は含まない。
 

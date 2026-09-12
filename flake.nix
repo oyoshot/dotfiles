@@ -99,17 +99,14 @@
         pkgs.herdr
         pkgs.hyperfine
         pkgs.jq
-        pkgs.kubernetes-helm
         pkgs.lua-language-server
         pkgs.markdown-oxide
         pkgs.marp-cli
         pkgs.neovim
         pkgs.ni
-        pkgs.opentofu
         pkgs.poetry
         pkgs.prettier
         pkgs.prettierd
-        pkgs.pulumi
         pkgs.pyright
         pkgs.ripgrep
         pkgs.ruff
@@ -117,9 +114,6 @@
         pkgs.shfmt
         pkgs.starship
         pkgs.stylua
-        pkgs.terraform-ls
-        pkgs.tflint
-        pkgs.tfsec
         pkgs.tmux
         pkgs.trash-cli
         pkgs.tree-sitter
