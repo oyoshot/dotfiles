@@ -66,7 +66,6 @@
         (zacrsPackage pkgs)
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
         pkgs.awscli2
-        pkgs.bash-language-server
         pkgs.bat
         pkgs.cargo-audit
         pkgs.cargo-chef
@@ -85,7 +84,6 @@
         pkgs.cargo-update
         pkgs.claude-code
         pkgs.codex
-        pkgs.cspell
         pkgs.delta
         pkgs.eva
         pkgs.eza
@@ -94,34 +92,23 @@
         pkgs.gh
         pkgs.ghq
         pkgs.git-wt
-        pkgs.gopls
         pkgs.gwq
         pkgs.herdr
         pkgs.hyperfine
         pkgs.jq
-        pkgs.lua-language-server
         pkgs.markdown-oxide
         pkgs.marp-cli
         pkgs.neovim
         pkgs.ni
         pkgs.poetry
-        pkgs.prettier
-        pkgs.prettierd
-        pkgs.pyright
         pkgs.ripgrep
-        pkgs.ruff
-        pkgs.shellcheck
-        pkgs.shfmt
         pkgs.starship
-        pkgs.stylua
         pkgs.tmux
         pkgs.trash-cli
-        pkgs.tree-sitter
         pkgs.typos-lsp
         pkgs.usage
         pkgs.uv
         pkgs.vim-startuptime
-        pkgs.vtsls
         pkgs.zoxide
       ];
     in

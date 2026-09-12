@@ -71,6 +71,19 @@ mise use --global helm@latest opentofu@latest pulumi@latest terraform-ls@latest 
 
 新規端末では初期設定に含まれるため、従来どおり Home Manager 適用後の `scripts/bootstrap-host.sh` が導入する。バージョン指定が `latest` でも既存の導入済みバイナリが自動更新されるわけではない。更新時は `mise upgrade` を使う。
 
+Neovim 用の pyright・gopls・Ruff・Prettier/prettierd・StyLua・Bash/Lua/TypeScript LSP・cspell・ShellCheck・shfmt・tree-sitter も mise に移した。既存端末では switch 前に次を実行する:
+
+```sh
+mise use --global npm:pyright@latest go:golang.org/x/tools/gopls@latest \
+  pipx:ruff@latest prettier@latest npm:@fsouza/prettierd@latest stylua@latest \
+  npm:bash-language-server@latest lua-language-server@latest npm:@vtsls/language-server@latest \
+  cspell@latest shellcheck@latest shfmt@latest tree-sitter@latest
+```
+
+Ruff は移行前と同じ `pipx:ruff` を使う。今回の Aqua 配布経路では署名検証に失敗したため、検証を無効化せず、[mise の pipx backend](https://mise.jdx.dev/dev-tools/backends/pipx.html) で PyPI パッケージを導入した。uv は引き続き現在の Nix パッケージが提供する。Markdown Oxide と typos-lsp は Cargo 経由の導入を Rust/Cargo の段階で確認してから移す。
+
+Neovim は起動元の project 環境を使い、pyright の `.venv` 優先と Deno 判定は維持する。非対話スクリプトや GUI から開く場合も、その repo で `mise exec -- nvim` を使えば明示的に環境を渡せる。正式な devShell のある repo では、その環境から起動する。
+
 2026-09-12 の Linux 検証では、実装した hook による devShell への出入り・繰り返し・子 zsh・読み込み失敗・直接 `nix develop` 後の親環境保持を確認した。起動時間は適用前後の設定を同じ条件の一時 ZDOTDIR から読み、`hyperfine -w 100 -m 500` で比較。計測順を反転した比較は `zsh -ic exit` が 6.8 → 6.9 ms、`zsh -lic exit` が 13.3 → 13.4 ms。実機への switch 前の計測であり、最初のコマンドで遅延実行する mise/direnv の処理時間は含まない。
 
 同日の Arch WSL 実機への switch も成功。mutable な mise 設定、Nix のバイナリ参照先、Neovim、herdr 統合、zacrs daemon を確認した。適用後の同じ起動ベンチマークは 6.7 / 13.4 ms（ログイン側に一度 199 ms の外れ値あり）。Tab / Enter による補完選択の操作確認は別途行う。

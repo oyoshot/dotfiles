@@ -10,7 +10,7 @@ case "$(readlink "$profile")" in
     *) echo "Profile is not backed by XDG generations: $profile" >&2; exit 1 ;;
 esac
 export PATH="$profile/bin:$PATH"
-for tool in rg fd jq gh nvim herdr herdr-plugin-agent-title codex claude pyright stylua zsh-autocomplete-rs; do
+for tool in rg fd jq gh nvim herdr herdr-plugin-agent-title codex claude zsh-autocomplete-rs; do
     actual=$(command -v "$tool")
     [ "$actual" = "$profile/bin/$tool" ] || {
         echo "Unexpected $tool path: $actual" >&2
@@ -21,8 +21,8 @@ rg --version
 fd --version
 jq --version
 herdr --version
-pyright --version
-stylua --version
+mise exec -- pyright --version
+mise exec -- stylua --version
 # Project tools are installed by bootstrap-host through mise, not home.packages.
 mise exec -- helm version --short
 mise exec -- tofu --version
@@ -36,15 +36,15 @@ zsh-autocomplete-rs init zsh > "$zacrs_init"
 echo 'Checking zacrs init syntax'
 zsh -n "$zacrs_init"
 echo 'Checking Neovim and pyright'
-NVIM_LOG_FILE="${TMPDIR:-/tmp}/dotfiles-nvim-check.log" nvim --headless -u NONE -i NONE \
-    '+lua assert(vim.fn.executable("pyright") == 1)' +qa
+NVIM_LOG_FILE="${TMPDIR:-/tmp}/dotfiles-nvim-check.log" mise exec -- nvim --headless -u NONE -i NONE \
+    '+lua for _, cmd in ipairs({"pyright-langserver", "gopls", "ruff", "prettierd", "stylua", "bash-language-server", "lua-language-server", "vtsls", "cspell", "shellcheck", "shfmt", "tree-sitter"}) do assert(vim.fn.executable(cmd) == 1, cmd .. " is missing") end' +qa
 
 # Interactive activation used to prepend stale mise shims over Nix tools.
 echo 'Checking interactive Zsh PATH after mise activation'
 zsh -ic '
     __mise_activate_once
     for pass in 1 2; do
-        for tool in rg nvim herdr pyright; do
+        for tool in rg nvim herdr; do
             actual=$(command -v "$tool")
             expected="$XDG_STATE_HOME/nix/profile/bin/$tool"
             # The HM home-path and user profile can point at the same binary.
@@ -53,7 +53,9 @@ zsh -ic '
                 exit 1
             fi
         done
-        for tool in helm tofu pulumi terraform-ls tflint tfsec; do
+        for tool in helm tofu pulumi terraform-ls tflint tfsec \
+            pyright gopls ruff prettier prettierd stylua bash-language-server \
+            lua-language-server vtsls cspell shellcheck shfmt tree-sitter; do
             actual=$(command -v "$tool")
             expected=$(mise which "$tool") || exit 1
             if [[ ! $actual -ef $expected ]]; then
