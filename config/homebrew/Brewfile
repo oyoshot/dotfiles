@@ -1,4 +1,4 @@
-# CLI tools managed by Nix: see flake.nix and NIX.md.
+# CLI tools managed by Nix: see flake.nix.
 tap "cloudflare/cloudflare"
 tap "daipeihust/tap"
 tap "koekeishiya/formulae"

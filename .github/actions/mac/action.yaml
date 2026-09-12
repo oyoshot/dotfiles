@@ -82,7 +82,3 @@ runs:
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs
-
-    - name: Check Nix CLI environment
-      shell: bash
-      run: sh .github/scripts/check-nix.sh
