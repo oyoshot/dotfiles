@@ -1,8 +1,7 @@
 # Loaded on first use, not while constructing an interactive shell.
 _dotfiles_without_fallbacks() {
   local entry
-  for entry in "${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims" \
-      "$XDG_DATA_HOME/deno/bin" "$XDG_DATA_HOME/gem/bin"; do
+  for entry in "${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims"; do
     path=( ${path:#$entry} )
   done
   [[ ${CARGO_TARGET_DIR-} != "$XDG_DATA_HOME/cargo/target" ]] || unset CARGO_TARGET_DIR
@@ -37,8 +36,6 @@ _dotfiles_mise_resume() {
       _dotfiles_mise_command "$@"
     }
   fi
-  # Legacy standalone tools remain available only outside a Nix project.
-  path+=( $XDG_DATA_HOME/deno/bin(N-/) $XDG_DATA_HOME/gem/bin(N-/) )
   export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$XDG_DATA_HOME/cargo/target}"
   generated=$("$__MISE_BIN" hook-env -s zsh) || return
   eval "$generated"

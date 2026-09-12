@@ -41,11 +41,6 @@ path=(
 # Shims bypass project ownership. mise activation supplies real tool directories.
 path=( ${path:#${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims} )
 path=( ${path:#$HOME/.nix-profile/bin} )
-if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
-  # Temporary fallbacks until the remaining standalone installs are migrated.
-  path+=( $XDG_DATA_HOME/deno/bin(N-/) $XDG_DATA_HOME/gem/bin(N-/) )
-fi
-
 # WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると
 # $commands (PATH 全走査) だけで ~90ms 遅くなる。対話シェルでは退避しておき、
 # .zshrc の winpath / command_not_found_handler で必要になった時に戻す。
