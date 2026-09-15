@@ -1,21 +1,18 @@
 name: Arch Linux Setup
-description: Bootstrap Arch environment, restore caches, install pinned chezmoi, and apply dotfiles
+description: Bootstrap Arch environment, restore caches, activate Home Manager, and provision host tools
 
 inputs:
   arch-extra-packages-path:
     description: "Path to Arch extra packages list"
-    default: dot_config/yay/extra-packages
+    default: config/yay/extra-packages
   mise-config-path:
     description: "Path to mise config"
-    default: dot_config/mise/config.toml
+    default: config/mise/config.toml
   cache-epoch:
     description: "Cache generation identifier"
     required: true
-  chezmoi-version:
-    description: "Pinned chezmoi version"
-    required: true
   github-token:
-    description: "GitHub token passed only to chezmoi apply step"
+    description: "GitHub token for explicit host provisioning"
     default: ""
 
 runs:
@@ -64,7 +61,9 @@ runs:
         key: arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
           arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-
-        path: /home/builder/.cache/mise
+        path: |
+          /home/builder/.cache/mise
+          /home/builder/.local/share/mise/installs
 
     - name: System bootstrap (root)
       shell: bash
@@ -74,26 +73,6 @@ runs:
         pacman-key --populate archlinux
         pacman -Syu --noconfirm archlinux-keyring
         pacman -S --needed --noconfirm base-devel git zsh sudo util-linux curl ca-certificates tar gzip pacman-contrib
-
-    - name: Install pinned chezmoi
-      shell: bash
-      run: |
-        set -euo pipefail
-        version="${{ inputs.chezmoi-version }}"
-        archive="chezmoi_${version}_linux_amd64.tar.gz"
-        checksums="chezmoi_${version}_checksums.txt"
-
-        tmpdir="$(mktemp -d)"
-        trap 'rm -rf "${tmpdir}"' EXIT
-
-        curl -fsSLo "${tmpdir}/${archive}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${archive}"
-        curl -fsSLo "${tmpdir}/${checksums}" "https://github.com/twpayne/chezmoi/releases/download/v${version}/${checksums}"
-
-        grep "  ${archive}$" "${tmpdir}/${checksums}" | (cd "${tmpdir}" && sha256sum -c -)
-        tar -xzf "${tmpdir}/${archive}" -C "${tmpdir}" chezmoi
-
-        install -m 0755 "${tmpdir}/chezmoi" /usr/local/bin/chezmoi
-        chezmoi --version
 
     - name: Create builder user
       shell: bash
@@ -113,7 +92,24 @@ runs:
           /home/builder/.cache \
           /home/builder/.local
 
-    - name: Apply chezmoi (builder)
+    - name: Install pinned Nix (builder)
+      shell: bash
+      run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/install-nix.sh"
+
+    - name: Build and cache custom Nix packages
+      uses: ./.github/actions/nix-build-cache
+
+    - name: Activate Home Manager (builder)
+      shell: bash
+      run: |
+        sudo -Hu builder env \
+          PATH="/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin" \
+          XDG_STATE_HOME="/home/builder/.local/state" \
+          NIX_CONFIG="experimental-features = nix-command flakes" nix \
+          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
+          switch --flake .#ci-linux
+
+    - name: Provision host tools (builder)
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
@@ -125,11 +121,12 @@ runs:
         set -euo pipefail
         sudo -Hu builder env \
           GITHUB_TOKEN="${GITHUB_TOKEN}" \
+          XDG_STATE_HOME="/home/builder/.local/state" \
           MISE_FETCH_REMOTE_VERSIONS_TIMEOUT="${MISE_FETCH_REMOTE_VERSIONS_TIMEOUT}" \
           MISE_HTTP_TIMEOUT="${MISE_HTTP_TIMEOUT}" \
           MISE_HTTP_RETRIES="${MISE_HTTP_RETRIES}" \
           MISE_JOBS="${MISE_JOBS}" \
-          chezmoi init --apply -S "${GITHUB_WORKSPACE}"
+          sh "${GITHUB_WORKSPACE}/scripts/bootstrap-host.sh"
 
     - name: Save pacman cache
       if: success()
@@ -152,4 +149,6 @@ runs:
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         key: arch-mise-v5-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
-        path: /home/builder/.cache/mise
+        path: |
+          /home/builder/.cache/mise
+          /home/builder/.local/share/mise/installs

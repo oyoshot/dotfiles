@@ -1,0 +1,143 @@
+# locale: rootのみ C。通常はUTF-8
+export LANG=ja_JP.UTF-8
+(( ${+UID} && UID == 0 )) && LANG=C
+
+# XDG
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+_user_dirs="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+[ -r "$_user_dirs" ] && . "$_user_dirs"
+: "${XDG_DOCUMENTS_DIR:=$HOME/Documents}"
+export NOTES_DIR="${NOTES_DIR:-$XDG_DOCUMENTS_DIR/notes}"
+unset _user_dirs
+
+# zsh
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# PATH
+typeset -gU path
+if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
+  path=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) $path )
+fi
+path=(
+  $path
+  $HOME/.local/bin(N-/)
+  $XDG_STATE_HOME/nix/profile/bin(N-/)
+  /nix/var/nix/profiles/default/bin(N-/)
+  /opt/homebrew/bin(N-/) # macOS/Apple Silicon
+  /usr/local/bin(N-/) # macOS/Intel
+  /usr/local/sbin(N-/)
+  /usr/bin(N-/)
+  /usr/sbin(N-/)
+  /bin(N-/)
+  /sbin(N-/)
+
+  /Library/Apple/usr/bin(N-/)
+  $XDG_DATA_HOME/gh-red/bin(N-/)
+)
+# Shims bypass project ownership. mise activation supplies real tool directories.
+path=( ${path:#${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims} )
+path=( ${path:#$HOME/.nix-profile/bin} )
+# WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると
+# $commands (PATH 全走査) だけで ~90ms 遅くなる。対話シェルでは退避しておき、
+# .zshrc の winpath / command_not_found_handler で必要になった時に戻す。
+# 非対話 (zsh -c のインライン実行) は exe を直接呼べるよう維持する。
+if [[ -o interactive ]]; then
+  typeset -ga _ZSH_WIN_PATH=( ${(M)path:#/mnt/*} )
+  path=( ${path:#/mnt/*} )
+fi
+
+export PATH
+
+# Keep the default man search path with a trailing colon.
+if [[ -d $XDG_STATE_HOME/nix/profile/share/man ]]; then
+  export MANPATH="$XDG_STATE_HOME/nix/profile/share/man:${MANPATH:-}"
+fi
+
+# Rust
+export RUST_BACKTRACE=1
+export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
+export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
+if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
+  export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$XDG_DATA_HOME/cargo/target}"
+fi
+
+# Deno
+export DENO_INSTALL="$XDG_DATA_HOME/deno"
+export DENO_INSTALL_ROOT="$DENO_INSTALL"
+
+# Python
+export RYE_HOME="$XDG_CONFIG_HOME/rye"
+export IPYTHONDIR="$XDG_CONFIG_HOME/jupyter"
+export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+
+# Ruby
+export GEM_HOME="$XDG_DATA_HOME/gem"
+export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem"
+export BUNDLE_USER_HOME="$XDG_CONFIG_HOME/bundle"
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle/plugin"
+
+# sheldon
+export SHELDON_CONFIG_DIR="$ZDOTDIR"
+
+# gh-red
+export GHRED_CONFIG_HOME="$XDG_CONFIG_HOME/gh-red"
+export GHRED_DATA_HOME="$XDG_DATA_HOME/gh-red"
+
+# Claude Code
+export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+
+# Codex
+export CODEX_HOME="$XDG_CONFIG_HOME/codex"
+
+# Docker
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+
+# Helm
+export HELM_CACHE_HOME="$XDG_CACHE_HOME/helm"
+export HELM_CONFIG_HOME="$XDG_CONFIG_HOME/helm"
+export HELM_DATA_HOME="$XDG_DATA_HOME/helm"
+
+# Keras
+export KERAS_HOME="$XDG_CONFIG_HOME/keras"
+
+# Node.js
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_history"
+
+# npm
+export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
+export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+
+# $+commands は PATH 全走査を起こす。非対話シェルは上の WSL ブロックで PATH を
+# 維持しているため走査が重い。実ファイルを直接見て EDITOR を決める。
+typeset -gx EDITOR=vi
+for _ed in nvim vim; do
+  if [[ -x $XDG_STATE_HOME/nix/profile/bin/$_ed || -x /usr/bin/$_ed || -x /usr/local/bin/$_ed || -x /opt/homebrew/bin/$_ed || -x $HOME/.local/bin/$_ed ]]; then
+    typeset -gx EDITOR=$_ed
+    break
+  fi
+done
+unset _ed
+
+typeset -gx VISUAL=$EDITOR
+typeset -gx GIT_EDITOR=$EDITOR
+typeset -gx SUDO_EDITOR=$EDITOR
+
+# WSLg: compositor が fcitx5 の Wayland IM 登録を拒否するため、
+# fcitx5 を必要とする GUI アプリはデフォルトで XWayland で動かす。
+# Ghostty だけは ~/.local/bin/ghostty で Wayland + GTK IM に戻す。
+if [[ -e /dev/dxg ]]; then
+  export WAYLAND_DISPLAY=
+  export GALLIUM_DRIVER=d3d12
+  if [[ -z $DBUS_SESSION_BUS_ADDRESS && -S ${XDG_RUNTIME_DIR:-/run/user/$UID}/bus ]]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR:-/run/user/$UID}/bus"
+  fi
+  export XMODIFIERS=@im=fcitx
+  export GTK_IM_MODULE=fcitx
+  export QT_IM_MODULE=fcitx
+fi

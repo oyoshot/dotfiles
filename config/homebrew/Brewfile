@@ -1,0 +1,18 @@
+# Composer/LuaRocks migration is pending verification of their runtime requirements.
+brew "composer"
+brew "luarocks"
+
+# Desktop applications pending individual migration or requiring host integration.
+
+cask "1password"
+cask "1password-cli"
+cask "chatgpt"
+cask "docker"
+cask "firefox"
+cask "ghostty"
+cask "google-chrome"
+cask "jupyterlab"
+cask "karabiner-elements"
+cask "notion"
+cask "notion-calendar"
+cask "podman-desktop"
