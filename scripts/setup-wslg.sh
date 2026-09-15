@@ -17,11 +17,4 @@ if [ -e /dev/dxg ]; then
 
     systemctl --user daemon-reload
     systemctl --user restart fcitx5-wslg.service
-
-    # WSLg does not scan ~/.local/share/applications for its Windows Start-menu
-    # integration.  Its /usr/local entry is scanned after /usr, so this desktop
-    # file overrides the package launcher without modifying a pacman-owned file.
-    ghostty_desktop="$HOME/.local/share/applications/com.mitchellh.ghostty.desktop"
-    sudo install -Dm0644 "$ghostty_desktop" \
-        /usr/local/share/applications/com.mitchellh.ghostty.desktop
 fi

@@ -115,7 +115,7 @@
     };
     "gnupg/gpg-agent.conf".text =
       lib.optionalString pkgs.stdenv.hostPlatform.isDarwin
-        "pinentry-program /opt/homebrew/bin/pinentry-mac\n";
+        "pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac\n";
     "textlint/textlintrc".text = builtins.replaceStrings
       [ "@homeDirectory@" ] [ config.home.homeDirectory ]
       (builtins.readFile ./config/textlint/textlintrc.tmpl);
@@ -125,7 +125,11 @@
     ".zshenv".source = ./config/zsh/.zshenv;
     ".textlintrc".source = config.xdg.configFile."textlint/textlintrc".source;
     ".local/bin/acm" = { source = ./local/bin/acm; };
-    ".local/bin/ghostty" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) { source = ./local/bin/ghostty; };
+    ".local/bin/ghostty" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
+      executable = true;
+      text = builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ]
+        [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ] (builtins.readFile ./local/bin/ghostty);
+    };
     ".local/bin/nvim-lsp-logrotate.sh" = { source = ./local/bin/nvim-lsp-logrotate.sh; };
     ".local/bin/pbcopy" = { source = ./local/bin/pbcopy; };
     ".local/bin/pbpaste" = { source = ./local/bin/pbpaste; };
@@ -137,8 +141,10 @@
       source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Windows/System32/rundll32.exe";
     };
     ".local/share/applications/com.mitchellh.ghostty.desktop" = lib.mkIf config.dotfiles.wsl {
+      # WSLg receives a copy during activation; keep its paths stable across updates.
       text = builtins.replaceStrings
-        [ "@homeDirectory@" ] [ config.home.homeDirectory ]
+        [ "@homeDirectory@" "@ghosttyIcon@" ]
+        [ config.home.homeDirectory "${config.home.profileDirectory}/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" ]
         (builtins.readFile ./local/share/applications/com.mitchellh.ghostty.desktop.tmpl);
     };
     "Library/Preferences/atcoder-cli" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {

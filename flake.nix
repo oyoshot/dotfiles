@@ -65,39 +65,82 @@
       cliPackages = pkgs: [
         (zacrsPackage pkgs)
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
+        pkgs.autoconf
+        pkgs.automake
+        pkgs.aws-vault
         pkgs.awscli2
         pkgs.bat
         pkgs.claude-code
+        pkgs.cloudflared
         pkgs.codex
+        pkgs.coreutils
         pkgs.delta
+        pkgs.diffutils
+        pkgs.dig
         pkgs.eva
         pkgs.eza
+        pkgs.fcp
         pkgs.fd
+        pkgs.findutils
+        pkgs.fish
         pkgs.fzf
+        pkgs.gawk
+        pkgs.getopt
         pkgs.gh
         pkgs.ghq
+        pkgs.git
         pkgs.git-wt
+        pkgs.gnugrep
+        pkgs.gnumake
+        pkgs.gnupg
+        pkgs.gnutar
+        pkgs.graphviz
         pkgs.gwq
+        pkgs.gzip
         pkgs.herdr
+        pkgs.htop
         pkgs.hyperfine
         pkgs.jq
         pkgs.marp-cli
+        pkgs.moreutils
+        pkgs.ncurses
         pkgs.neovim
         pkgs.ni
+        pkgs.pkg-config
+        pkgs.podman-compose
         pkgs.poetry
+        pkgs.rclone
         pkgs.ripgrep
+        pkgs.skopeo
+        pkgs.ssm-session-manager-plugin
         pkgs.starship
+        pkgs.time
         pkgs.tmux
         pkgs.trash-cli
+        pkgs.unzip
         pkgs.usage
         pkgs.uv
         pkgs.vim-startuptime
+        pkgs.wget
+        pkgs.whois
         pkgs.zoxide
         pkgs.zsh
+      ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        # Default linker for the shared Cargo configuration and native builds.
+        pkgs.gnused
+        pkgs.clang
+        pkgs.mold
+      ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+        # macOS scripts expect BSD sed; preserve Homebrew's gsed spelling.
+        (pkgs.gnused.overrideAttrs { configureFlags = [ "--program-prefix=g" ]; })
+        pkgs.gcc
+        pkgs.binutils
+        pkgs.pinentry_mac
       ];
     in
     {
       packages = forAllSystems (pkgs: {
+        podman = pkgs.podman;
         home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
         zsh-autocomplete-rs = zacrsPackage pkgs;
         herdr-plugin-agent-title = pkgs.callPackage ./packages/herdr-agent-title.nix {
