@@ -1,0 +1,17 @@
+# Host packages; user tools, fonts and applications are managed by Home Manager.
+# install-arch.sh installs base/base-devel/git; pacman retains their dependencies.
+# zsh is the /bin/zsh login shell. WSLg currently uses Arch Fcitx.
+downgrade
+fcitx5
+fcitx5-configtool
+fcitx5-gtk
+fcitx5-mozc
+fuse3
+# LuaRocks migration is pending verification of its runtime requirements.
+luarocks
+# Cargo tools built by mise need OpenSSL headers and pkg-config metadata.
+openssl
+# Host container policy/seccomp defaults; Podman itself is managed by Nix.
+containers-common
+reflector
+zsh
