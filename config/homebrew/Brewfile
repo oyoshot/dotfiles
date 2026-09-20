@@ -2,6 +2,13 @@
 brew "composer"
 brew "luarocks"
 
+# Homebrew provides versioned GCC commands; cc stays Apple Clang from Xcode/CLT.
+brew "gcc"
+
+# Native libraries used by Cargo tools installed through mise.
+brew "openssl@3"
+brew "pkgconf"
+
 # Desktop applications pending individual migration or requiring host integration.
 
 cask "1password"

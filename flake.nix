@@ -62,6 +62,8 @@
           platforms = systems;
         };
       };
+      # Native compilers, linkers and pkg-config live with the host SDK/libraries.
+      # Putting Nix wrappers here also changes ordinary mise/Cargo builds.
       cliPackages = pkgs: [
         (zacrsPackage pkgs)
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
@@ -106,7 +108,6 @@
         pkgs.ncurses
         pkgs.neovim
         pkgs.ni
-        pkgs.pkg-config
         pkgs.podman-compose
         pkgs.poetry
         pkgs.rclone
@@ -126,14 +127,10 @@
         pkgs.zoxide
         pkgs.zsh
       ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        # Default linker for the shared Cargo configuration and native builds.
         pkgs.gnused
-        pkgs.clang
-        pkgs.mold
       ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         # macOS scripts expect BSD sed; preserve Homebrew's gsed spelling.
         (pkgs.gnused.overrideAttrs { configureFlags = [ "--program-prefix=g" ]; })
-        pkgs.gcc
         pkgs.pinentry_mac
       ];
     in

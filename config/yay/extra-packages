@@ -9,8 +9,12 @@ fcitx5-mozc
 fuse3
 # LuaRocks migration is pending verification of its runtime requirements.
 luarocks
-# Cargo tools built by mise need OpenSSL headers and pkg-config metadata.
+# Native builds use the host toolchain and libraries, including Cargo's
+# configured clang/mold linker. Keep these together outside the Nix profile.
+clang
+mold
 openssl
+pkgconf
 # Host container policy/seccomp defaults; Podman itself is managed by Nix.
 containers-common
 reflector
