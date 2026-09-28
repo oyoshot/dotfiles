@@ -7,8 +7,6 @@ fcitx5-configtool
 fcitx5-gtk
 fcitx5-mozc
 fuse3
-# LuaRocks migration is pending verification of its runtime requirements.
-luarocks
 # Native builds use the host toolchain and libraries, including Cargo's
 # configured clang/mold linker. Keep these together outside the Nix profile.
 clang

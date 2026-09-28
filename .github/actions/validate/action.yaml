@@ -16,3 +16,5 @@ runs:
         for configuration in oyoshot-linux oyoshot-darwin ci-linux ci-darwin; do
           nix eval --raw ".#homeConfigurations.${configuration}.activationPackage.drvPath" >/dev/null
         done
+        system=$(nix eval --impure --raw --expr builtins.currentSystem)
+        nix build --no-link --no-update-lock-file ".#checks.${system}.mise-migration"

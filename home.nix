@@ -11,6 +11,9 @@ in
     targets.genericLinux.gpu.enable = pkgs.stdenv.hostPlatform.isLinux;
     fonts.fontconfig.enable = pkgs.stdenv.hostPlatform.isLinux;
     home.packages = [
+      # LuaRocks and its interpreter must agree on the Lua ABI.
+      pkgs.lua5_4
+      pkgs.lua54Packages.luarocks
       pkgs.nerd-fonts.jetbrains-mono
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       pkgs.alacritty
@@ -25,6 +28,12 @@ in
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      pkgs.php
+      pkgs.phpPackages.composer
+      pkgs.chatgpt
+      pkgs.firefox-bin
+      pkgs.google-chrome
+      pkgs.notion-app
       pkgs.nerd-fonts.hack
       pkgs.mas
       pkgs.wezterm
@@ -70,6 +79,13 @@ in
           run ${pkgs.coreutils}/bin/install -m 600 ${./config/mise/config.toml} ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"}
         fi
       '';
+    # Remove only unchanged defaults; explicit user versions and project configs survive.
+    home.activation.miseNixTools = lib.hm.dag.entryAfter [ "miseMutableConfig" ] ''
+      run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
+        ${./scripts/migrate-mise-tools.py} \
+        ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"} \
+        ${pkgs.writeText "nix-owned-mise-tools.json" (builtins.toJSON (builtins.attrNames (import ./packages/user-tools.nix pkgs)))}
+    '';
     nix.package = pkgs.nix;
     nix.settings.use-xdg-base-directories = true;
     nix.settings.experimental-features = [ "nix-command" "flakes" ];

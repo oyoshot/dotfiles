@@ -36,9 +36,9 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system:
         f (import nixpkgs {
           inherit system;
-          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" ];
         }));
-      # Runtimes, Terraform versions and textlint plugins stay in mise.
+      # Runtime/toolchain exceptions are documented in config/mise/config.toml.
       zacrsPackage = pkgs: pkgs.rustPlatform.buildRustPackage {
         pname = "zsh-autocomplete-rs";
         version = "0.1.0-${builtins.substring 0 7 zacrs-src.rev}";
@@ -64,7 +64,7 @@
       };
       # Native compilers, linkers and pkg-config live with the host SDK/libraries.
       # Putting Nix wrappers here also changes ordinary mise/Cargo builds.
-      cliPackages = pkgs: [
+      cliPackages = pkgs: builtins.attrValues (import ./packages/user-tools.nix pkgs) ++ [
         (zacrsPackage pkgs)
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
         pkgs.autoconf
@@ -153,6 +153,18 @@
         };
       });
 
+      checks = forAllSystems (pkgs: {
+        mise-migration = pkgs.runCommand "mise-nix-migration-check" {
+          nativeBuildInputs = [ (pkgs.python3.withPackages (ps: [ ps.tomlkit ])) ];
+        } ''
+          mkdir -p scripts tests
+          cp ${./scripts/migrate-mise-tools.py} scripts/migrate-mise-tools.py
+          cp ${./tests/test-mise-migration.py} tests/test-mise-migration.py
+          python -B tests/test-mise-migration.py
+          touch $out
+        '';
+      });
+
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShellNoCC {
           name = "dotfiles-cli";
@@ -164,7 +176,7 @@
         oyoshot-linux = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [
@@ -180,7 +192,7 @@
         ci-linux = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [ ./home.nix {
@@ -192,7 +204,7 @@
         ci-darwin = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [ ./home.nix {
@@ -204,7 +216,7 @@
         oyoshot-darwin = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [

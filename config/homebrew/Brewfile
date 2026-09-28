@@ -1,7 +1,3 @@
-# Composer/LuaRocks migration is pending verification of their runtime requirements.
-brew "composer"
-brew "luarocks"
-
 # Homebrew provides versioned GCC commands; cc stays Apple Clang from Xcode/CLT.
 brew "gcc"
 
@@ -9,17 +5,17 @@ brew "gcc"
 brew "openssl@3"
 brew "pkgconf"
 
-# Desktop applications pending individual migration or requiring host integration.
+# Host integration (credentials, privileged helpers, input events) stays native.
 
 cask "1password"
 cask "1password-cli"
-cask "chatgpt"
 cask "docker"
-cask "firefox"
+# Pinned nixpkgs Ghostty supports Linux only.
 cask "ghostty"
-cask "google-chrome"
+# Desktop app, not the Python jupyterlab server; absent from pinned nixpkgs.
 cask "jupyterlab"
 cask "karabiner-elements"
-cask "notion"
+# No macOS package in pinned nixpkgs.
 cask "notion-calendar"
+# Manages the host VM/container integration.
 cask "podman-desktop"

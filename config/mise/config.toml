@@ -20,61 +20,27 @@ rye = "latest"
 rust = "latest"
 scala = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
-# Project tooling follows the original rolling-version policy.
+# Package installers and compilers follow the selected language runtime.
 pipx = "latest"
-ansible = "latest"
-helm = "latest"
-kubectl = "latest"
-oc = "latest"
-odo = "latest"
-opentofu = "latest"
-pulumi = "latest"
-tekton = "latest"
-terraform-ls = "latest"
-tflint = "latest"
-tfsec = "latest"
 zig = "latest"
 
-# Editor tooling is project-scoped; Neovim itself stays in Home Manager.
-"npm:pyright" = "latest"
+# gopls must track the Go toolchain; see nixpkgs gopls/package.nix.
 "go:golang.org/x/tools/gopls" = "latest"
-ruff = "latest"
-prettier = "latest"
-"npm:@fsouza/prettierd" = "latest"
-stylua = "latest"
-"npm:bash-language-server" = "latest"
-lua-language-server = "latest"
-"npm:@vtsls/language-server" = "latest"
-cspell = "latest"
-shellcheck = "latest"
-shfmt = "latest"
-tree-sitter = "latest"
 
+# Tools coupled to the selected Rust toolchain or native build environment.
 "cargo:cargo-compete" = "latest"
-"cargo:cargo-audit" = "latest"
-"cargo:cargo-chef" = "latest"
-"cargo:cargo-crev" = "latest"
-"cargo:cargo-deny" = "latest"
 "cargo:cargo-expand" = "latest"
-"cargo:cargo-features-manager" = "latest"
 "cargo:flamegraph" = "latest"
-"cargo:cargo-generate" = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-llvm-cov" = "latest"
-"cargo:cargo-machete" = "latest"
-"cargo:cargo-make" = "latest"
-"cargo:cargo-nextest" = "latest"
-"cargo:cargo-sort" = "latest"
 "cargo:cargo-udeps" = "latest"
-"cargo:cargo-update" = "latest"
-"cargo:typos-lsp" = "latest"
-"cargo:typos-cli" = "latest"
-"cargo:https://github.com/Feel-ix-343/markdown-oxide.git" = "latest"
 
+# No matching package in the pinned nixpkgs; keep the upstream installers.
 "go:github.com/mattn/memo" = "latest"
 
-"npm:@astrojs/language-server" = "latest"
+# Loaded as a Node plugin, rather than a standalone executable.
 "npm:@astrojs/ts-plugin" = "latest"
+# These standalone tools have no matching package in the pinned nixpkgs.
 "npm:atcoder-cli" = "latest"
 "npm:mcp-hub" = "latest"
 "npm:md-to-pdf" = "latest"
