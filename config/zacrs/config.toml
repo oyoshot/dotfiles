@@ -31,7 +31,7 @@ tfi = 'terraform init'
 tfp = 'terraform plan -lock=false'
 tfa = 'terraform apply'
 tfd = 'terraform destroy'
-tff = 'terraform fmt'
+tff = 'terraform fmt --recursive'
 tfv = 'terraform validate'
 tfo = 'terraform output'
 tfsl = 'terraform state list'
@@ -125,4 +125,27 @@ when.position = "argument"
 trigger = "nullerr"
 expansion = "2> /dev/null"
 description = "discard stderr"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "now"
+expansion = "date +'%Y-%m-%dT%H:%M:%S%z'"
+description = "print current time in ISO 8601"
+
+[[abbreviation]]
+trigger = "ts"
+expansion = "$(date +%Y%m%d-%H%M%S)"
+description = "timestamp for file names"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "epoch"
+expansion = "$(date +%s)"
+description = "current Unix epoch seconds"
+when.position = "argument"
+
+[[abbreviation]]
+trigger = "tolog"
+expansion = '> "$(date +%Y%m%d-%H%M%S).log" 2>&1'
+description = "redirect output to a timestamped log file"
 when.position = "argument"
