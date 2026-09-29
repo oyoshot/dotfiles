@@ -13,7 +13,29 @@ macOS の Composer は PHP と、LuaRocks は両 OS で Lua 5.4 と一緒に供�
 異なる PHP / Lua を使うプロジェクトは、その runtime に合うパッケージ管理環境を
 プロジェクト単位で指定する。
 
-macOS の ChatGPT / Firefox / Chrome / Notion は Home Manager 管理。
+macOS の GUI は `packages/darwin-apps.nix` に集約し、Home Manager の `copyApps` で
+`~/Applications/Home Manager Apps` に配置する。1Password / ChatGPT / Firefox /
+Chrome / Ghostty / Notion / Podman Desktop / WezTerm は nixpkgs の既存定義を使う。
+Ghostty の macOS 用パッケージ名は `ghostty-bin`。
+Notion Calendar と JupyterLab Desktop は [brew-nix](https://github.com/BatteredBunny/brew-nix) の
+`notion-calendar` / `jupyterlab-app` を使う。Homebrew を実行するのではなく、cask の
+メタデータから Nix パッケージを生成する。1Password CLI も Nix 管理。
+
+brew-nix の変換実装と brew-api のメタデータは別 input として `flake.lock` に固定する。
+アプリの更新は `nix flake update brew-api`、変換実装の更新は `nix flake update brew-nix`。
+nixpkgs 由来のアプリは `nix flake update nixpkgs` で更新する。
+brew-nix は experimental で、cask のインストールフックや OS サービス設定すべてを
+再現するものではない。対象は確認した通常の app bundle に限定する。
+
+macOS CI ではビルド、Home Manager 適用・再適用後の配置・アーキテクチャ・署名を検査する。
+今回置き換える3本は配置先の実行ファイルを起動し、15秒間終了しないことも検査する。
+これは起動の smoke test で、UI 操作・ログイン・TCC の許可・Jupyter の Python 環境初期化・
+コンテナ VM の起動は別途実機で確認する。1Password の認証連携も CLI のバージョン検査とは別。
+
+更新元は Nix とし、アプリに自動更新を止める設定がある場合は無効にする。
+`copyApps` の配置先は書き込み可能なコピーなので、アプリによる更新を技術的に禁止するわけではない。
+Home Manager の再適用で固定済み bundle を再配置する。Nix の世代を戻しても、
+アプリが更新したユーザーデータまで戻るわけではない。
 既存の Homebrew アプリは自動削除しない。macOS で Home Manager 側の起動と
 ユーザーデータの保持を確認した後、重複する Homebrew インストールを整理する。
 
@@ -32,9 +54,22 @@ macOS の ChatGPT / Firefox / Chrome / Notion は Home Manager 管理。
 
 ホストのコンパイラ・リンカ・OpenSSL・pkgconf、Arch の基盤パッケージ・Fcitx・
 FUSE・コンテナポリシー・ログインシェルはホスト側で揃える。
-macOS の 1Password と CLI、Docker、Karabiner、Podman Desktop はホスト統合を維持。
-Ghostty は固定 nixpkgs の macOS 非対応、JupyterLab Desktop と Notion Calendar は
-対応する macOS パッケージがないため Homebrew に残す。
+macOS の Docker Desktop は当面 Homebrew に残す。アプリ本体だけでなく CLI・socket・VM の
+連携まで検証してから移行を判断する。管理者権限が常に必要という理由ではない。
+Karabiner は DriverKit と launch daemon の統合があるため、Homebrew の upstream
+インストーラを維持する。nix-darwin 側の対応状況も含め、通常アプリとは別に検証する。
+Podman Desktop 本体とその Podman 依存は Nix のパッケージで供給する。
+
+## Homebrew との統合
+
+現在は standalone Home Manager と `scripts/bootstrap-host.sh` を使い、残りの
+OS パッケージは Brewfile から明示的に導入する。nix-darwin はまだ導入していない。
+
+[nix-darwin の homebrew モジュール](https://nix-darwin.github.io/nix-darwin/manual/#opt-homebrew.enable)
+を使うと cask/formula を Nix で宣言できるが、実際の導入・更新は Homebrew が担当する。
+[nix-homebrew](https://github.com/zhaofengli/nix-homebrew) は Homebrew 本体と tap を
+管理する別モジュールで、パッケージ一覧は nix-darwin の `homebrew.*` で管理する。
+これらは Nix store 内にアプリを格納する今回の方式とは管理主体が異なる。
 
 ## 既存 mise 設定の移行
 

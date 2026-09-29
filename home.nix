@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   podman = pkgs.podman;
 in
@@ -30,14 +30,11 @@ in
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
       pkgs.php
       pkgs.phpPackages.composer
-      pkgs.chatgpt
-      pkgs.firefox-bin
-      pkgs.google-chrome
-      pkgs.notion-app
       pkgs.nerd-fonts.hack
       pkgs.mas
-      pkgs.wezterm
-    ];
+      pkgs._1password-cli
+    ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin
+      (builtins.attrValues (import ./packages/darwin-apps.nix { inherit pkgs inputs; }));
     # Preserve the rootless API socket convention formerly supplied by podman-docker.
     home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       DOCKER_HOST = "unix://\${XDG_RUNTIME_DIR}/podman/podman.sock";

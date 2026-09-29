@@ -5,17 +5,7 @@ brew "gcc"
 brew "openssl@3"
 brew "pkgconf"
 
-# Host integration (credentials, privileged helpers, input events) stays native.
-
-cask "1password"
-cask "1password-cli"
-cask "docker"
-# Pinned nixpkgs Ghostty supports Linux only.
-cask "ghostty"
-# Desktop app, not the Python jupyterlab server; absent from pinned nixpkgs.
-cask "jupyterlab"
+# Docker stays here until CLI/socket/VM integration is verified with Nix.
+# Karabiner needs DriverKit/launchd integration. Ordinary app bundles are Nix-owned.
+cask "docker-desktop"
 cask "karabiner-elements"
-# No macOS package in pinned nixpkgs.
-cask "notion-calendar"
-# Manages the host VM/container integration.
-cask "podman-desktop"
