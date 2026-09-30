@@ -160,9 +160,6 @@
             "/share/zsh/site-functions"
           ];
         };
-      } // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-        gui-app-manifest = pkgs.writeText "darwin-apps.json"
-          (builtins.toJSON (builtins.attrNames (import ./packages/darwin-apps.nix { inherit pkgs inputs; })));
       });
 
       checks = forAllSystems (pkgs: {

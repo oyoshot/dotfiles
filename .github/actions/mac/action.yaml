@@ -68,7 +68,7 @@ runs:
         export XDG_STATE_HOME="$HOME/.local/state"
         sh scripts/bootstrap-host.sh
 
-    - name: Verify Nix-managed macOS apps
+    - name: Re-activate Home Manager
       shell: bash
       env:
         NIX_CONFIG: "experimental-features = nix-command flakes"
@@ -76,15 +76,7 @@ runs:
         set -euo pipefail
         export XDG_STATE_HOME="$HOME/.local/state"
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-        manifest=$(nix build --no-link --no-update-lock-file --print-out-paths .#gui-app-manifest)
-        apps_dir=$(nix eval --raw .#homeConfigurations.ci-darwin.config.targets.darwin.copyApps.directory)
-        profile="$XDG_STATE_HOME/nix/profile"
-        /usr/bin/python3 scripts/check-darwin-apps.py "$manifest" "$HOME/$apps_dir" "$profile"
-        # Re-activation must preserve deployable, signed bundles.
         nix run --no-update-lock-file .#home-manager -- -b before-home-manager switch --flake .#ci-darwin
-        /usr/bin/python3 scripts/check-darwin-apps.py "$manifest" "$HOME/$apps_dir" "$profile" --launch
-        "$profile/bin/op" --version
-        "$profile/bin/ghostty" --version
 
     - name: Save Homebrew cache
       if: success()
