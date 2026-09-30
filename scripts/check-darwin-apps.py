@@ -63,7 +63,7 @@ def check_apps(manifest, installed, profile, launch=False):
             if not actual.get(key) or actual[key] != expected.get(key):
                 raise RuntimeError(f"Unexpected {key} in {app}")
         executable = app / "Contents/MacOS" / actual["CFBundleExecutable"]
-        subprocess.run(["/usr/bin/lipo", "-verify_arch", architecture, str(executable)], check=True)
+        subprocess.run(["/usr/bin/lipo", str(executable), "-verify_arch", architecture], check=True)
         # Verifies integrity after copying, including nested frameworks/helpers.
         # Does not claim that login, TCC permissions or VM startup have been tested.
         subprocess.run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)], check=True)
