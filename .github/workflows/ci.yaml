@@ -9,9 +9,6 @@ on:
     - cron: "17 10 * * 6"
   workflow_dispatch:
 
-env:
-  CHEZMOI_VERSION: 2.69.3
-
 jobs:
   validate-mac:
     name: validate (mac)
@@ -26,8 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/validate
-        with:
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
 
   validate-arch:
     name: validate (arch)
@@ -39,16 +34,9 @@ jobs:
     concurrency:
       group: ci-validate-arch-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
-    container:
-      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
-      options: >-
-        --tmpfs /tmp:exec,mode=1777
-        --tmpfs /var/tmp:exec,mode=1777
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/validate
-        with:
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
 
   provisioning-changes:
     name: detect provisioning changes
@@ -72,7 +60,7 @@ jobs:
           set -euo pipefail
           git diff --no-renames --name-only "${BASE_SHA}...${HEAD_SHA}" >/tmp/changed-files
 
-          provisioning_pattern='^(\.chezmoiignore$|\.chezmoiscripts/|\.chezmoiexternal|dot_config/mise/|dot_config/homebrew/Brewfile$|dot_config/yay/extra-packages$|\.github/actions/(mac|arch)/|\.github/workflows/ci\.yaml$)'
+          provisioning_pattern='^(.*\.nix$|flake\.lock$|config/|local/|scripts/|\.workarounds/|\.github/)'
           run=false
           if grep -Eq "${provisioning_pattern}" /tmp/changed-files; then
             run=true
@@ -104,7 +92,6 @@ jobs:
       - uses: ./.github/actions/mac
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   provision-arch:
@@ -139,7 +126,6 @@ jobs:
       - uses: ./.github/actions/arch
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   scheduled-provision-mac:
@@ -163,7 +149,6 @@ jobs:
       - uses: ./.github/actions/mac
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   scheduled-provision-arch:
@@ -197,5 +182,4 @@ jobs:
       - uses: ./.github/actions/arch
         with:
           cache-epoch: ${{ steps.cache-epoch.outputs.value }}
-          chezmoi-version: ${{ env.CHEZMOI_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,11 @@
+# Homebrew provides versioned GCC commands; cc stays Apple Clang from Xcode/CLT.
+brew "gcc"
+
+# Native libraries used by Cargo tools installed through mise.
+brew "openssl@3"
+brew "pkgconf"
+
+# Docker stays here until CLI/socket/VM integration is verified with Nix.
+# Karabiner needs DriverKit/launchd integration. Ordinary app bundles are Nix-owned.
+cask "docker-desktop"
+cask "karabiner-elements"
