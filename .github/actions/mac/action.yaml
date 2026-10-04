@@ -29,10 +29,10 @@ runs:
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        # Rebuild Cargo tools against host libraries after the toolchain migration.
-        key: macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        # Rebuild Cargo tools against Nix OpenSSL after the Homebrew migration.
+        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-
+          macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs
@@ -78,6 +78,25 @@ runs:
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
         nix run --no-update-lock-file .#home-manager -- -b before-home-manager switch --flake .#ci-darwin
 
+    - name: Verify macOS development tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        export PATH="$HOME/.local/bin:$HOME/.local/state/nix/profile/bin:$PATH"
+        case "$(mise exec -- pkg-config --variable=prefix openssl)" in
+          /nix/store/*) ;;
+          *) echo "OpenSSL must come from Nix" >&2; exit 1 ;;
+        esac
+        probe=$(mktemp -d)
+        printf '#include <openssl/crypto.h>\nint main(void) { return OpenSSL_version_num() == 0; }\n' > "$probe/openssl.c"
+        mise exec -- sh -c '/usr/bin/clang "$1/openssl.c" $(pkg-config --cflags --libs openssl) -o "$1/openssl"' sh "$probe"
+        "$probe/openssl"
+        for compiler in "$HOME"/.local/bin/{gcc,g++,gfortran}-*; do
+          "$compiler" --version
+        done
+        docker --version
+        docker compose version
+
     - name: Save Homebrew cache
       if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -89,7 +108,7 @@ runs:
       if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs

@@ -71,8 +71,8 @@
           platforms = systems;
         };
       };
-      # Native compilers, linkers and pkg-config live with the host SDK/libraries.
-      # Putting Nix wrappers here also changes ordinary mise/Cargo builds.
+      # Keep the default compiler/linker with the host SDK.
+      # home.nix exposes Darwin's Nix GCC only through versioned commands.
       cliPackages = pkgs: builtins.attrValues (import ./packages/user-tools.nix pkgs) ++ [
         (zacrsPackage pkgs)
         (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })

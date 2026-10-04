@@ -28,6 +28,10 @@ in
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      pkgs.openssl
+      pkgs.pkgconf
+      pkgs.docker-client
+      pkgs.docker-credential-helpers
       pkgs.php
       pkgs.phpPackages.composer
       pkgs.nerd-fonts.hack
@@ -50,11 +54,21 @@ in
       enableZshIntegration = false;
       enableBashIntegration = false;
       enableFishIntegration = false;
+      # Host Clang can link Nix OpenSSL without using a Nix compiler wrapper.
+      globalConfig.env = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        PKG_CONFIG_PATH = "${lib.getDev pkgs.openssl}/lib/pkgconfig";
+      };
       globalConfig.settings = {
         experimental = true;
         idiomatic_version_file_enable_tools = [ "terraform" "node" "python" "rust" ];
         npm.bun = true;
       };
+    };
+    # Keep cc/c++ as Apple Clang, while providing Homebrew-style GCC names.
+    home.file = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      ".local/bin/gcc-${lib.versions.major pkgs.gcc.version}".source = "${pkgs.gcc}/bin/gcc";
+      ".local/bin/g++-${lib.versions.major pkgs.gcc.version}".source = "${pkgs.gcc}/bin/g++";
+      ".local/bin/gfortran-${lib.versions.major pkgs.gfortran.version}".source = "${pkgs.gfortran}/bin/gfortran";
     };
     programs.direnv = {
       enable = true;

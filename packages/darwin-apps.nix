@@ -15,4 +15,6 @@ in
   # Cask metadata is pinned independently through the brew-api input.
   "Notion Calendar.app" = casks.notion-calendar;
   "JupyterLab.app" = casks.jupyterlab-app;
+  # Docker Desktop owns first-run setup, contexts and optional privileged helpers.
+  "Docker.app" = casks.docker-desktop;
 }

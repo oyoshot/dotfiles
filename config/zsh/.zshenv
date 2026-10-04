@@ -26,6 +26,7 @@ path=(
   $path
   $HOME/.local/bin(N-/)
   $XDG_STATE_HOME/nix/profile/bin(N-/)
+  $HOME/.docker/bin(N-/) # Docker Desktop's user-scoped credential helpers
   /nix/var/nix/profiles/default/bin(N-/)
   /opt/homebrew/bin(N-/) # macOS/Apple Silicon
   /usr/local/bin(N-/) # macOS/Intel
