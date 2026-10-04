@@ -2,7 +2,7 @@
 
 ユーザーランドのツールと設定は、できるだけ Nix / Home Manager で管理する。
 言語バージョン切り替えや upstream の実行環境との互換性に必要な範囲は mise に任せる。
-システム設定・権限・ホストの SDK / ライブラリに関わるものは OS の管理に残す。
+システム設定・権限・ホストの SDK は OS の管理に残す。開発用ライブラリは Nix で揃える。
 「開発ツール」「最新版が必要」という分類だけでは mise に移さない。
 
 ## Nix
@@ -17,8 +17,8 @@ macOS の GUI は `packages/darwin-apps.nix` に集約し、Home Manager の `co
 `~/Applications/Home Manager Apps` に配置する。1Password / ChatGPT / Firefox /
 Chrome / Ghostty / Notion / Podman Desktop / WezTerm は nixpkgs の既存定義を使う。
 Ghostty の macOS 用パッケージ名は `ghostty-bin`。
-Notion Calendar と JupyterLab Desktop は [brew-nix](https://github.com/BatteredBunny/brew-nix) の
-`notion-calendar` / `jupyterlab-app` を使う。Homebrew を実行するのではなく、cask の
+Docker Desktop、Notion Calendar と JupyterLab Desktop は [brew-nix](https://github.com/BatteredBunny/brew-nix) の
+`docker-desktop` / `notion-calendar` / `jupyterlab-app` を使う。Homebrew を実行するのではなく、cask の
 メタデータから Nix パッケージを生成する。1Password CLI も Nix 管理。
 
 brew-nix の変換実装と brew-api のメタデータは別 input として `flake.lock` に固定する。
@@ -51,13 +51,37 @@ Home Manager の再適用で固定済み bundle を再配置する。Nix の世�
 
 ## OS 側に残す範囲
 
-ホストのコンパイラ・リンカ・OpenSSL・pkgconf、Arch の基盤パッケージ・Fcitx・
-FUSE・コンテナポリシー・ログインシェルはホスト側で揃える。
-macOS の Docker Desktop は当面 Homebrew に残す。アプリ本体だけでなく CLI・socket・VM の
-連携まで検証してから移行を判断する。管理者権限が常に必要という理由ではない。
+Arch の基盤パッケージ・FUSE・コンテナポリシー・ログインシェルはホスト側で揃える。
+Docker Desktop のアプリと CLI は Nix で供給し、初回設定・VM・必要な権限設定は
+Docker Desktop 自身に任せる。VM 起動は macOS 実機で別途確認する。
+WSLg の Fcitx は Home Manager の既存モジュールで Nix 版と Mozc を供給し、
+既存の候補ウィンドウ回避パッチとサービス起動引数を維持する。
+Arch の Fcitx パッケージ指定は、WSLg 実機で入力を確認してから撤去する。
 Karabiner は DriverKit と launch daemon の統合があるため、Homebrew の upstream
 インストーラを維持する。nix-darwin 側の対応状況も含め、通常アプリとは別に検証する。
 Podman Desktop 本体とその Podman 依存は Nix のパッケージで供給する。
+
+## ネイティブビルド
+
+Linux の Clang・mold・pkg-config・OpenSSL は `devShells.x86_64-linux.native` で揃える。
+Rust などのバージョン選択は mise が担当する。dotfiles ディレクトリでは次のように使う。
+
+```sh
+nix develop .#native
+mise exec rust -- cargo build --manifest-path /path/to/project/Cargo.toml
+```
+
+プロジェクトの direnv から使う場合は、そのプロジェクトの `.envrc` でこの flake の
+`native` shell を指定する。通常の `nix develop` にも同じビルド依存を含める。
+グローバル PATH の `clang` を Nix wrapper に差し替える方式は使わない。
+
+`bootstrap-host.sh` は Linux の mise インストールをこの shell 内で実行する。
+ビルド環境は `$XDG_STATE_HOME/nix/profiles/runtime-build` に保存する。
+mise でインストールしたバイナリは Nix のライブラリを参照するため、旧世代を削除する際は
+古い環境でインストールしたツールも再ビルドする。
+
+macOS は Apple Clang / SDK を使い、GCC は Nix から版付きのコマンド名で供給する。
+OpenSSL と pkgconf も Nix 管理とし、mise の環境設定から OpenSSL の検索先を渡す。
 
 ## Homebrew との統合
 

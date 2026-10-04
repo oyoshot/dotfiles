@@ -16,7 +16,15 @@ case "$(uname -s)" in
         fi
         ;;
 esac
-zsh "$source_dir/scripts/install-runtimes.zsh"
+if [ "$(uname -s)" = Linux ]; then
+    # Keep the build environment rooted: mise's Cargo binaries link its libraries.
+    build_profiles="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
+    mkdir -p "$build_profiles"
+    nix develop --no-update-lock-file --profile "$build_profiles/runtime-build" \
+        "$source_dir#native" --command zsh "$source_dir/scripts/install-runtimes.zsh"
+else
+    zsh "$source_dir/scripts/install-runtimes.zsh"
+fi
 if [ "$(uname -s)" = Linux ] && [ -e /dev/dxg ]; then
     sh "$source_dir/scripts/setup-wslg.sh"
 fi

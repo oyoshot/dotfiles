@@ -5,10 +5,9 @@ windows under WSLg.
 
 Upstream issue: https://github.com/microsoft/wslg/issues/1495
 
-On Arch WSLg machines, `sh scripts/setup-wslg.sh` installs the patched package
-automatically while the installed fcitx5 version matches this pinned recipe.
-The onchange setup script skips unknown newer versions instead of downgrading
-them or failing the rest of the apply.
+Home Manager now applies the patch to the Nix Fcitx package in `services.nix`.
+The Arch recipe below is retained for rollback during the WSLg migration;
+`setup-wslg.sh` no longer installs an Arch package.
 
 Manual install:
 

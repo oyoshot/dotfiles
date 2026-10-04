@@ -175,9 +175,20 @@
       });
 
       devShells = forAllSystems (pkgs: {
-        default = pkgs.mkShellNoCC {
+        default = (pkgs.mkShell.override {
+          stdenv = if pkgs.stdenv.hostPlatform.isLinux then pkgs.clangStdenv else pkgs.stdenvNoCC;
+        }) {
           name = "dotfiles-cli";
           packages = cliPackages pkgs;
+          inputsFrom = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            self.devShells.${pkgs.stdenv.hostPlatform.system}.native
+          ];
+        };
+      } // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        native = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
+          name = "dotfiles-native";
+          nativeBuildInputs = [ pkgs.mold pkgs.pkg-config pkgs.mise ];
+          buildInputs = [ pkgs.openssl ];
         };
       });
 

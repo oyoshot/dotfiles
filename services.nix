@@ -1,5 +1,22 @@
 { config, lib, pkgs, ... }:
 {
+  i18n.inputMethod = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
+    enable = true;
+    type = "fcitx5";
+    fcitx5 = {
+      addons = [ pkgs.fcitx5-mozc ];
+      # Keep the existing WSLg unit and its frontend restrictions.
+      systemd.enable = false;
+      fcitx5-with-addons = pkgs.qt6Packages.fcitx5-with-addons.override {
+        fcitx5 = pkgs.fcitx5.overrideAttrs (old: {
+          # Preserve the existing workaround until microsoft/wslg#1495 is fixed.
+          patches = (old.patches or [ ]) ++ [
+            ./.workarounds/REMOVE_WHEN_WSLG_1495_IS_FIXED/wslg-keep-candidate-window-mapped.patch
+          ];
+        });
+      };
+    };
+  };
   xdg.configFile."logrotate.d/nvim".text = ''
     ${config.xdg.stateHome}/nvim/lsp.log {
       size 16M
@@ -31,7 +48,7 @@
       Service = {
         Type = "simple";
         Environment = [ "DISPLAY=:0" "GALLIUM_DRIVER=d3d12" "XMODIFIERS=@im=fcitx" "GTK_IM_MODULE=fcitx" "QT_IM_MODULE=fcitx" ];
-        ExecStart = "/usr/bin/fcitx5 --disable=waylandim,wayland,clipboard --replace";
+        ExecStart = "${config.i18n.inputMethod.package}/bin/fcitx5 --disable=waylandim,wayland,clipboard --replace";
         Restart = "always";
         RestartSec = "2s";
       };

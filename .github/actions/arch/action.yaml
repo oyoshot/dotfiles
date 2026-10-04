@@ -58,10 +58,10 @@ runs:
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        # Rebuild Cargo tools against host libraries after the toolchain migration.
-        key: arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        # Rebuild Cargo tools inside the Nix native development environment.
+        key: arch-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock') }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-
+          arch-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock') }}-
         path: |
           /home/builder/.cache/mise
           /home/builder/.local/share/mise/installs
@@ -149,7 +149,7 @@ runs:
       if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: arch-mise-v6-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: arch-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock') }}-${{ inputs.cache-epoch }}
         path: |
           /home/builder/.cache/mise
           /home/builder/.local/share/mise/installs
