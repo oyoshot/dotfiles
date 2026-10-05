@@ -56,7 +56,7 @@ Docker Desktop のアプリと CLI は Nix で供給し、初回設定・VM・�
 Docker Desktop 自身に任せる。VM 起動は macOS 実機で別途確認する。
 WSLg の Fcitx は Home Manager の既存モジュールで Nix 版と Mozc を供給し、
 既存の候補ウィンドウ回避パッチとサービス起動引数を維持する。
-Arch の Fcitx パッケージ指定は、WSLg 実機で入力を確認してから撤去する。
+WSLg 実機で Nix 版の日本語入力・候補表示を確認済み。Arch の Fcitx パッケージ指定は撤去した。
 Karabiner は DriverKit と launch daemon の統合があるため、Homebrew の upstream
 インストーラを維持する。nix-darwin 側の対応状況も含め、通常アプリとは別に検証する。
 Podman Desktop 本体とその Podman 依存は Nix のパッケージで供給する。
