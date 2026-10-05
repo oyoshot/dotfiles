@@ -51,7 +51,13 @@ Home Manager の再適用で固定済み bundle を再配置する。Nix の世�
 
 ## OS 側に残す範囲
 
-Arch の基盤パッケージ・FUSE・コンテナポリシー・ログインシェルはホスト側で揃える。
+Arch の基盤パッケージ・FUSE・ログインシェルはホスト側で揃える。
+FUSE は setuid の `fusermount3` とホストのデスクトップポータルの依存なので Arch に残す。
+Podman の署名ポリシーは nixpkgs の Skopeo 標準定義、seccomp は固定した Podman に
+同梱された標準プロファイルを Home Manager から指定する。既存のユーザーの
+`containers.conf`・`storage.conf` は維持する。Arch の `containers-common` は不要。
+Arch が提供する短縮イメージ名の alias には依存せず、`docker.io/library/alpine` のように
+レジストリを含むイメージ名を使う。実際にインストール済みの Arch パッケージは自動削除しない。
 Docker Desktop のアプリと CLI は Nix で供給し、初回設定・VM・必要な権限設定は
 Docker Desktop 自身に任せる。VM 起動は macOS 実機で別途確認する。
 WSLg の Fcitx は Home Manager の既存モジュールで Nix 版と Mozc を供給し、

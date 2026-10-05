@@ -44,6 +44,10 @@ in
       DOCKER_HOST = "unix://\${XDG_RUNTIME_DIR}/podman/podman.sock";
     };
     xdg.configFile = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      "containers/policy.json".source = "${pkgs.skopeo.policy}/default-policy.json";
+      "containers/containers.conf.d/10-nix.conf".source = (pkgs.formats.toml { }).generate "containers-nix.conf" {
+        containers.seccomp_profile = "${podman.src}/vendor/go.podman.io/common/pkg/seccomp/seccomp.json";
+      };
       "systemd/user/podman.service".source = "${podman}/share/systemd/user/podman.service";
       "systemd/user/podman.socket".source = "${podman}/share/systemd/user/podman.socket";
     };
