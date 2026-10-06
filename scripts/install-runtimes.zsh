@@ -27,11 +27,4 @@ if type mise >/dev/null 2>&1; then
         (( attempt += 1 ))
         (( retry_delay *= 2 ))
     done
-
-    # mise 2026.9.18 still treats the llvm-tools-preview alias as missing:
-    # rustup reports the installed component as llvm-tools-<host>.
-    # Remove this step once the seed and existing mutable Rust configurations
-    # declare rust-analyzer,llvm-tools,rust-src (preserving selected versions).
-    # Until then, let rustup resolve aliases and provision the components.
-    mise exec -- rustup component add rust-analyzer llvm-tools-preview rust-src
 fi
