@@ -162,18 +162,6 @@
         };
       });
 
-      checks = forAllSystems (pkgs: {
-        mise-migration = pkgs.runCommand "mise-nix-migration-check" {
-          nativeBuildInputs = [ (pkgs.python3.withPackages (ps: [ ps.tomlkit ])) ];
-        } ''
-          mkdir -p scripts tests
-          cp ${./scripts/migrate-mise-tools.py} scripts/migrate-mise-tools.py
-          cp ${./tests/test-mise-migration.py} tests/test-mise-migration.py
-          python -B tests/test-mise-migration.py
-          touch $out
-        '';
-      });
-
       devShells = forAllSystems (pkgs: {
         default = (pkgs.mkShell.override {
           stdenv = if pkgs.stdenv.hostPlatform.isLinux then pkgs.clangStdenv else pkgs.stdenvNoCC;

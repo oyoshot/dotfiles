@@ -94,13 +94,6 @@ in
           run ${pkgs.coreutils}/bin/install -m 600 ${./config/mise/config.toml} ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"}
         fi
       '';
-    # Remove only unchanged defaults; explicit user versions and project configs survive.
-    home.activation.miseNixTools = lib.hm.dag.entryAfter [ "miseMutableConfig" ] ''
-      run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
-        ${./scripts/migrate-mise-tools.py} \
-        ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"} \
-        ${pkgs.writeText "nix-owned-mise-tools.json" (builtins.toJSON (builtins.attrNames (import ./packages/user-tools.nix pkgs)))}
-    '';
     nix.package = pkgs.nix;
     nix.settings.use-xdg-base-directories = true;
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
