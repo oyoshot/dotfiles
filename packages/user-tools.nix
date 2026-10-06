@@ -29,16 +29,7 @@ pkgs: {
   "cargo:cargo-crev" = pkgs.cargo-crev;
   "cargo:cargo-deny" = pkgs.cargo-deny;
   "cargo:cargo-features-manager" = pkgs.cargo-features-manager;
-  "cargo:cargo-generate" = if pkgs.stdenv.hostPlatform.isDarwin then
-    pkgs.cargo-generate.overrideAttrs (old: {
-      # nixpkgs intends to skip this /Users-dependent test on Darwin, but
-      # cargo-generate 0.25.0 moved it. Remove when nixpkgs fixes the filter.
-      checkFlags = map (flag:
-        if flag == "--skip=git::utils::should_canonicalize"
-        then "--skip=utils::tests::should_canonicalize"
-        else flag
-      ) old.checkFlags;
-    }) else pkgs.cargo-generate;
+  "cargo:cargo-generate" = pkgs.cargo-generate;
   "cargo:cargo-machete" = pkgs.cargo-machete;
   "cargo:cargo-make" = pkgs.cargo-make;
   "cargo:cargo-nextest" = pkgs.cargo-nextest;
