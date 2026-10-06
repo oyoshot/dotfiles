@@ -29,10 +29,10 @@ runs:
     - id: mise-cache-restore
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        # Rebuild Cargo tools against Nix OpenSSL after the Homebrew migration.
-        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        # Cached Cargo binaries reference Nix libraries; rebuild when their inputs change.
+        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-${{ inputs.cache-epoch }}
         restore-keys: |
-          macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-
+          macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs
@@ -108,7 +108,7 @@ runs:
       if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path) }}-${{ inputs.cache-epoch }}
+        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-${{ inputs.cache-epoch }}
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs
