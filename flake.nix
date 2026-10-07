@@ -81,13 +81,13 @@
         pkgs.aws-vault
         pkgs.awscli2
         pkgs.bat
+        pkgs.bind
         pkgs.claude-code
         pkgs.cloudflared
         pkgs.codex
         pkgs.coreutils
         pkgs.delta
         pkgs.diffutils
-        pkgs.dig
         pkgs.eva
         pkgs.eza
         pkgs.fcp
