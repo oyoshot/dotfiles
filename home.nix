@@ -1,6 +1,17 @@
 { config, lib, pkgs, inputs, ... }:
 let
   podman = pkgs.podman;
+  alacritty = if config.dotfiles.wsl then pkgs.symlinkJoin {
+    name = "alacritty-wsl";
+    paths = [ pkgs.alacritty ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    # WSL's AMD driver dlopens libssl.so; without it GLX fails with BadConfig.
+    # Remove when the host driver no longer needs this library search path.
+    postBuild = ''
+      wrapProgram $out/bin/alacritty --prefix LD_LIBRARY_PATH : \
+        /usr/lib/wsl/lib:${lib.makeLibraryPath [ pkgs.openssl ]}
+    '';
+  } else pkgs.alacritty;
 in
 {
   imports = [ ./dotfiles.nix ./externals.nix ./services.nix ];
@@ -16,7 +27,7 @@ in
       pkgs.lua54Packages.luarocks
       pkgs.nerd-fonts.jetbrains-mono
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      pkgs.alacritty
+      alacritty
       pkgs.ghostty
       podman
       (pkgs.runCommand "podman-docker-compat" { } ''
