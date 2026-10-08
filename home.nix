@@ -29,6 +29,8 @@ in
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       alacritty
       pkgs.ghostty
+      pkgs.docker-compose
+      pkgs.vim
       podman
       (pkgs.runCommand "podman-docker-compat" { } ''
         mkdir -p $out/bin
@@ -59,9 +61,11 @@ in
       "containers/policy.json".source = "${pkgs.skopeo.policy}/default-policy.json";
       "containers/containers.conf.d/10-nix.conf".source = (pkgs.formats.toml { }).generate "containers-nix.conf" {
         containers.seccomp_profile = "${podman.src}/vendor/go.podman.io/common/pkg/seccomp/seccomp.json";
+        engine.compose_providers = [ "${pkgs.docker-compose}/bin/docker-compose" ];
       };
       "systemd/user/podman.service".source = "${podman}/share/systemd/user/podman.service";
       "systemd/user/podman.socket".source = "${podman}/share/systemd/user/podman.socket";
+      "systemd/user/sockets.target.wants/podman.socket".source = "${podman}/share/systemd/user/podman.socket";
     };
     programs.mise = {
       enable = true;
