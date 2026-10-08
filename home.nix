@@ -35,6 +35,7 @@ in
         ln -s ${podman}/bin/podman $out/bin/docker
       '')
       pkgs.man-pages
+      pkgs.man-pages-posix
       pkgs.noto-fonts-cjk-sans
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
