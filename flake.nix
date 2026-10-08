@@ -88,6 +88,7 @@
         pkgs.coreutils
         pkgs.delta
         pkgs.diffutils
+        pkgs.difftastic
         pkgs.eva
         pkgs.eza
         pkgs.fcp
@@ -113,10 +114,12 @@
         pkgs.hyperfine
         pkgs.jq
         pkgs.marp-cli
+        pkgs.marksman
         pkgs.moreutils
         pkgs.ncurses
         pkgs.neovim
         pkgs.ni
+        pkgs.pass
         pkgs.podman-compose
         pkgs.poetry
         pkgs.rclone
@@ -133,6 +136,7 @@
         pkgs.vim-startuptime
         pkgs.wget
         pkgs.whois
+        pkgs.yazi
         pkgs.zoxide
         pkgs.zsh
       ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
