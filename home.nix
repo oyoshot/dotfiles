@@ -84,7 +84,7 @@ in
     };
     programs.mise = {
       enable = true;
-      enableMutableConfig = true;
+      mutableSettings = true;
       # The existing .zshrc coordinates mise and direnv with one deferred hook.
       enableZshIntegration = false;
       enableBashIntegration = false;
