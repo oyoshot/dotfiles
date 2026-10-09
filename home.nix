@@ -12,12 +12,27 @@ let
         /usr/lib/wsl/lib:${lib.makeLibraryPath [ pkgs.openssl ]}
     '';
   } else pkgs.alacritty;
+  chromium = if config.dotfiles.wsl then pkgs.chromium.overrideAttrs (old: {
+    buildCommand = old.buildCommand + ''
+      # WSL's AMD driver needs these runtime libraries, as with Alacritty.
+      # Remove the library path when the host driver no longer requires it.
+      # Use Home Manager's existing GTK cache even outside a Nix login shell.
+      wrapProgram $out/bin/chromium \
+        --prefix LD_LIBRARY_PATH : /usr/lib/wsl/lib:${lib.makeLibraryPath [ pkgs.openssl ]} \
+        --set GTK_IM_MODULE_FILE ${config.home.profileDirectory}/etc/gtk-3.0/immodules.cache \
+        --prefix GTK_PATH : ${config.i18n.inputMethod.package}/lib/gtk-4.0
+    '';
+  }) else pkgs.chromium;
 in
 {
   imports = [ ./dotfiles.nix ./externals.nix ./services.nix ];
   options.dotfiles.wsl = lib.mkEnableOption "WSLg desktop integration";
   config = {
     programs.home-manager.enable = true;
+    programs.chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      enable = true;
+      package = chromium;
+    };
     home.stateVersion = "25.11";
     targets.genericLinux.gpu.enable = pkgs.stdenv.hostPlatform.isLinux;
     fonts.fontconfig.enable = pkgs.stdenv.hostPlatform.isLinux;
