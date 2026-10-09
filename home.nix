@@ -23,6 +23,16 @@ let
         --prefix GTK_PATH : ${config.i18n.inputMethod.package}/lib/gtk-4.0
     '';
   }) else pkgs.chromium;
+  googleChrome = if config.dotfiles.wsl then pkgs.google-chrome.overrideAttrs (old: {
+    postFixup = (old.postFixup or "") + ''
+      # Same WSL driver and Home Manager input-module requirements as Chromium.
+      # Remove the library path when the host driver no longer requires it.
+      wrapProgram $out/bin/google-chrome-stable \
+        --prefix LD_LIBRARY_PATH : /usr/lib/wsl/lib:${lib.makeLibraryPath [ pkgs.openssl ]} \
+        --set GTK_IM_MODULE_FILE ${config.home.profileDirectory}/etc/gtk-3.0/immodules.cache \
+        --prefix GTK_PATH : ${config.i18n.inputMethod.package}/lib/gtk-4.0
+    '';
+  }) else pkgs.google-chrome;
 in
 {
   imports = [ ./dotfiles.nix ./externals.nix ./services.nix ];
@@ -43,6 +53,7 @@ in
       pkgs.nerd-fonts.jetbrains-mono
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       alacritty
+      googleChrome
       pkgs.ghostty
       pkgs.docker-compose
       pkgs.vim
