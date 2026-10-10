@@ -45,7 +45,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system:
         f (import nixpkgs {
           inherit system;
-          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
         }));
       # Runtime/toolchain exceptions are documented in config/mise/config.toml.
       zacrsPackage = pkgs: pkgs.rustPlatform.buildRustPackage {
@@ -188,7 +188,7 @@
         oyoshot-linux = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [
@@ -204,7 +204,7 @@
         ci-linux = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [ ./home.nix {
@@ -216,7 +216,7 @@
         ci-darwin = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [ ./home.nix {
@@ -228,7 +228,7 @@
         oyoshot-darwin = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
           };
           extraSpecialArgs = { inherit inputs; };
           modules = [

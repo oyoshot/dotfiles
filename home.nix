@@ -1,6 +1,17 @@
 { config, lib, pkgs, inputs, ... }:
 let
   podman = pkgs.podman;
+  linuxTools = import ./packages/linux-tools.nix { inherit pkgs; };
+  obsidian = if config.dotfiles.wsl then linuxTools.obsidian.overrideAttrs (old: {
+    postFixup = (old.postFixup or "") + ''
+      # Same WSL driver and input-module requirements as Chrome/Chromium.
+      # Remove the library path when the host driver no longer requires it.
+      wrapProgram $out/bin/obsidian \
+        --prefix LD_LIBRARY_PATH : /usr/lib/wsl/lib:${lib.makeLibraryPath [ pkgs.openssl ]} \
+        --set GTK_IM_MODULE_FILE ${config.home.profileDirectory}/etc/gtk-3.0/immodules.cache \
+        --prefix GTK_PATH : ${config.i18n.inputMethod.package}/lib/gtk-4.0
+    '';
+  }) else linuxTools.obsidian;
   alacritty = if config.dotfiles.wsl then pkgs.symlinkJoin {
     name = "alacritty-wsl";
     paths = [ pkgs.alacritty ];
@@ -54,6 +65,10 @@ in
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       alacritty
       googleChrome
+      obsidian
+      linuxTools.yq
+      linuxTools.rsync
+      linuxTools.pandoc
       pkgs.ghostty
       pkgs.docker-compose
       pkgs.vim
@@ -64,6 +79,7 @@ in
       '')
       pkgs.man-pages
       pkgs.man-pages-posix
+      pkgs.noto-fonts
       pkgs.noto-fonts-cjk-sans
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
