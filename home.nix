@@ -75,6 +75,8 @@ in
       pkgs.vim
       pkgs.nano
       pkgs.strace
+      pkgs.perf
+      pkgs.opensshWithKerberos
       pkgs.traceroute
       pkgs.ipafont
       podman
