@@ -72,6 +72,10 @@ in
       pkgs.ghostty
       pkgs.docker-compose
       pkgs.vim
+      pkgs.nano
+      pkgs.strace
+      pkgs.traceroute
+      pkgs.ipafont
       podman
       (pkgs.runCommand "podman-docker-compat" { } ''
         mkdir -p $out/bin
