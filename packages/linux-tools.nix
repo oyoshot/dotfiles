@@ -1,5 +1,14 @@
 { pkgs }:
 {
+  # Remove once nixpkgs provides xwininfo >= 1.1.7.
+  # https://gitlab.freedesktop.org/xorg/app/xwininfo/-/tags/xwininfo-1.1.7
+  xwininfo = if pkgs.lib.versionAtLeast pkgs.xwininfo.version "1.1.7" then pkgs.xwininfo else pkgs.xwininfo.overrideAttrs {
+    version = "1.1.7";
+    src = pkgs.fetchurl {
+      url = "mirror://xorg/individual/app/xwininfo-1.1.7.tar.xz";
+      hash = "sha256-vuFNWUzIbMWarhAVwbRSpxv2DDBBMeJxbKHPDfcztKw=";
+    };
+  };
   # Use the official static release until nixpkgs provides Pandoc >= 3.11.
   # Updating the old Haskell package set would also require pandoc-lua-engine/server.
   # https://github.com/jgm/pandoc/releases/tag/3.11

@@ -69,6 +69,7 @@ in
       linuxTools.yq
       linuxTools.rsync
       linuxTools.pandoc
+      linuxTools.xwininfo
       pkgs.ghostty
       pkgs.docker-compose
       pkgs.vim
