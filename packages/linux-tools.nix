@@ -40,6 +40,8 @@
     version = "3.5.1";
     src = pkgs.fetchurl { url = "https://download.samba.org/pub/rsync/src/rsync-3.5.1.tar.gz"; hash = "sha256-xV+cncEPuL7Dl7OZoP3e1TzJotjjCJG7DWNyTSXDe+8="; };
     buildInputs = old.buildInputs ++ [ pkgs.libidn2 ];
+    # configure otherwise finds /usr/bin/fakeroot in unsandboxed CI builds.
+    nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.fakeroot ];
     # New test creates a shell script with a /usr/bin/env shebang.
     preBuild = old.preBuild + ''
       substituteInPlace testsuite/rsync-ssl-type-option_test.py \

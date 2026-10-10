@@ -107,7 +107,7 @@ runs:
           PATH="/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin" \
           XDG_STATE_HOME="/home/builder/.local/state" \
           NIX_CONFIG="experimental-features = nix-command flakes" nix \
-          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
+          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager --print-build-logs \
           switch --flake .#ci-linux
 
     - name: Provision host tools (builder)
