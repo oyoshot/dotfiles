@@ -1,0 +1,9 @@
+# Host packages; user tools, fonts and applications are managed by Home Manager.
+# install-arch.sh installs base/base-devel/git; pacman retains their dependencies.
+# zsh is the /bin/zsh login shell; Fcitx is managed by Home Manager.
+downgrade
+# Privileged fusermount3 helper and host xdg-desktop-portal dependency.
+fuse3
+# Development builds use the Nix native shell; Rust versions remain mise-owned.
+reflector
+zsh

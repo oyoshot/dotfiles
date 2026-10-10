@@ -1,0 +1,2 @@
+# Karabiner needs DriverKit/launchd integration.
+cask "karabiner-elements"

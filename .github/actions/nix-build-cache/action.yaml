@@ -1,0 +1,21 @@
+name: Build custom Nix packages
+description: Restore and save the runtime closures of locally built packages
+runs:
+  using: composite
+  steps:
+    - id: restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: /tmp/dotfiles-nix-cache
+        key: nix-custom-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.lock', 'flake.nix', 'packages/**') }}
+        restore-keys: |
+          nix-custom-v1-${{ runner.os }}-${{ runner.arch }}-
+    - name: Import cache and build custom packages
+      shell: bash
+      run: bash .github/scripts/cache-nix.sh
+    - name: Save custom package cache
+      if: steps.restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: /tmp/dotfiles-nix-cache
+        key: ${{ steps.restore.outputs.cache-primary-key }}
