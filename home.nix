@@ -83,6 +83,13 @@ in
       pkgs.opensshWithKerberos
       pkgs.traceroute
       pkgs.ipafont
+      # Pandoc PDF output, including Japanese documents with LuaLaTeX.
+      (pkgs.texliveSmall.withPackages (ps: with ps; [
+        collection-langjapanese
+        collection-luatex
+        luatexja
+        selnolig
+      ]))
       podman
       (pkgs.runCommand "podman-docker-compat" { } ''
         mkdir -p $out/bin
