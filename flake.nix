@@ -71,7 +71,7 @@
           platforms = systems;
         };
       };
-      # Keep the default compiler/linker with the host SDK.
+      # On Darwin, keep the default compiler/linker with the host SDK.
       # home.nix exposes Darwin's Nix GCC only through versioned commands.
       cliPackages = pkgs: builtins.attrValues (import ./packages/user-tools.nix pkgs) ++ [
         (zacrsPackage pkgs)

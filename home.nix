@@ -71,6 +71,10 @@ in
       linuxTools.pandoc
       linuxTools.xwininfo
       pkgs.ghostty
+      # Cargo's global linker settings also work outside nix develop.
+      # Rust versions remain mise-owned; project libraries belong in dev shells.
+      pkgs.clang
+      pkgs.mold
       pkgs.docker-compose
       pkgs.vim
       pkgs.nano
