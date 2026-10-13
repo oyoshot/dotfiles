@@ -4,6 +4,8 @@
 downgrade
 # Setuid fusermount3 helper for unprivileged mounts with Nix-managed rclone.
 fuse3
+# Japanese manuals for Nix-managed man; unavailable in the pinned nixpkgs.
+man-pages-ja
 # Development builds use the Nix native shell; Rust versions remain mise-owned.
 reflector
 zsh
