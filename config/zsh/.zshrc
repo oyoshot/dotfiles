@@ -56,6 +56,30 @@ fpath=(
   $fpath
 )
 
+# Update each tool through its package manager; stop on the first failure.
+up() {
+  case "$OSTYPE" in
+    darwin*)
+      nh home switch --update -c oyoshot-darwin || return
+      brew upgrade || return
+      brew upgrade --cask --greedy || return
+      mas upgrade || return
+      ;;
+    linux*)
+      nh home switch --update -c oyoshot-linux || return
+      yay --noconfirm || return
+      ;;
+    *)
+      print -u2 -- "up: unsupported OS: $OSTYPE"
+      return 1
+      ;;
+  esac
+
+  mise cache clear || return
+  mise up || return
+  nvim --headless '+Lazy! update' +qa
+}
+
 # defer loader
 source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
 

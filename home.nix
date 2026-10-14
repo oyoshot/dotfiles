@@ -50,6 +50,10 @@ in
   options.dotfiles.wsl = lib.mkEnableOption "WSLg desktop integration";
   config = {
     programs.home-manager.enable = true;
+    programs.nh = {
+      enable = true;
+      homeFlake = "${config.home.homeDirectory}/dev/github.com/oyoshot/dotfiles";
+    };
     programs.chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
       package = chromium;

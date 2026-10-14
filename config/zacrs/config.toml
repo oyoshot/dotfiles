@@ -67,7 +67,6 @@ e = 'exit'
 rm = 'trash-put'
 v = 'nvim'
 m = 'memo'
-up = 'if [[ "$OSTYPE" == darwin* ]]; then brew upgrade && brew upgrade --cask --greedy && mas upgrade; else yay --noconfirm; fi && rustup update && mise cache clear && mise up && nvim --headless "+Lazy! update" +qa'
 sz = 'source ~/.zshenv && source "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc"'
 ez = 'exec zsh -l'
 ls = 'eza --icons --group-directories-first'
@@ -77,8 +76,8 @@ lt = 'eza --icons --group-directories-first --tree'
 lla = 'eza --icons --group-directories-first -la --header --git --group'
 b = 'bat --theme ansi'
 cat = 'bat --theme ansi'
-hal = 'home-manager switch --flake "$HOME/.local/share/chezmoi#oyoshot-linux"'
-ham = 'home-manager switch --flake "$HOME/.local/share/chezmoi#oyoshot-darwin"'
+hal = 'nh home switch -c oyoshot-linux'
+ham = 'nh home switch -c oyoshot-darwin'
 
 [[abbreviation]]
 trigger = "gcm"

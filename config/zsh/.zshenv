@@ -8,6 +8,11 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.cache"
 
+# Import Home Manager session variables for interactive and non-interactive shells.
+_hm_session_vars="$XDG_STATE_HOME/nix/profile/etc/profile.d/hm-session-vars.sh"
+[[ -r "$_hm_session_vars" ]] && source "$_hm_session_vars"
+unset _hm_session_vars
+
 _user_dirs="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
 [ -r "$_user_dirs" ] && . "$_user_dirs"
 : "${XDG_DOCUMENTS_DIR:=$HOME/Documents}"
