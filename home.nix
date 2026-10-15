@@ -50,10 +50,7 @@ in
   options.dotfiles.wsl = lib.mkEnableOption "WSLg desktop integration";
   config = {
     programs.home-manager.enable = true;
-    programs.nh = {
-      enable = true;
-      homeFlake = "${config.xdg.configHome}/home-manager";
-    };
+    programs.nh.enable = true;
     programs.chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
       package = chromium;

@@ -13,6 +13,9 @@ _hm_session_vars="$XDG_STATE_HOME/nix/profile/etc/profile.d/hm-session-vars.sh"
 [[ -r "$_hm_session_vars" ]] && source "$_hm_session_vars"
 unset _hm_session_vars
 
+# Refresh the local entry even when a long-lived parent has old session variables.
+export NH_HOME_FLAKE="$XDG_CONFIG_HOME/home-manager"
+
 _user_dirs="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
 [ -r "$_user_dirs" ] && . "$_user_dirs"
 : "${XDG_DOCUMENTS_DIR:=$HOME/Documents}"
