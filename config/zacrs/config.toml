@@ -76,8 +76,8 @@ lt = 'eza --icons --group-directories-first --tree'
 lla = 'eza --icons --group-directories-first -la --header --git --group'
 b = 'bat --theme ansi'
 cat = 'bat --theme ansi'
-hal = 'nh home switch -c oyoshot-linux'
-ham = 'nh home switch -c oyoshot-darwin'
+hal = 'nh home switch -c "${USER}-linux"'
+ham = 'nh home switch -c "${USER}-darwin"'
 
 [[abbreviation]]
 trigger = "gcm"

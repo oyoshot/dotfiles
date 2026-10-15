@@ -47,6 +47,17 @@
           inherit system;
           config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
         }));
+      mkHome = { system, username, homeDirectory, wsl ? false }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = (forAllSystems (pkgs: pkgs)).${system};
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./home.nix {
+            home.username = username;
+            home.homeDirectory = homeDirectory;
+            dotfiles.wsl = wsl;
+            home.packages = [ self.packages.${system}.default ];
+          } ];
+        };
       # Runtime/toolchain exceptions are documented in config/mise/config.toml.
       zacrsPackage = pkgs: pkgs.rustPlatform.buildRustPackage {
         pname = "zsh-autocomplete-rs";
@@ -185,60 +196,32 @@
       });
 
       homeConfigurations = {
-        oyoshot-linux = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
-          };
-          extraSpecialArgs = { inherit inputs; };
-          modules = [
-            ./home.nix
-            {
-              home.username = "oyoshot";
-              home.homeDirectory = "/home/oyoshot";
-              dotfiles.wsl = true;
-              home.packages = [ self.packages.x86_64-linux.default ];
-            }
-          ];
+        oyoshot-linux = mkHome {
+          system = "x86_64-linux";
+          username = "oyoshot";
+          homeDirectory = "/home/oyoshot";
+          wsl = true;
         };
-        ci-linux = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
-          };
-          extraSpecialArgs = { inherit inputs; };
-          modules = [ ./home.nix {
-            home.username = "builder";
-            home.homeDirectory = "/home/builder";
-            home.packages = [ self.packages.x86_64-linux.default ];
-          } ];
+        user-linux = mkHome {
+          system = "x86_64-linux";
+          username = "user";
+          homeDirectory = "/home/user";
+          wsl = true;
         };
-        ci-darwin = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
-          };
-          extraSpecialArgs = { inherit inputs; };
-          modules = [ ./home.nix {
-            home.username = "runner";
-            home.homeDirectory = "/Users/runner";
-            home.packages = [ self.packages.aarch64-darwin.default ];
-          } ];
+        oyoshot-darwin = mkHome {
+          system = "aarch64-darwin";
+          username = "oyoshot";
+          homeDirectory = "/Users/oyoshot";
         };
-        oyoshot-darwin = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            system = "aarch64-darwin";
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
-          };
-          extraSpecialArgs = { inherit inputs; };
-          modules = [
-            ./home.nix
-            {
-              home.username = "oyoshot";
-              home.homeDirectory = "/Users/oyoshot";
-              home.packages = [ self.packages.aarch64-darwin.default ];
-            }
-          ];
+        ci-linux = mkHome {
+          system = "x86_64-linux";
+          username = "builder";
+          homeDirectory = "/home/builder";
+        };
+        ci-darwin = mkHome {
+          system = "aarch64-darwin";
+          username = "runner";
+          homeDirectory = "/Users/runner";
         };
       };
     };

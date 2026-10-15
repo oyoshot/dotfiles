@@ -60,13 +60,13 @@ fpath=(
 _up_run() {
   case "$OSTYPE" in
     darwin*)
-      nh home switch --update -c oyoshot-darwin || return
+      nh home switch --update -c "${USER}-darwin" || return
       brew upgrade || return
       brew upgrade --cask --greedy || return
       mas upgrade || return
       ;;
     linux*)
-      nh home switch --update -c oyoshot-linux || return
+      nh home switch --update -c "${USER}-linux" || return
       yay --noconfirm || return
       ;;
     *)
