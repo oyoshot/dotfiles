@@ -2,6 +2,7 @@
 
 {
   xdg.configFile = {
+    "mprocs/up.yaml".text = "scrollback: 100000\n";
     "alacritty" = {
       source = ./config/alacritty;
       recursive = true;

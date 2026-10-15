@@ -62,6 +62,7 @@ in
     targets.genericLinux.gpu.enable = pkgs.stdenv.hostPlatform.isLinux;
     fonts.fontconfig.enable = pkgs.stdenv.hostPlatform.isLinux;
     home.packages = [
+      pkgs.mprocs
       # LuaRocks and its interpreter must agree on the Lua ABI.
       pkgs.lua5_4
       pkgs.lua54Packages.luarocks
