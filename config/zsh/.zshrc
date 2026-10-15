@@ -57,7 +57,7 @@ fpath=(
 )
 
 # Update each tool through its package manager; stop on the first failure.
-_up_run() {
+up() {
   case "$OSTYPE" in
     darwin*)
       nh home switch --update-input dotfiles -c home || return
@@ -78,36 +78,6 @@ _up_run() {
   mise cache clear || return
   mise up || return
   nvim --headless '+Lazy! update' +qa
-}
-
-# Keep interactive update output in a terminal viewport; retain normal CLI behavior.
-up() {
-  if [[ ! -t 0 || ! -t 1 ]]; then
-    _up_run
-    return $?
-  fi
-
-  local result_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-up.XXXXXXXX") || return
-  local result=130 viewer_result
-  print -r -- "$result" > "$result_file"
-  local child_code="_up_run() { ${functions[_up_run]}"$'\n}'$'\n'
-  child_code+='_up_run
-local result=$?
-print -r -- "$result" > "$1"
-print
-print -r -- "Update finished (exit $result). Press Enter to close."
-read -r
-exit "$result"'
-
-  mprocs --config "$XDG_CONFIG_HOME/mprocs/up.yaml" \
-    --names up --on-init '{c: focus-term}' \
-    --on-all-finished '{c: force-quit}' \
-    "zsh -c ${(q)child_code} up ${(q)result_file}"
-  viewer_result=$?
-  read -r result < "$result_file"
-  command rm -f -- "$result_file"
-  (( viewer_result == 0 )) || return "$viewer_result"
-  return "$result"
 }
 
 # defer loader
