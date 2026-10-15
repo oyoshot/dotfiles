@@ -47,16 +47,14 @@
           inherit system;
           config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
         }));
-      mkHome = { system, username, homeDirectory, wsl ? false }:
+      mkHome = { system, username, homeDirectory, wsl ? false, modules ? [ ] }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = (forAllSystems (pkgs: pkgs)).${system};
-          extraSpecialArgs = { inherit inputs; };
-          modules = [ ./home.nix {
+          modules = [ self.homeModules.default {
             home.username = username;
             home.homeDirectory = homeDirectory;
             dotfiles.wsl = wsl;
-            home.packages = [ self.packages.${system}.default ];
-          } ];
+          } ] ++ modules;
         };
       # Runtime/toolchain exceptions are documented in config/mise/config.toml.
       zacrsPackage = pkgs: pkgs.rustPlatform.buildRustPackage {
@@ -159,6 +157,17 @@
       ];
     in
     {
+      lib.mkHome = mkHome;
+      homeModules.default = { pkgs, ... }: {
+        imports = [ ./home.nix ];
+        _module.args.inputs = inputs;
+        home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+      };
+      templates.home = {
+        path = ./templates/home;
+        description = "Local standalone Home Manager entry point";
+      };
+
       packages = forAllSystems (pkgs: {
         podman = pkgs.podman;
         home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
@@ -196,27 +205,16 @@
       });
 
       homeConfigurations = {
-        oyoshot-linux = mkHome {
-          system = "x86_64-linux";
-          username = "oyoshot";
-          homeDirectory = "/home/oyoshot";
-          wsl = true;
-        };
-        user-linux = mkHome {
-          system = "x86_64-linux";
-          username = "user";
-          homeDirectory = "/home/user";
-          wsl = true;
-        };
-        oyoshot-darwin = mkHome {
-          system = "aarch64-darwin";
-          username = "oyoshot";
-          homeDirectory = "/Users/oyoshot";
-        };
         ci-linux = mkHome {
           system = "x86_64-linux";
           username = "builder";
           homeDirectory = "/home/builder";
+        };
+        ci-wsl = mkHome {
+          system = "x86_64-linux";
+          username = "builder";
+          homeDirectory = "/home/builder";
+          wsl = true;
         };
         ci-darwin = mkHome {
           system = "aarch64-darwin";

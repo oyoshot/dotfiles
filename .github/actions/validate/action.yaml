@@ -13,6 +13,6 @@ runs:
         export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
         export NIX_CONFIG='experimental-features = nix-command flakes'
         nix flake check --all-systems --no-build --no-update-lock-file
-        for configuration in oyoshot-linux oyoshot-darwin ci-linux ci-darwin; do
+        for configuration in ci-linux ci-wsl ci-darwin; do
           nix eval --raw ".#homeConfigurations.${configuration}.activationPackage.drvPath" >/dev/null
         done

@@ -52,7 +52,7 @@ in
     programs.home-manager.enable = true;
     programs.nh = {
       enable = true;
-      homeFlake = "${config.home.homeDirectory}/dev/github.com/oyoshot/dotfiles";
+      homeFlake = "${config.xdg.configHome}/home-manager";
     };
     programs.chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
