@@ -9,7 +9,8 @@ export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$XDG_CONFIG_HOME/claude}"
 # Nix builds the binary. Only registration of mutable user settings happens here.
 # This plugin's manifest has no runtime events; its functionality is these hooks.
 mkdir -p "$CODEX_HOME" "$CLAUDE_CONFIG_DIR"
-herdr-plugin-agent-title install-hooks
+# The plugin prints errors only in debug mode; keep the reason in activation logs.
+HERDR_AGENT_TITLE_DEBUG=1 herdr-plugin-agent-title install-hooks
 
 integration_status="$(herdr integration status)"
 
