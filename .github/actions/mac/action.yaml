@@ -59,7 +59,11 @@ runs:
     - name: Activate Home Manager
       shell: bash
       env:
-        NIX_CONFIG: "experimental-features = nix-command flakes"
+        # Build independent derivations concurrently without multiplying per-job cores.
+        NIX_CONFIG: |
+          experimental-features = nix-command flakes
+          max-jobs = auto
+          cores = 1
       run: |
         export XDG_STATE_HOME="$HOME/.local/state"
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
@@ -83,7 +87,11 @@ runs:
     - name: Re-activate Home Manager
       shell: bash
       env:
-        NIX_CONFIG: "experimental-features = nix-command flakes"
+        # Build independent derivations concurrently without multiplying per-job cores.
+        NIX_CONFIG: |
+          experimental-features = nix-command flakes
+          max-jobs = auto
+          cores = 1
       run: |
         set -euo pipefail
         export XDG_STATE_HOME="$HOME/.local/state"

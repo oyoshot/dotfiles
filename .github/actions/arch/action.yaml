@@ -118,11 +118,17 @@ runs:
 
     - name: Activate Home Manager (builder)
       shell: bash
+      env:
+        # Build independent derivations concurrently without multiplying per-job cores.
+        NIX_CONFIG: |
+          experimental-features = nix-command flakes
+          max-jobs = auto
+          cores = 1
       run: |
         sudo -Hu builder env \
           PATH="/home/builder/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin" \
           XDG_STATE_HOME="/home/builder/.local/state" \
-          NIX_CONFIG="experimental-features = nix-command flakes" nix \
+          NIX_CONFIG="${NIX_CONFIG}" nix \
           --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager --print-build-logs \
           switch --flake .#ci-linux
 
