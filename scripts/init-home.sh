@@ -30,6 +30,9 @@ staging=$(mktemp -d "$parent/.dotfiles-init.XXXXXX")
 trap 'rm -rf -- "$staging"' EXIT
 trap 'exit 130' INT
 trap 'exit 143' HUP TERM
+# om calls nix itself; a fresh host may not enable flakes in nix.conf yet.
+export NIX_CONFIG="${NIX_CONFIG:+$NIX_CONFIG
+}extra-experimental-features = nix-command flakes"
 om init --non-interactive --params "$params" -o "$staging/home" "$source_dir#home"
 nix-instantiate --parse "$staging/home/flake.nix" >/dev/null
 mv -T -n -- "$staging/home" "$destination"
