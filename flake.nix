@@ -1,7 +1,6 @@
 {
   description = "Pinned CLI tools for these dotfiles";
 
-  inputs.omnix.url = "github:juspay/omnix/9a4899083cd3579aa0929e7caf53c0f28e31b70c";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.brew-api = {
     url = "github:BatteredBunny/brew-api";
@@ -200,8 +199,7 @@
         init = pkgs.writeShellApplication {
           name = "dotfiles-init";
           runtimeInputs = [
-            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix
-            inputs.omnix.packages.${pkgs.stdenv.hostPlatform.system}.default
+            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix pkgs.omnix
           ];
           runtimeEnv = {
             DOTFILES_TEMPLATE = "${self}";
