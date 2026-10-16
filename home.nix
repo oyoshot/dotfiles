@@ -50,6 +50,7 @@ in
   options.dotfiles.wsl = lib.mkEnableOption "WSLg desktop integration";
   config = {
     programs.home-manager.enable = true;
+    programs.man.generateCaches = pkgs.stdenv.hostPlatform.isLinux;
     programs.nh.enable = true;
     programs.chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
@@ -98,6 +99,7 @@ in
       '')
       pkgs.man-pages
       pkgs.man-pages-posix
+      (pkgs.callPackage ./packages/man-pages-ja.nix { })
       pkgs.noto-fonts
       pkgs.noto-fonts-cjk-sans
       pkgs.noto-fonts-cjk-serif

@@ -4,8 +4,6 @@
 downgrade
 # Setuid fusermount3 helper for unprivileged mounts with Nix-managed rclone.
 fuse3
-# Japanese manuals for Nix-managed man; unavailable in the pinned nixpkgs.
-man-pages-ja
 # Maintain search indexes for host manuals, including the Japanese pages.
 man-db
 # Compiler/linker defaults are Nix-managed; project libraries use the native shell.
