@@ -108,6 +108,11 @@ runs:
           /home/builder/.cache/mise
           /home/builder/.local/share/mise/installs
 
+    - name: Restore builder ownership after cache extraction
+      shell: bash
+      # Cache extraction runs as root and can create root-owned parent directories.
+      run: chown -R builder:builder /home/builder/.cache /home/builder/.local
+
     - name: Build and cache custom Nix packages
       uses: ./.github/actions/nix-build-cache
 
