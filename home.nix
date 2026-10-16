@@ -132,7 +132,7 @@ in
     };
     programs.mise = {
       enable = true;
-      # The existing .zshrc coordinates mise and direnv with one deferred hook.
+      # The repository-managed .zshrc loads the standard shell hooks.
       enableZshIntegration = false;
       enableBashIntegration = false;
       enableFishIntegration = false;
@@ -142,7 +142,7 @@ in
       };
       globalConfig.settings = {
         experimental = true;
-        idiomatic_version_file_enable_tools = [ "terraform" "node" "python" "rust" ];
+        idiomatic_version_file_enable_tools = [ "terraform" "node" "python" "ruby" "rust" ];
         npm.bun = true;
       };
       # Host-specific tools belong in the unmanaged config.local.toml.

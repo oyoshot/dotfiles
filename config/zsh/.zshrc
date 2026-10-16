@@ -99,11 +99,6 @@ zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
 zsh-defer source $ZDOTDIR/defer.zsh
 zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME/op/plugins.sh"'
 
-# Mise
-autoload -Uz add-zsh-hook
-typeset -g __MISE_ACTIVATED=0
-typeset -g __MISE_BIN
-
 # Avoid building the full $commands hash just to locate startup dependencies.
 _zsh_find_command() {
   local dir candidate
@@ -115,34 +110,6 @@ _zsh_find_command() {
     return 0
   done
   return 1
-}
-
-_zsh_find_command mise && __MISE_BIN=$REPLY
-
-__mise_activate_once() {
-  (( __MISE_ACTIVATED )) && return 0
-  __MISE_ACTIVATED=1
-  source "$ZDOTDIR/project-environment.zsh"
-  _dotfiles_environment_init
-}
-
-# Keep parsing and subprocesses off the startup path, including zsh -ic exit.
-if [[ -n $__MISE_BIN ]]; then
-  if [[ -o interactive ]]; then
-    __mise_preexec_once() {
-      __mise_activate_once
-      add-zsh-hook -d preexec __mise_preexec_once
-    }
-    add-zsh-hook preexec __mise_preexec_once
-  else
-    __mise_activate_once
-  fi
-fi
-
-# Also covers non-terminal invocations such as zsh -ic 'nix develop ...'.
-nix() {
-  __mise_activate_once
-  _dotfiles_nix "$@"
 }
 
 # 遅延ロードしない方が安全
@@ -191,7 +158,6 @@ if _zsh_find_command starship; then
   unset _starship_bin _starship_config _starship_init _starship_init_tmp _starship_marker
   unset _starship_stat _starship_cached_marker _starship_cache_matches _starship_initialized
 fi
-unfunction _zsh_find_command
 
 # WSL: .zshenv が退避した Windows PATH を戻す。rehash に ~90ms かかるので
 # 必要になった時だけ払う。戻すのはこのシェルのみ。
@@ -218,6 +184,20 @@ if (( $#_ZSH_WIN_PATH )); then
     return 127
   }
 fi
+
+# Install standard hooks after the WSL handler so mise can chain to it.
+if _zsh_find_command mise; then
+  eval "$("$REPLY" activate zsh)"
+  functions[_dotfiles_mise_command]=$functions[mise]
+  mise() {
+    (( $+functions[__load_github_token_once] )) && __load_github_token_once
+    _dotfiles_mise_command "$@"
+  }
+fi
+if _zsh_find_command direnv; then
+  eval "$("$REPLY" hook zsh)"
+fi
+unfunction _zsh_find_command
 
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do

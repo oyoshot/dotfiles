@@ -27,7 +27,7 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
 # PATH
 typeset -gU path
-if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
+if [[ -z ${IN_NIX_SHELL-} ]]; then
   path=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) $path )
 fi
 path=(
@@ -47,8 +47,6 @@ path=(
   /Library/Apple/usr/bin(N-/)
   $XDG_DATA_HOME/gh-red/bin(N-/)
 )
-# Shims bypass project ownership. mise activation supplies real tool directories.
-path=( ${path:#${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims} )
 path=( ${path:#$HOME/.nix-profile/bin} )
 # WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると
 # $commands (PATH 全走査) だけで ~90ms 遅くなる。対話シェルでは退避しておき、
@@ -70,7 +68,7 @@ fi
 export RUST_BACKTRACE=1
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
-if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
+if [[ -z ${IN_NIX_SHELL-} ]]; then
   export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$XDG_DATA_HOME/cargo/target}"
 fi
 

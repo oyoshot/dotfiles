@@ -64,9 +64,9 @@ vim.o.incsearch = true
 vim.o.autoindent = true
 vim.o.laststatus = 2
 
--- Inherit the selected project environment; adding shims here bypasses Nix shells.
+-- Inherit the selected project environment.
 -- GUI launches may lack the user profile, so append only the common tools path.
-if not vim.env.IN_NIX_SHELL and not vim.env.DOTFILES_NIX_SHELL then
+if not vim.env.IN_NIX_SHELL then
 	local profile = (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state")) .. "/nix/profile/bin"
 	if not (":" .. vim.env.PATH .. ":"):find(":" .. profile .. ":", 1, true) then
 		vim.env.PATH = vim.env.PATH .. ":" .. profile
