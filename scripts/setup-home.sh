@@ -4,6 +4,7 @@
 #   nix run github:oyoshot/dotfiles/experiment/nix-cli#init -- wsl-linux
 # On a host that edits this clone, follow its commits instead of GitHub:
 #   nix run .#init -- --local . wsl-linux
+# Updates (up) then pick up new commits; uncommitted changes leave the lock as is.
 # Build and switch the generated entry with Home Manager before host provisioning.
 set -eu
 case "${1:---build}" in
