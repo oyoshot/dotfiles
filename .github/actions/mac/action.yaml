@@ -26,20 +26,32 @@ runs:
           macos-brew-v4-${{ hashFiles(inputs.brewfile-path) }}-
         path: ~/Library/Caches/Homebrew
 
-    - id: mise-cache-restore
-      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
-      with:
-        # Cached Cargo binaries reference Nix libraries; rebuild when their inputs change.
-        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-${{ inputs.cache-epoch }}
-        restore-keys: |
-          macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-
-        path: |
-          ~/.cache/mise
-          ~/.local/share/mise/installs
-
     - name: Install pinned Nix
       shell: bash
       run: sh .github/scripts/install-nix.sh
+
+    - id: mise-environment
+      name: Resolve mise build environment
+      shell: bash
+      env:
+        NIX_CONFIG: "experimental-features = nix-command flakes"
+      run: |
+        set -euo pipefail
+        export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+        key=$(nix eval --no-update-lock-file --raw .#homeConfigurations.ci-darwin.config \
+          --apply 'config: builtins.hashString "sha256" (builtins.toJSON { mise = config.programs.mise.package.outPath; config = config.programs.mise.globalConfig; })')
+        echo "key=$key" >>"$GITHUB_OUTPUT"
+
+    - id: mise-cache-restore
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        # Invalidate on the evaluated build environment, rather than unrelated Nix edits.
+        key: macos-mise-v8-${{ runner.arch }}-${{ steps.mise-environment.outputs.key }}-${{ hashFiles(inputs.mise-config-path, 'scripts/install-runtimes.zsh', 'scripts/bootstrap-host.sh') }}-${{ inputs.cache-epoch }}
+        restore-keys: |
+          macos-mise-v8-${{ runner.arch }}-${{ steps.mise-environment.outputs.key }}-${{ hashFiles(inputs.mise-config-path, 'scripts/install-runtimes.zsh', 'scripts/bootstrap-host.sh') }}-
+        path: |
+          ~/.cache/mise
+          ~/.local/share/mise/installs
 
     - name: Build and cache custom Nix packages
       uses: ./.github/actions/nix-build-cache
@@ -108,7 +120,7 @@ runs:
       if: success()
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
-        key: macos-mise-v7-${{ hashFiles(inputs.mise-config-path, 'flake.nix', 'flake.lock', 'home.nix') }}-${{ inputs.cache-epoch }}
+        key: macos-mise-v8-${{ runner.arch }}-${{ steps.mise-environment.outputs.key }}-${{ hashFiles(inputs.mise-config-path, 'scripts/install-runtimes.zsh', 'scripts/bootstrap-host.sh') }}-${{ inputs.cache-epoch }}
         path: |
           ~/.cache/mise
           ~/.local/share/mise/installs
