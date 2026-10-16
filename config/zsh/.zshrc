@@ -185,19 +185,37 @@ if (( $#_ZSH_WIN_PATH )); then
   }
 fi
 
-# Install standard hooks after the WSL handler so mise can chain to it.
-if _zsh_find_command mise; then
-  eval "$("$REPLY" activate zsh)"
-  functions[_dotfiles_mise_command]=$functions[mise]
-  mise() {
-    (( $+functions[__load_github_token_once] )) && __load_github_token_once
-    _dotfiles_mise_command "$@"
-  }
-fi
-if _zsh_find_command direnv; then
-  eval "$("$REPLY" hook zsh)"
-fi
+# Discover binaries without subprocesses; activate when the prompt is idle or
+# immediately before its first command. Non-prompt shells do not run these hooks.
+typeset -g _DOTFILES_MISE_BIN= _DOTFILES_DIRENV_BIN=
+_zsh_find_command mise && _DOTFILES_MISE_BIN=$REPLY
+_zsh_find_command direnv && _DOTFILES_DIRENV_BIN=$REPLY
 unfunction _zsh_find_command
+
+autoload -Uz add-zsh-hook
+_dotfiles_init_tool_hooks() {
+  add-zsh-hook -d preexec _dotfiles_init_tool_hooks
+  # The deferred invocation may follow the preexec invocation.
+  [[ -n $_DOTFILES_MISE_BIN$_DOTFILES_DIRENV_BIN ]] || return 0
+  local mise_bin=$_DOTFILES_MISE_BIN direnv_bin=$_DOTFILES_DIRENV_BIN
+  _DOTFILES_MISE_BIN= _DOTFILES_DIRENV_BIN=
+  # mise chains to the WSL command-not-found handler defined above.
+  if [[ -n $mise_bin ]]; then
+    eval "$("$mise_bin" activate zsh)"
+    functions[_dotfiles_mise_command]=$functions[mise]
+    mise() {
+      (( $+functions[__load_github_token_once] )) && __load_github_token_once
+      _dotfiles_mise_command "$@"
+    }
+  fi
+  if [[ -n $direnv_bin ]]; then
+    eval "$("$direnv_bin" hook zsh)"
+    # hook zsh registers callbacks; apply .envrc before the first command too.
+    _direnv_hook
+  fi
+}
+add-zsh-hook preexec _dotfiles_init_tool_hooks
+zsh-defer _dotfiles_init_tool_hooks
 
 # load override
 for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do

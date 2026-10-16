@@ -27,9 +27,7 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
 # PATH
 typeset -gU path
-if [[ -z ${IN_NIX_SHELL-} ]]; then
-  path=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) $path )
-fi
+# Preserve inherited precedence, including nix shell (which does not set IN_NIX_SHELL).
 path=(
   $path
   $HOME/.local/bin(N-/)
