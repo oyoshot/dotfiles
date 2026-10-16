@@ -113,9 +113,11 @@
       source = ./config/fcitx5;
       recursive = true;
     };
+    # Nix gnupg looks for pinentry in its own output, which ships none.
     "gnupg/gpg-agent.conf".text =
-      lib.optionalString pkgs.stdenv.hostPlatform.isDarwin
-        "pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac\n";
+      if pkgs.stdenv.hostPlatform.isDarwin
+      then "pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac\n"
+      else "pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses\n";
     "textlint/textlintrc".text = builtins.replaceStrings
       [ "@homeDirectory@" ] [ config.home.homeDirectory ]
       (builtins.readFile ./config/textlint/textlintrc.tmpl);
