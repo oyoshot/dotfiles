@@ -180,6 +180,7 @@
           { name = "home"; description = "home"; placeholder = "@HOME@"; }
           { name = "system"; description = "system"; placeholder = "@SYSTEM@"; }
           { name = "wsl"; description = "wsl"; placeholder = "@WSL@"; }
+          { name = "dotfiles"; description = "dotfiles flake URL"; placeholder = "@DOTFILES@"; }
         ];
       };
       apps = forAllSystems (pkgs: {
@@ -204,7 +205,7 @@
         init = pkgs.writeShellApplication {
           name = "dotfiles-init";
           runtimeInputs = [
-            pkgs.coreutils pkgs.jq pkgs.nix
+            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix
             inputs.omnix.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
           runtimeEnv = {

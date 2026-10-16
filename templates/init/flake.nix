@@ -1,5 +1,5 @@
 {
-  inputs.dotfiles.url = "github:oyoshot/dotfiles/experiment/nix-cli";
+  inputs.dotfiles.url = "@DOTFILES@";
   outputs = { dotfiles, ... }: {
     homeConfigurations.home = dotfiles.lib.mkHome {
       username = "@USERNAME@";

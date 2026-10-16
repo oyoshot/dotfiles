@@ -1,6 +1,18 @@
 #!/bin/sh
 set -eu
 # Generate only; activation and host provisioning are separate operations.
+usage='Usage: dotfiles-init [--local DIR] {wsl-linux|linux|darwin} [OUTPUT_DIRECTORY]'
+# --local reads committed changes from a clone; otherwise follow the published branch.
+dotfiles=github:oyoshot/dotfiles/experiment/nix-cli
+if [ "${1-}" = --local ]; then
+  [ "$#" -ge 2 ] || { echo "$usage" >&2; exit 2; }
+  if [ ! -f "$2/flake.nix" ] || ! git -C "$2" rev-parse --git-dir >/dev/null 2>&1; then
+    echo "Not a dotfiles clone: $2" >&2
+    exit 2
+  fi
+  dotfiles="git+file://$(CDPATH='' cd -- "$2" && pwd -P)"
+  shift 2
+fi
 case "${1-}" in
   wsl-linux|linux)
     [ "$DOTFILES_SYSTEM" = x86_64-linux ] || { echo "This profile requires x86_64 Linux" >&2; exit 2; }
@@ -11,7 +23,7 @@ case "${1-}" in
     [ "$DOTFILES_SYSTEM" = aarch64-darwin ] || { echo "This profile requires Apple Silicon macOS" >&2; exit 2; }
     wsl=false
     ;;
-  *) echo "Usage: dotfiles-init {wsl-linux|linux|darwin} [OUTPUT_DIRECTORY]" >&2; exit 2 ;;
+  *) echo "$usage" >&2; exit 2 ;;
 esac
 [ "$#" -le 2 ] || { echo "Too many arguments" >&2; exit 2; }
 destination=${2:-${XDG_CONFIG_HOME:-$HOME/.config}/home-manager}
@@ -21,9 +33,9 @@ if [ -e "$destination" ] || [ -L "$destination" ]; then
 fi
 source_dir=$DOTFILES_TEMPLATE
 system=$DOTFILES_SYSTEM
-params=$(jq -cn --arg username "$(id -un)" --arg home "$HOME" --arg system "$system" --arg wsl "$wsl" '
+params=$(jq -cn --arg username "$(id -un)" --arg home "$HOME" --arg system "$system" --arg wsl "$wsl" --arg dotfiles "$dotfiles" '
   def nixString: split("\\")|join("\\\\")|split("\"")|join("\\\"")|split("${")|join("\\${")|split("\n")|join("\\n")|split("\r")|join("\\r")|split("\t")|join("\\t");
-  {username:($username|nixString),home:($home|nixString),system:$system,wsl:$wsl}')
+  {username:($username|nixString),home:($home|nixString),system:$system,wsl:$wsl,dotfiles:($dotfiles|nixString)}')
 parent=$(dirname -- "$destination")
 mkdir -p "$parent"
 staging=$(mktemp -d "$parent/.dotfiles-init.XXXXXX")

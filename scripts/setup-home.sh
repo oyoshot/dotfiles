@@ -2,10 +2,9 @@
 # Install Nix first: https://nix.dev/install-nix#multi-user-installation
 # Initialize without cloning (choose wsl-linux, linux, or darwin):
 #   nix run github:oyoshot/dotfiles/experiment/nix-cli#init -- wsl-linux
+# On a host that edits this clone, follow its commits instead of GitHub:
+#   nix run .#init -- --local . wsl-linux
 # Build and switch the generated entry with Home Manager before host provisioning.
-# Local development (does not rewrite the machine's lock file):
-#   home-manager build --flake "$NH_HOME_FLAKE#home" \
-#     --override-input dotfiles /path/to/dotfiles --no-write-lock-file
 set -eu
 case "${1:---build}" in
     --build) action=build ;;
