@@ -164,11 +164,6 @@
         _module.args.inputs = inputs;
         home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
       };
-      templates.home = {
-        path = ./templates/home;
-        description = "Local standalone Home Manager entry point";
-      };
-
       templates.init = {
         path = ./templates/init;
         description = "Automatic standalone Home Manager initialization";
