@@ -60,13 +60,13 @@ fpath=(
 up() {
   case "$OSTYPE" in
     darwin*)
-      nh home switch --update-input dotfiles -c home || return
+      nh home switch --update-input dotfiles -c home -b before-home-manager || return
       brew upgrade || return
       brew upgrade --cask --greedy || return
       mas upgrade || return
       ;;
     linux*)
-      nh home switch --update-input dotfiles -c home || return
+      nh home switch --update-input dotfiles -c home -b before-home-manager || return
       yay --noconfirm || return
       ;;
     *)
