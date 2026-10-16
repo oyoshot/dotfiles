@@ -6,12 +6,23 @@ source_dir=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export PATH="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/bin:/opt/homebrew/bin:$PATH"
+# Home Manager must provide the configuration before any privileged operation.
+[ -f "$XDG_CONFIG_HOME/mise/config.toml" ] || {
+    echo "Apply Home Manager before running host setup (mise config is missing)." >&2
+    exit 1
+}
+# Never install runtimes selected by an unrelated caller's project.
+cd "$HOME"
 case "$(uname -s)" in
     Darwin) sh "$source_dir/scripts/install-mac.sh" ;;
     Linux)
         # shellcheck disable=SC1091
         . /etc/os-release
         if [ "$ID" = arch ]; then
+            [ -f "$XDG_CONFIG_HOME/yay/extra-packages" ] || {
+                echo "Apply Home Manager first (Arch package list is missing)." >&2
+                exit 1
+            }
             sh "$source_dir/scripts/install-arch.sh"
         fi
         ;;

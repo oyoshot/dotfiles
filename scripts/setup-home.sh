@@ -22,5 +22,5 @@ mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
 nix --extra-experimental-features 'nix-command flakes' run "$source_dir#home-manager" -- \
     -b before-home-manager "$action" --flake "$entry#home"
 if [ "$action" = switch ]; then
-    echo "Home Manager applied. Next: sh $source_dir/scripts/bootstrap-host.sh"
+    echo "Home Manager applied. Next: nix run $source_dir#bootstrap-host"
 fi
