@@ -1,6 +1,7 @@
 {
   description = "Pinned CLI tools for these dotfiles";
 
+  inputs.omnix.url = "github:juspay/omnix/9a4899083cd3579aa0929e7caf53c0f28e31b70c";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.brew-api = {
     url = "github:BatteredBunny/brew-api";
@@ -168,7 +169,39 @@
         description = "Local standalone Home Manager entry point";
       };
 
+      templates.init = {
+        path = ./templates/init;
+        description = "Automatic standalone Home Manager initialization";
+      };
+      om.templates.home = {
+        template = self.templates.init;
+        params = [
+          { name = "username"; description = "username"; placeholder = "@USERNAME@"; }
+          { name = "home"; description = "home"; placeholder = "@HOME@"; }
+          { name = "system"; description = "system"; placeholder = "@SYSTEM@"; }
+          { name = "wsl"; description = "wsl"; placeholder = "@WSL@"; }
+        ];
+      };
+      apps = forAllSystems (pkgs: {
+        init = {
+          type = "app";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.init}/bin/dotfiles-init";
+        };
+      });
+
       packages = forAllSystems (pkgs: {
+        init = pkgs.writeShellApplication {
+          name = "dotfiles-init";
+          runtimeInputs = [
+            pkgs.coreutils pkgs.jq pkgs.nix
+            inputs.omnix.packages.${pkgs.stdenv.hostPlatform.system}.default
+          ];
+          runtimeEnv = {
+            DOTFILES_TEMPLATE = "${self}";
+            DOTFILES_SYSTEM = pkgs.stdenv.hostPlatform.system;
+          };
+          text = builtins.readFile ./scripts/init-home.sh;
+        };
         podman = pkgs.podman;
         home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
         zsh-autocomplete-rs = zacrsPackage pkgs;

@@ -1,10 +1,8 @@
 #!/bin/sh
 # Install Nix first: https://nix.dev/install-nix#multi-user-installation
-# Initialize the local entry with Nix's template support:
-#   mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/home-manager"
-#   cd "${XDG_CONFIG_HOME:-$HOME/.config}/home-manager"
-#   nix flake init -t /path/to/dotfiles#home
-# Edit machine.nix, then run this script with --build before --switch.
+# Initialize without cloning (choose wsl-linux, linux, or darwin):
+#   nix run github:oyoshot/dotfiles/experiment/nix-cli#init -- wsl-linux
+# Build and switch the generated entry with Home Manager before host provisioning.
 # Local development (does not rewrite the machine's lock file):
 #   home-manager build --flake "$NH_HOME_FLAKE#home" \
 #     --override-input dotfiles /path/to/dotfiles --no-write-lock-file
@@ -17,7 +15,7 @@ esac
 source_dir=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)
 entry="${XDG_CONFIG_HOME:-$HOME/.config}/home-manager"
 [ -f "$entry/flake.nix" ] || {
-    echo "Initialize $entry with the home flake template and edit machine.nix first." >&2
+    echo "Initialize $entry with the dotfiles #init app first." >&2
     exit 1
 }
 mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
