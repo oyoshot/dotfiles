@@ -27,13 +27,23 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
 # PATH
 typeset -gU path
-if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
-  path=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) $path )
-fi
+# Keep inherited project prefixes (including nix shell) ahead of user defaults,
+# but place those defaults before OS tools when starting from a plain login PATH.
+typeset -a _dotfiles_path _dotfiles_defaults
+_dotfiles_path=()
+_dotfiles_defaults=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) )
+for _dotfiles_entry in "$path[@]"; do
+  case $_dotfiles_entry in
+    /usr/bin|/usr/sbin|/bin|/sbin|/usr/local/bin|/usr/local/sbin|/opt/homebrew/bin|/opt/homebrew/sbin|/nix/var/nix/profiles/default/bin|/run/current-system/sw/bin)
+      _dotfiles_path+=( "$_dotfiles_defaults[@]" )
+      _dotfiles_defaults=()
+      ;;
+  esac
+  _dotfiles_path+=( "$_dotfiles_entry" )
+done
 path=(
-  $path
-  $HOME/.local/bin(N-/)
-  $XDG_STATE_HOME/nix/profile/bin(N-/)
+  "$_dotfiles_path[@]"
+  "$_dotfiles_defaults[@]"
   $HOME/.docker/bin(N-/) # Docker Desktop's user-scoped credential helpers
   /nix/var/nix/profiles/default/bin(N-/)
   /opt/homebrew/bin(N-/) # macOS/Apple Silicon
@@ -47,8 +57,7 @@ path=(
   /Library/Apple/usr/bin(N-/)
   $XDG_DATA_HOME/gh-red/bin(N-/)
 )
-# Shims bypass project ownership. mise activation supplies real tool directories.
-path=( ${path:#${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims} )
+unset _dotfiles_path _dotfiles_defaults _dotfiles_entry
 path=( ${path:#$HOME/.nix-profile/bin} )
 # WSL: Windows 側 PATH は DrvFs アクセスが 1 ディレクトリ ~10ms かかり、19 本あると
 # $commands (PATH 全走査) だけで ~90ms 遅くなる。対話シェルでは退避しておき、
@@ -70,7 +79,7 @@ fi
 export RUST_BACKTRACE=1
 export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
-if [[ -z ${IN_NIX_SHELL-}${DOTFILES_NIX_SHELL-} ]]; then
+if [[ -z ${IN_NIX_SHELL-} ]]; then
   export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$XDG_DATA_HOME/cargo/target}"
 fi
 
