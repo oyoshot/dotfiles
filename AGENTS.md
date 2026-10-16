@@ -32,6 +32,6 @@
 - 共通 CLI：`flake.nix`、`packages/user-tools.nix`
 - OS 別パッケージ・Home Manager 設定：`home.nix`、`services.nix`
 - macOS GUI：`packages/darwin-apps.nix`
-- mise の初期設定：`config/mise/config.toml`
+- mise のツール：`config/mise/config.toml`（マシン固有は `~/.config/mise/config.local.toml`）
 - OS 側のパッケージ：`config/homebrew/Brewfile`、`config/yay/extra-packages`
 - Linux の開発環境：`flake.nix` の `native` shell。`nix develop .#native` で利用する。

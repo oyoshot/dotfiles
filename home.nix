@@ -130,7 +130,6 @@ in
     };
     programs.mise = {
       enable = true;
-      mutableSettings = true;
       # The existing .zshrc coordinates mise and direnv with one deferred hook.
       enableZshIntegration = false;
       enableBashIntegration = false;
@@ -144,6 +143,8 @@ in
         idiomatic_version_file_enable_tools = [ "terraform" "node" "python" "rust" ];
         npm.bun = true;
       };
+      # Host-specific tools belong in the unmanaged config.local.toml.
+      globalConfig.tools = (lib.importTOML ./config/mise/config.toml).tools;
     };
     # Keep cc/c++ as Apple Clang, while providing Homebrew-style GCC names.
     home.file = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
@@ -162,15 +163,6 @@ in
         nix_direnv_disallow_fallback
       '';
     };
-    # linkGeneration removes the previous HM-managed config.toml symlink.
-    # Seed only missing files; subsequent switches preserve mise use --global.
-    home.activation.miseInitialTools = lib.hm.dag.entryBetween
-      [ "miseMutableConfig" ] [ "linkGeneration" ] ''
-        if [[ ! -e ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"} && ! -L ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"} ]]; then
-          run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg "${config.xdg.configHome}/mise"}
-          run ${pkgs.coreutils}/bin/install -m 600 ${./config/mise/config.toml} ${lib.escapeShellArg "${config.xdg.configHome}/mise/config.toml"}
-        fi
-      '';
     nix.package = pkgs.nix;
     nix.settings.use-xdg-base-directories = true;
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
