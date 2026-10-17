@@ -136,17 +136,13 @@ in
       enableZshIntegration = false;
       enableBashIntegration = false;
       enableFishIntegration = false;
-      # Host Clang can link Nix OpenSSL without using a Nix compiler wrapper.
-      globalConfig.env = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-        PKG_CONFIG_PATH = "${lib.getDev pkgs.openssl}/lib/pkgconfig";
-      };
-      globalConfig.settings = {
-        experimental = true;
-        idiomatic_version_file_enable_tools = [ "terraform" "node" "python" "ruby" "rust" ];
-        npm.bun = true;
-      };
-      # Host-specific tools belong in the unmanaged config.local.toml.
-      globalConfig.tools = (lib.importTOML ./config/mise/config.toml).tools;
+      globalConfig = lib.mkMerge [
+        (lib.importTOML ./config/mise/config.toml)
+        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+          # Host Clang can link Nix OpenSSL without using a Nix compiler wrapper.
+          env.PKG_CONFIG_PATH = "${lib.getDev pkgs.openssl}/lib/pkgconfig";
+        })
+      ];
     };
     # Keep cc/c++ as Apple Clang, while providing Homebrew-style GCC names.
     home.file = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {

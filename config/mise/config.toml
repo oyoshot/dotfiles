@@ -1,6 +1,13 @@
-# Global mise tools, linked by Home Manager as ~/.config/mise/config.toml.
-# Common settings are declared in home.nix. Add host-specific tools with
+# Global mise configuration, read by Home Manager to generate ~/.config/mise/config.toml.
+# Add host-specific tools with
 #   mise use --path ~/.config/mise/config.local.toml <tool>
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["terraform", "node", "python", "ruby", "rust"]
+
+[settings.npm]
+bun = true
 
 [tools]
 # ghc = "latest"
