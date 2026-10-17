@@ -1,4 +1,17 @@
 { config, lib, pkgs, ... }:
+let
+  nvimLogrotateArgs = [
+    "${pkgs.logrotate}/bin/logrotate"
+    "-s"
+    "${config.xdg.cacheHome}/logrotate.status"
+    "${config.xdg.configHome}/logrotate.d/nvim"
+  ];
+  nvimLogrotate = pkgs.writeShellScript "nvim-logrotate" ''
+    set -eu
+    ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg config.xdg.cacheHome}
+    exec ${lib.escapeShellArgs nvimLogrotateArgs}
+  '';
+in
 {
   i18n.inputMethod = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
     enable = true;
@@ -17,25 +30,17 @@
       };
     };
   };
-  xdg.configFile."logrotate.d/nvim".text = ''
-    ${config.xdg.stateHome}/nvim/lsp.log {
-      size 16M
-      rotate 7
-      compress
-      copytruncate
-      missingok
-      notifempty
-      dateext
-      dateformat -%Y%m%d-%H%M%S
-    }
-  '';
+  xdg.configFile."logrotate.d/nvim".text = builtins.replaceStrings
+    [ "@stateHome@" "@dateSeparator@" ]
+    [ config.xdg.stateHome (if pkgs.stdenv.hostPlatform.isDarwin then "." else "-") ]
+    (builtins.readFile ./config/logrotate/nvim.conf.tmpl);
 
   systemd.user.services = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     logrotate-nvim = {
       Unit.Description = "Logrotate for Neovim LSP";
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.logrotate}/bin/logrotate -s %h/.cache/logrotate.status %h/.config/logrotate.d/nvim";
+        ExecStart = "${nvimLogrotate}";
       };
     };
     fcitx5-wslg = lib.mkIf config.dotfiles.wsl {
@@ -64,7 +69,7 @@
     enable = true;
     config = {
       Label = "com.oyoshot.nvim-lsp-logrotate";
-      ProgramArguments = [ "/bin/bash" "-lc" "${config.home.homeDirectory}/.local/bin/nvim-lsp-logrotate.sh" ];
+      ProgramArguments = [ "${nvimLogrotate}" ];
       StartCalendarInterval = { Hour = 3; Minute = 0; };
       RunAtLoad = true;
       StandardOutPath = "/dev/null";

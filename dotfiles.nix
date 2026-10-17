@@ -132,7 +132,6 @@
       text = builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ]
         [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ] (builtins.readFile ./local/bin/ghostty);
     };
-    ".local/bin/nvim-lsp-logrotate.sh" = { source = ./local/bin/nvim-lsp-logrotate.sh; };
     ".local/bin/pbcopy" = { source = ./local/bin/pbcopy; };
     ".local/bin/pbpaste" = { source = ./local/bin/pbpaste; };
     ".local/share/cargo/config.toml" = { source = ./local/share/cargo/config.toml; };
