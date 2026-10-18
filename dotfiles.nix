@@ -64,9 +64,8 @@
       source = ./config/nvim;
       recursive = true;
     };
-    "ripgrep" = {
-      source = ./config/ripgrep;
-      recursive = true;
+    "ripgrep/config" = {
+      source = ./config/ripgrep/config;
     };
     "ruff" = {
       source = ./config/ruff;
