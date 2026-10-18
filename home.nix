@@ -130,6 +130,17 @@ in
       "systemd/user/podman.socket".source = "${podman}/share/systemd/user/podman.socket";
       "systemd/user/sockets.target.wants/podman.socket".source = "${podman}/share/systemd/user/podman.socket";
     };
+    xdg.dataFile."applications/Alacritty.desktop" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
+      source = pkgs.substitute {
+        src = "${alacritty}/share/applications/Alacritty.desktop";
+        substitutions = [
+          # Keep launchers valid across upgrades, including the New Terminal action.
+          "--replace-fail" "TryExec=alacritty" "TryExec=${config.home.profileDirectory}/bin/alacritty"
+          "--replace-fail" "Exec=alacritty" "Exec=${config.home.profileDirectory}/bin/alacritty"
+          "--replace-fail" "Icon=Alacritty" "Icon=${config.home.profileDirectory}/share/icons/hicolor/scalable/apps/Alacritty.svg"
+        ];
+      };
+    };
     programs.mise = {
       enable = true;
       # The repository-managed .zshrc loads the standard shell hooks.
@@ -177,6 +188,16 @@ in
         if [[ -e /dev/dxg ]]; then
           if [[ "$(${pkgs.coreutils}/bin/readlink /run/opengl-driver || true)" != "${config.targets.genericLinux.gpu.drivers}" ]]; then
             run /usr/bin/sudo ${lib.getExe config.targets.genericLinux.gpu.setupPackage}
+          fi
+
+          # WSLg scans /usr/local/share/applications, but not Home Manager profiles.
+          # Remove these exports when WSLg supports the profile's XDG_DATA_DIRS.
+          if ! ${pkgs.diffutils}/bin/cmp -s \
+              ${config.xdg.dataFile."applications/Alacritty.desktop".source} \
+              /usr/local/share/applications/Alacritty.desktop; then
+            run /usr/bin/sudo ${pkgs.coreutils}/bin/install -Dm0644 \
+              ${config.xdg.dataFile."applications/Alacritty.desktop".source} \
+              /usr/local/share/applications/Alacritty.desktop
           fi
 
           if ! ${pkgs.diffutils}/bin/cmp -s \
