@@ -65,11 +65,16 @@ vim.o.autoindent = true
 vim.o.laststatus = 2
 
 -- Inherit the selected project environment.
--- GUI launches may lack the user profile, so append only the common tools path.
+-- GUI launches may lack the user profile and interactive mise activation.
+local fallback_paths = {}
 if not vim.env.IN_NIX_SHELL then
-	local profile = (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state")) .. "/nix/profile/bin"
-	if not (":" .. vim.env.PATH .. ":"):find(":" .. profile .. ":", 1, true) then
-		vim.env.PATH = vim.env.PATH .. ":" .. profile
+	table.insert(fallback_paths, (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state")) .. "/nix/profile/bin")
+end
+local mise_data = vim.env.MISE_DATA_DIR or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
+table.insert(fallback_paths, mise_data .. "/shims")
+for _, path in ipairs(fallback_paths) do
+	if not (":" .. vim.env.PATH .. ":"):find(":" .. path .. ":", 1, true) then
+		vim.env.PATH = vim.env.PATH .. ":" .. path
 	end
 end
 

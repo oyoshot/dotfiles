@@ -44,6 +44,8 @@ done
 path=(
   "$_dotfiles_path[@]"
   "$_dotfiles_defaults[@]"
+  # Non-interactive shells do not run mise activation; keep its tools as fallbacks.
+  ${MISE_DATA_DIR:-$XDG_DATA_HOME/mise}/shims(N-/)
   $HOME/.docker/bin(N-/) # Docker Desktop's user-scoped credential helpers
   /nix/var/nix/profiles/default/bin(N-/)
   /opt/homebrew/bin(N-/) # macOS/Apple Silicon
