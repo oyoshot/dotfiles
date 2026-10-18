@@ -154,6 +154,7 @@
         # macOS scripts expect BSD sed; preserve Homebrew's gsed spelling.
         (pkgs.gnused.overrideAttrs { configureFlags = [ "--program-prefix=g" ]; })
         pkgs.pinentry_mac
+        pkgs.podman
       ];
     in
     {
