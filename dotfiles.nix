@@ -1,7 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   xdg.configFile = {
+    # Follow the active generation without requiring a new login shell.
+    "dotfiles/source".source = inputs.self.outPath;
     "alacritty" = {
       source = ./config/alacritty;
       recursive = true;

@@ -76,7 +76,16 @@ up() {
   esac
 
   mise cache clear || return
-  mise up || return
+  if [[ "$OSTYPE" == linux* ]]; then
+    # Keep libraries linked by Cargo tools alive, as in bootstrap-host.sh.
+    local build_profiles="$XDG_STATE_HOME/nix/profiles"
+    mkdir -p "$build_profiles" || return
+    nix develop --no-update-lock-file --profile "$build_profiles/runtime-build" \
+      "$XDG_CONFIG_HOME/dotfiles/source#native" \
+      --command mise up || return
+  else
+    mise up || return
+  fi
   nvim --headless '+Lazy! update' +qa
 }
 

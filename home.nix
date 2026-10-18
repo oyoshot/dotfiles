@@ -116,8 +116,8 @@ in
       pkgs._1password-cli
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin
       (builtins.attrValues (import ./packages/darwin-apps.nix { inherit pkgs inputs; }));
-    # Preserve the rootless API socket convention formerly supplied by podman-docker.
     home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      # Preserve the rootless API socket convention formerly supplied by podman-docker.
       DOCKER_HOST = "unix://\${XDG_RUNTIME_DIR}/podman/podman.sock";
     };
     xdg.configFile = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
