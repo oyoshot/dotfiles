@@ -57,6 +57,7 @@ in
       package = chromium;
     };
     home.stateVersion = "25.11";
+    targets.genericLinux.enable = pkgs.stdenv.hostPlatform.isLinux;
     targets.genericLinux.gpu.enable = pkgs.stdenv.hostPlatform.isLinux;
     fonts.fontconfig.enable = pkgs.stdenv.hostPlatform.isLinux;
     home.packages = [

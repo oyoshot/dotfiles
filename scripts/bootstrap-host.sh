@@ -28,11 +28,7 @@ case "$(uname -s)" in
         ;;
 esac
 if [ "$(uname -s)" = Linux ]; then
-    # Keep the build environment rooted: mise's Cargo binaries link its libraries.
-    build_profiles="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
-    mkdir -p "$build_profiles"
-    nix develop --no-update-lock-file --profile "$build_profiles/runtime-build" \
-        "$source_dir#native" --command zsh "$source_dir/scripts/install-runtimes.zsh"
+    sh "$source_dir/scripts/with-runtime-build.sh" zsh "$source_dir/scripts/install-runtimes.zsh"
 else
     zsh "$source_dir/scripts/install-runtimes.zsh"
 fi

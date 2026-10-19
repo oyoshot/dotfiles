@@ -66,12 +66,11 @@ vim.o.laststatus = 2
 
 -- Inherit the selected project environment.
 -- GUI launches may lack the user profile and interactive mise activation.
-local fallback_paths = {}
+local mise_data = vim.env.MISE_DATA_DIR or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
+local fallback_paths = { mise_data .. "/shims" }
 if not vim.env.IN_NIX_SHELL then
 	table.insert(fallback_paths, (vim.env.XDG_STATE_HOME or (vim.env.HOME .. "/.local/state")) .. "/nix/profile/bin")
 end
-local mise_data = vim.env.MISE_DATA_DIR or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
-table.insert(fallback_paths, mise_data .. "/shims")
 local paths = vim.split(vim.env.PATH or "", ":", { plain = true })
 local system_paths = {
 	["/usr/bin"] = true,
@@ -87,17 +86,19 @@ local system_paths = {
 }
 local insert_at = #paths + 1
 for index, path in ipairs(paths) do
-	if system_paths[path] then
+	if system_paths[path] or vim.tbl_contains(fallback_paths, path) then
 		insert_at = index
 		break
 	end
 end
--- Keep inherited project prefixes first, then fallbacks, then OS tools.
+-- Normalize global fallbacks even when inherited, keeping project prefixes first.
+paths = vim.tbl_filter(function(path)
+	return not vim.tbl_contains(fallback_paths, path)
+end, paths)
+-- mise project overrides must precede the global Nix defaults.
 for _, path in ipairs(fallback_paths) do
-	if not vim.tbl_contains(paths, path) then
-		table.insert(paths, insert_at, path)
-		insert_at = insert_at + 1
-	end
+	table.insert(paths, insert_at, path)
+	insert_at = insert_at + 1
 end
 vim.env.PATH = table.concat(paths, ":")
 
