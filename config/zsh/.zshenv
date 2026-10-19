@@ -34,6 +34,11 @@ _dotfiles_path=()
 _dotfiles_defaults=( $HOME/.local/bin(N-/) $XDG_STATE_HOME/nix/profile/bin(N-/) )
 for _dotfiles_entry in "$path[@]"; do
   case $_dotfiles_entry in
+    "$HOME/.local/bin"|"$XDG_STATE_HOME/nix/profile/bin")
+      # nix.sh may prepend the profile. Reinsert both defaults below so local
+      # wrappers win without moving them ahead of inherited project prefixes.
+      continue
+      ;;
     /usr/bin|/usr/sbin|/bin|/sbin|/usr/local/bin|/usr/local/sbin|/opt/homebrew/bin|/opt/homebrew/sbin|/nix/var/nix/profiles/default/bin|/run/current-system/sw/bin)
       _dotfiles_path+=( "$_dotfiles_defaults[@]" )
       _dotfiles_defaults=()
