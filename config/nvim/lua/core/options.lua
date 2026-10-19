@@ -72,11 +72,34 @@ if not vim.env.IN_NIX_SHELL then
 end
 local mise_data = vim.env.MISE_DATA_DIR or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
 table.insert(fallback_paths, mise_data .. "/shims")
-for _, path in ipairs(fallback_paths) do
-	if not (":" .. vim.env.PATH .. ":"):find(":" .. path .. ":", 1, true) then
-		vim.env.PATH = vim.env.PATH .. ":" .. path
+local paths = vim.split(vim.env.PATH or "", ":", { plain = true })
+local system_paths = {
+	["/usr/bin"] = true,
+	["/usr/sbin"] = true,
+	["/bin"] = true,
+	["/sbin"] = true,
+	["/usr/local/bin"] = true,
+	["/usr/local/sbin"] = true,
+	["/opt/homebrew/bin"] = true,
+	["/opt/homebrew/sbin"] = true,
+	["/nix/var/nix/profiles/default/bin"] = true,
+	["/run/current-system/sw/bin"] = true,
+}
+local insert_at = #paths + 1
+for index, path in ipairs(paths) do
+	if system_paths[path] then
+		insert_at = index
+		break
 	end
 end
+-- Keep inherited project prefixes first, then fallbacks, then OS tools.
+for _, path in ipairs(fallback_paths) do
+	if not vim.tbl_contains(paths, path) then
+		table.insert(paths, insert_at, path)
+		insert_at = insert_at + 1
+	end
+end
+vim.env.PATH = table.concat(paths, ":")
 
 vim.filetype.add({
 	extension = {

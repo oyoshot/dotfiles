@@ -13,21 +13,21 @@ let
   '';
 in
 {
-  i18n.inputMethod = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
+  i18n.inputMethod = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     enable = true;
     type = "fcitx5";
     fcitx5 = {
       addons = [ pkgs.fcitx5-mozc ];
       # Keep the existing WSLg unit and its frontend restrictions.
-      systemd.enable = false;
-      fcitx5-with-addons = pkgs.qt6Packages.fcitx5-with-addons.override {
+      systemd.enable = lib.mkIf config.dotfiles.wsl false;
+      fcitx5-with-addons = lib.mkIf config.dotfiles.wsl (pkgs.qt6Packages.fcitx5-with-addons.override {
         fcitx5 = pkgs.fcitx5.overrideAttrs (old: {
           # Preserve the existing workaround until microsoft/wslg#1495 is fixed.
           patches = (old.patches or [ ]) ++ [
             ./.workarounds/REMOVE_WHEN_WSLG_1495_IS_FIXED/wslg-keep-candidate-window-mapped.patch
           ];
         });
-      };
+      });
     };
   };
   xdg.configFile."logrotate.d/nvim".text = builtins.replaceStrings
