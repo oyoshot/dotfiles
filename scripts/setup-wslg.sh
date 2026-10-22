@@ -8,9 +8,10 @@ if [ -e /dev/dxg ]; then
     # Remove this bridge if WSLg gains access to Home Manager's font configuration.
     font_source=$(readlink -e "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profile/share/fonts/truetype/ipag.ttf")
     font_dir=/usr/local/share/fonts/dotfiles-wslg
-    sudo install -d -m 755 "$font_dir"
+    # Home Manager activation has a restricted PATH; use the host's setuid sudo.
+    /usr/bin/sudo install -d -m 755 "$font_dir"
     font_target=$(realpath --relative-to="$font_dir" "$font_source")
-    sudo ln -sfnT "$font_target" "$font_dir/ipag.ttf"
+    /usr/bin/sudo ln -sfnT "$font_target" "$font_dir/ipag.ttf"
 
     # Home Manager supplies Fcitx and the WSLg patch through Nix.
     systemctl --user daemon-reload
