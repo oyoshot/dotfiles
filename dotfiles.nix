@@ -71,10 +71,6 @@
       source = ./config/ruff;
       recursive = true;
     };
-    "rye" = {
-      source = ./config/rye;
-      recursive = true;
-    };
     "skhd" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       source = ./config/skhd;
       recursive = true;

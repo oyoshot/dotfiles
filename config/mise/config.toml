@@ -24,7 +24,6 @@ node = "22"
 pnpm = "latest"
 python = "3.13"
 ruby = "latest"
-rye = "latest"
 rust = { version = "latest", components = "rust-analyzer,llvm-tools,rust-src" }
 scala = "latest"
 terraform = ["1.0.11", "1.5.7", "latest"]
