@@ -179,10 +179,6 @@
         ];
       };
       apps = forAllSystems (pkgs: {
-        bootstrap-host = {
-          type = "app";
-          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.bootstrap-host}/bin/dotfiles-bootstrap-host";
-        };
         init = {
           type = "app";
           program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.init}/bin/dotfiles-init";
@@ -190,17 +186,11 @@
       });
 
       packages = forAllSystems (pkgs: {
-        bootstrap-host = pkgs.writeShellApplication {
-          name = "dotfiles-bootstrap-host";
-          runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.nix pkgs.zsh ];
-          text = ''
-            exec sh ${self}/scripts/bootstrap-host.sh "$@"
-          '';
-        };
         init = pkgs.writeShellApplication {
           name = "dotfiles-init";
           runtimeInputs = [
-            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix pkgs.omnix
+            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix pkgs.omnix pkgs.zsh
+            home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
           ];
           runtimeEnv = {
             DOTFILES_TEMPLATE = "${self}";

@@ -210,6 +210,13 @@ in
           fi
         fi
       '');
+    home.activation.wslgFonts = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl)
+      (lib.hm.dag.entryAfter [ "linkGeneration" "installPackages" ] ''
+        run ${pkgs.coreutils}/bin/env \
+          XDG_STATE_HOME=${lib.escapeShellArg config.xdg.stateHome} \
+          PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.systemd ]}:$PATH \
+          ${pkgs.runtimeShell} ${./scripts/setup-wslg.sh}
+      '');
     home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "linkGeneration" "installPackages" ] ''
       run ${pkgs.coreutils}/bin/env \
         XDG_CONFIG_HOME=${lib.escapeShellArg config.xdg.configHome} \
