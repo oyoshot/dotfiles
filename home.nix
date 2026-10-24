@@ -2,6 +2,8 @@
 let
   podman = pkgs.podman;
   linuxTools = import ./packages/linux-tools.nix { inherit pkgs; };
+  darwinApps = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
+    (import ./packages/darwin-apps.nix { inherit pkgs inputs; });
   obsidian = if config.dotfiles.wsl then linuxTools.obsidian.overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
       # Same WSL driver and input-module requirements as Chrome/Chromium.
@@ -116,7 +118,7 @@ in
       pkgs.mas
       pkgs._1password-cli
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin
-      (builtins.attrValues (import ./packages/darwin-apps.nix { inherit pkgs inputs; }));
+      (builtins.attrValues (builtins.removeAttrs darwinApps [ "1Password.app" ]));
     home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       # Preserve the rootless API socket convention formerly supplied by podman-docker.
       DOCKER_HOST = "unix://\${XDG_RUNTIME_DIR}/podman/podman.sock";
@@ -184,6 +186,25 @@ in
       use-xdg-base-directories = true"
       run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg "${config.xdg.stateHome}/nix/profiles"}
     '';
+    # 1Password requires /Applications/1Password.app (nixpkgs#254944).
+    # Follow nix-darwin's dedicated copier without retaining Nix store timestamps
+    # (nix-darwin#1842). Remove this when copyApps supports per-app destinations.
+    home.activation.onePassword = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
+      (lib.hm.dag.entryAfter [ "copyApps" ] ''
+        onePasswordSource=${lib.escapeShellArg "${darwinApps."1Password.app"}/Applications/1Password.app"}
+        onePasswordTarget=/Applications/1Password.app
+        onePasswordRsyncFlags=(
+          --recursive --checksum --perms --links --copy-unsafe-links
+          --specials --delete --chmod=-w
+        )
+        onePasswordChanges=$(${lib.getExe pkgs.rsync} --dry-run --itemize-changes \
+          "''${onePasswordRsyncFlags[@]}" "$onePasswordSource/" "$onePasswordTarget/")
+        if [[ -n "$onePasswordChanges" ]]; then
+          run /usr/bin/sudo /usr/bin/install -o root -g wheel -m0555 -d "$onePasswordTarget"
+          run /usr/bin/sudo ${lib.getExe pkgs.rsync} \
+            "''${onePasswordRsyncFlags[@]}" "$onePasswordSource/" "$onePasswordTarget/"
+        fi
+      '');
     home.activation.wslgDesktop = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl)
       (lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         if [[ -e /dev/dxg ]]; then
