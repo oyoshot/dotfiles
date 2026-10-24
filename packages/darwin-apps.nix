@@ -17,14 +17,14 @@ in
           hash = "sha256-TN+8YPp8tdQyGBd/uIt89AnH9Y9LMJLyzajwNMXuz5o=";
         };
       };
-  "ChatGPT.app" = pkgs.chatgpt;
+  "ChatGPT.app" = casks.chatgpt;
   # macOS 27 restricts profile data to Mozilla-signed apps (nixpkgs#535123).
   # Keep the vendor bundle until wrapped firefox-bin preserves that identity.
   "Firefox.app" = pkgs.firefox-bin-unwrapped;
   "Google Chrome.app" = pkgs.google-chrome;
   "Ghostty.app" = pkgs.ghostty-bin;
-  "Notion.app" = pkgs.notion-app;
-  "Podman Desktop.app" = pkgs.podman-desktop;
+  "Notion.app" = casks.notion;
+  "Podman Desktop.app" = casks.podman-desktop;
   "WezTerm.app" = pkgs.wezterm;
   # Cask metadata is pinned independently through the brew-api input.
   "Notion Calendar.app" = casks.notion-calendar;
