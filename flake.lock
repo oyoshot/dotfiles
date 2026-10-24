@@ -51,11 +51,11 @@
     "brew-api": {
       "flake": false,
       "locked": {
-        "lastModified": 1792024146,
-        "narHash": "sha256-75bXFJD6t5Jy5sKUuDs6iJaixbRO8C78+lQqFDUgvs0=",
+        "lastModified": 1792844910,
+        "narHash": "sha256-sPx1FDcIGWV5V7twGsRvt2xFIaFn8RFyCmb8801RtKk=",
         "owner": "BatteredBunny",
         "repo": "brew-api",
-        "rev": "48745428abd3ceee393e4fa303524f0173affd81",
+        "rev": "ce2b68a6b0ec3b6ba2ebffcf1c3f24ce6c294e20",
         "type": "github"
       },
       "original": {
@@ -75,11 +75,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790843130,
-        "narHash": "sha256-HKjwROhiocAP44sc1JFNcXP1+H8bgTwYvCOwOQs/cXM=",
+        "lastModified": 1792145718,
+        "narHash": "sha256-h5Go3/IBRHALRrzPivujltNar/XlQ8zddcI4tHdn5Bw=",
         "owner": "BatteredBunny",
         "repo": "brew-nix",
-        "rev": "d058f7ec3bdb325000a5c305f03020c621612bea",
+        "rev": "c9d44a9d6014dd47c7ac542dccf89b607e3faa12",
         "type": "github"
       },
       "original": {
@@ -112,11 +112,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792000010,
-        "narHash": "sha256-4jtkwQlReQdXsKJJfB9yT7nIf0TlwgZOk2XtxjUgDS8=",
+        "lastModified": 1792818371,
+        "narHash": "sha256-yhEZAzZRNvzYpoAlyFY3wM75V9BmkIXJIueof8S5gOg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "5a9d300bd619c03857521b50c8877a19dbad7078",
+        "rev": "2cd3234928f60bbff695a7ee56115ef7799c47cd",
         "type": "github"
       },
       "original": {
@@ -165,11 +165,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1791637130,
-        "narHash": "sha256-TuvwvSjJrpqyIYdjhQ7Wu+ADVfeOpO2Um21/V7TOubw=",
+        "lastModified": 1792506237,
+        "narHash": "sha256-Q/8KLB6jNfpaUN1HAedE/u/Et9feE/zYSsutBLKrCFk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ca1659429c950a11a565b5764e37a1b704e17ec8",
+        "rev": "5adc50831c259f87faeb09ddf930d43597197473",
         "type": "github"
       },
       "original": {
@@ -250,11 +250,11 @@
     "zacrs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791523028,
-        "narHash": "sha256-fW70m3AdBuUA+CIlZLUqwb1TaRgG25kZJSRiNH5bYK8=",
+        "lastModified": 1792732418,
+        "narHash": "sha256-qiKzf5C73Hp+mLUeXT02oNuhaAW6uUpjviNIRxAPwn4=",
         "ref": "refs/heads/main",
-        "rev": "68e533ee9c26ec8ba0df57f83fd8a5ee0c386705",
-        "revCount": 129,
+        "rev": "e707469f704dcf38c55a4beb8016c63230d0a47c",
+        "revCount": 132,
         "type": "git",
         "url": "https://github.com/oyoshot/zsh-autocomplete-rs-proto.git"
       },
@@ -266,11 +266,11 @@
     "zsh-completions": {
       "flake": false,
       "locked": {
-        "lastModified": 1791591465,
-        "narHash": "sha256-/Ehrso6ymLjDc+V+jpBaSlVPTpQrEqlzMHBapdYbbF0=",
+        "lastModified": 1792130223,
+        "narHash": "sha256-H25tD8EAj7PRjGaUh8DDtMdSTRTAtzu4VS5Ka0ApCp0=",
         "owner": "zsh-users",
         "repo": "zsh-completions",
-        "rev": "6661b4b68173784ba31ef10ce4b5cb1c9ecfdcac",
+        "rev": "989b23277ab33e8d5e82df6aed936e846db9d8b8",
         "type": "github"
       },
       "original": {
