@@ -1,0 +1,13 @@
+[include]
+    path = conf.d/core.conf
+    path = conf.d/alias.conf
+    path = conf.d/user.conf
+    path = conf.d/delta.conf
+    path = conf.d/ghq.conf
+    path = conf.d/gh.conf
+    path = conf.d/signing.conf
+    path = conf.d/local.conf
+    path = conf.d/wt.conf
+
+[includeIf "gitdir:~/.local/share/nvim/lazy/lsp_signature.nvim/.git/"]
+    path = conf.d/nvim-lazy.conf

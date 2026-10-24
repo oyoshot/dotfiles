@@ -1,0 +1,19 @@
+# Copy user.signingKey and gpg.ssh.program from 1Password's Configure Commit Signing.
+# Choose the personal or work key for this host; keep these settings in local.conf.
+# [user]
+#     signingKey = ssh-ed25519 <public-key>
+# [gpg "ssh"]
+#     program = <signer-path-from-1Password>
+
+[tag]
+    forceSignAnnotated = true
+
+[users "default"]
+    signingKey = ""
+
+[url "git@example.ghe.com:"]
+    pushInsteadOf = https://example.ghe.com/
+    insteadOf = example:
+
+[ghq "https://example.ghe.com"]
+    vcs = github

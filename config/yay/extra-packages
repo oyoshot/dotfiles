@@ -1,0 +1,12 @@
+# Host integration and exceptions to Home Manager package management.
+# install-arch.sh installs base/base-devel/git; pacman retains their dependencies.
+# zsh is the /bin/zsh login shell; Fcitx is managed by Home Manager.
+downgrade
+# Setuid fusermount3 helper for unprivileged mounts with Nix-managed rclone.
+fuse3
+# Maintain search indexes for host manuals, including the Japanese pages.
+man-db
+# Compiler/linker defaults are Nix-managed; project libraries use the native shell.
+# Rust versions remain mise-owned.
+reflector
+zsh
