@@ -58,14 +58,20 @@ fpath=(
 
 # Update each tool through its package manager; stop on the first failure.
 up() {
-  # A local clone is switched from its working tree so updated locks can be tried before committing.
-  local dotfiles
-  dotfiles=$(jq -r '.nodes.dotfiles.original | select(.type == "git") | "git+\(.url)"' "$NH_HOME_FLAKE/flake.lock") || return
-  if [[ $dotfiles == git+file://* ]]; then
+  # Read the configured input, not the previous lock's location.
+  local home_flake=${NH_HOME_FLAKE:a} dotfiles
+  dotfiles=$(nix eval --raw --file "$home_flake/flake.nix" inputs.dotfiles.url) || return
+  # Resolve local references relative to their configuration, not the caller.
+  case "$dotfiles" in
+    path:/*|git+file:/*) ;;
+    path:*) dotfiles="path:$home_flake/${dotfiles#path:}" ;;
+    git+file:*) dotfiles="git+file:$home_flake/${dotfiles#git+file:}" ;;
+  esac
+  if [[ $dotfiles == path:* || $dotfiles == git+file:* ]]; then
     nix flake update --flake "$dotfiles" || return
-    nh home switch -c home --override-input dotfiles "$dotfiles" || return
+    nh home switch "$home_flake" -c home -b before-home-manager --override-input dotfiles "$dotfiles" || return
   else
-    nh home switch --update-input dotfiles -c home -b before-home-manager || return
+    nh home switch "$home_flake" --update-input dotfiles -c home -b before-home-manager || return
   fi
 
   case "$OSTYPE" in
