@@ -18,7 +18,9 @@ in
         };
       };
   "ChatGPT.app" = pkgs.chatgpt;
-  "Firefox.app" = pkgs.firefox-bin;
+  # macOS 27 restricts profile data to Mozilla-signed apps (nixpkgs#535123).
+  # Keep the vendor bundle until wrapped firefox-bin preserves that identity.
+  "Firefox.app" = pkgs.firefox-bin-unwrapped;
   "Google Chrome.app" = pkgs.google-chrome;
   "Ghostty.app" = pkgs.ghostty-bin;
   "Notion.app" = pkgs.notion-app;
