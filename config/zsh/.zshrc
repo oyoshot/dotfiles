@@ -58,15 +58,23 @@ fpath=(
 
 # Update each tool through its package manager; stop on the first failure.
 up() {
+  # A local clone is switched from its working tree so updated locks can be tried before committing.
+  local dotfiles
+  dotfiles=$(jq -r '.nodes.dotfiles.original | select(.type == "git") | "git+\(.url)"' "$NH_HOME_FLAKE/flake.lock") || return
+  if [[ $dotfiles == git+file://* ]]; then
+    nix flake update --flake "$dotfiles" || return
+    nh home switch -c home --override-input dotfiles "$dotfiles" || return
+  else
+    nh home switch --update-input dotfiles -c home -b before-home-manager || return
+  fi
+
   case "$OSTYPE" in
     darwin*)
-      nh home switch --update-input dotfiles -c home -b before-home-manager || return
       brew upgrade || return
       brew upgrade --cask --greedy || return
       mas upgrade || return
       ;;
     linux*)
-      nh home switch --update-input dotfiles -c home -b before-home-manager || return
       yay --noconfirm || return
       ;;
     *)
