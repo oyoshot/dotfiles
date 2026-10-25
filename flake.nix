@@ -45,7 +45,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system:
         f (import nixpkgs {
           inherit system;
-          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" ];
+          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" "zoom" ];
         }));
       mkHome = { system, username, homeDirectory, wsl ? false, modules ? [ ] }:
         home-manager.lib.homeManagerConfiguration {

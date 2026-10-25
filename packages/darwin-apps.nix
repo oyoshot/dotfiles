@@ -24,6 +24,13 @@ in
   # Keep the vendor bundle until wrapped firefox-bin preserves that identity.
   "Firefox.app" = pkgs.firefox-bin-unwrapped;
   "Google Chrome.app" = pkgs.google-chrome;
+  # The installer also contains Microsoft AutoUpdate; deploy only Teams.
+  "Microsoft Teams.app" = pkgs.linkFarm "microsoft-teams-app" [
+    {
+      name = "Applications/Microsoft Teams.app";
+      path = "${casks.microsoft-teams}/Applications/Microsoft Teams.app";
+    }
+  ];
   "Ghostty.app" = pkgs.ghostty-bin;
   "Notion.app" = casks.notion;
   "Obsidian.app" = casks.obsidian;
@@ -31,6 +38,7 @@ in
   "Slack.app" = casks.slack;
   "Visual Studio Code.app" = casks.visual-studio-code;
   "WezTerm.app" = pkgs.wezterm;
+  "zoom.us.app" = pkgs.zoom-us;
   # Cask metadata is pinned independently through the brew-api input.
   "Notion Calendar.app" = casks.notion-calendar;
   "JupyterLab.app" = casks.jupyterlab-app;
