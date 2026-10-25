@@ -1,6 +1,39 @@
 { config, lib, pkgs, inputs, ... }:
-
+let
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  ghosttyConfig = pkgs.writeText "ghostty-config" (
+    builtins.readFile ./config/ghostty/config + "\n" + (
+      if isDarwin then ''
+        command = shell:/bin/sh -c "/bin/wait4path /nix/store && exec /bin/zsh -lc 'unset HERDR_ENV; exec herdr'"
+      '' else ''
+        command = zsh -lc "unset HERDR_ENV; exec herdr"
+      ''
+    )
+  );
+in
 {
+  # Restored macOS apps can start before the encrypted Nix volume is mounted.
+  # Keep Ghostty's startup config readable then; its command waits before zsh.
+  # Remove this copy when startup config can safely depend on the Nix store.
+  home.activation.ghosttyConfig = lib.mkIf isDarwin
+    (lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      copyGhosttyConfig() (
+        set -e
+        target=${lib.escapeShellArg "${config.xdg.configHome}/ghostty/config"}
+        source=${lib.escapeShellArg ghosttyConfig}
+        if [[ ! -L "$target" ]] && ${pkgs.diffutils}/bin/cmp -s "$source" "$target"; then
+          exit 0
+        fi
+        ${pkgs.coreutils}/bin/mkdir -p "$(dirname "$target")"
+        temporary=$(${pkgs.coreutils}/bin/mktemp "$target.XXXXXXXX")
+        trap '${pkgs.coreutils}/bin/rm -f "$temporary"' EXIT
+        ${pkgs.coreutils}/bin/install -m 0444 "$source" "$temporary"
+        ${pkgs.coreutils}/bin/mv -fT "$temporary" "$target"
+      )
+      run copyGhosttyConfig
+      unset -f copyGhosttyConfig
+    '');
+
   xdg.configFile = {
     # Follow the active generation without requiring a new login shell.
     "dotfiles/source".source = inputs.self.outPath;
@@ -24,9 +57,8 @@
       source = ./config/cspell;
       recursive = true;
     };
-    "ghostty" = {
-      source = ./config/ghostty;
-      recursive = true;
+    "ghostty/config" = lib.mkIf (!isDarwin) {
+      source = ghosttyConfig;
     };
     "git" = {
       source = ./config/git;

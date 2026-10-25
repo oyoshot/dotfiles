@@ -17,9 +17,6 @@ window-padding-balance = true
 mouse-hide-while-typing = true
 scrollback-limit = 10000
 
-# fcitx5 is started after WSLg by the systemd user service.
-command = zsh -lc "unset HERDR_ENV; exec herdr"
-
 # macOS-style shortcuts, also understood by the GTK build as Super.
 macos-option-as-alt = true
 keybind = super+,=open_config
