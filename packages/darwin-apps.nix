@@ -71,7 +71,6 @@ in
       path = "${casks.microsoft-teams}/Applications/Microsoft Teams.app";
     }
   ];
-  "Microsoft AutoUpdate.app" = casks.microsoft-auto-update;
   "Ghostty.app" = pkgs.ghostty-bin;
   "Notion.app" = casks.notion;
   "Obsidian.app" = casks.obsidian;
