@@ -279,8 +279,6 @@ fi
 
 if ((${+commands[brew]})); then
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-    # rip
-    export GRAVEYARD="~/.Trash"
 fi
 
 # Zoxide
