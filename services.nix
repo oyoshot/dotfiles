@@ -13,6 +13,36 @@ let
   '';
 in
 {
+  home.packages = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.yabai ];
+  services.skhd = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    enable = true;
+    errorLogFile = "${config.home.homeDirectory}/Library/Logs/skhd.err.log";
+    outLogFile = "${config.home.homeDirectory}/Library/Logs/skhd.out.log";
+  };
+  launchd.agents.skhd = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    restartTriggers = [ ./config/skhd/skhdrc ];
+    config.EnvironmentVariables = {
+      PATH = "${config.home.profileDirectory}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      XDG_CONFIG_HOME = config.xdg.configHome;
+    };
+  };
+  launchd.agents.yabai = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    enable = true;
+    restartTriggers = [ ./config/yabai/yabairc ];
+    config = {
+      ProgramArguments = [
+        "${pkgs.yabai}/bin/yabai"
+        "--config"
+        "${config.xdg.configHome}/yabai/yabairc"
+      ];
+      EnvironmentVariables.PATH = "${config.home.profileDirectory}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      ProcessType = "Interactive";
+      KeepAlive = true;
+      RunAtLoad = true;
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/yabai.err.log";
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/yabai.out.log";
+    };
+  };
   i18n.inputMethod = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     enable = true;
     type = "fcitx5";
