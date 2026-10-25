@@ -24,6 +24,7 @@ in
   "Google Chrome.app" = pkgs.google-chrome;
   "Ghostty.app" = pkgs.ghostty-bin;
   "Notion.app" = casks.notion;
+  "Obsidian.app" = casks.obsidian;
   "Podman Desktop.app" = casks.podman-desktop;
   "WezTerm.app" = pkgs.wezterm;
   # Cask metadata is pinned independently through the brew-api input.
