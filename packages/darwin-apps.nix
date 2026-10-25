@@ -4,6 +4,7 @@ let
   casks = inputs.brew-nix.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
+  "Alacritty.app" = pkgs.alacritty;
   # Avoid downgrading the existing installation during migration.
   # Remove this override once pinned nixpkgs supplies 8.12.42 or later.
   "1Password.app" =
