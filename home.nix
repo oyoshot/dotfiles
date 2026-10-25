@@ -108,6 +108,7 @@ in
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      pkgs.pandoc
       pkgs.openssl
       pkgs.pkgconf
       pkgs.docker-client
