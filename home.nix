@@ -156,6 +156,9 @@ in
         (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
           # Host Clang can link Nix OpenSSL without using a Nix compiler wrapper.
           env.PKG_CONFIG_PATH = "${lib.getDev pkgs.openssl}/lib/pkgconfig";
+          # openssl-sys checks Homebrew before pkg-config on macOS.
+          env.OPENSSL_LIB_DIR = "${lib.getLib pkgs.openssl}/lib";
+          env.OPENSSL_INCLUDE_DIR = "${lib.getDev pkgs.openssl}/include";
         })
       ];
     };
