@@ -4,6 +4,9 @@ let
   linuxTools = import ./packages/linux-tools.nix { inherit pkgs; };
   darwinApps = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
     (import ./packages/darwin-apps.nix { inherit pkgs inputs; });
+  karabinerInstaller = pkgs.callPackage ./packages/karabiner-elements-installer.nix {
+    inherit (inputs.brew-nix.packages.${pkgs.stdenv.hostPlatform.system}.karabiner-elements) src version;
+  };
   obsidian = if config.dotfiles.wsl then linuxTools.obsidian.overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
       # Same WSL driver and input-module requirements as Chrome/Chromium.
@@ -108,6 +111,8 @@ in
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
     ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      (pkgs.callPackage ./packages/im-select.nix { })
+      karabinerInstaller
       pkgs.pandoc
       pkgs.openssl
       pkgs.pkgconf
@@ -195,6 +200,17 @@ in
       use-xdg-base-directories = true"
       run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg "${config.xdg.stateHome}/nix/profiles"}
     '';
+    # Use the vendor installer for system services and DriverKit registration.
+    home.activation.karabinerElements = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
+      (lib.hm.dag.entryAfter [ "copyApps" ] ''
+        karabinerVersion=$(/usr/sbin/pkgutil --pkg-info-plist org.pqrs.Karabiner-Elements 2>/dev/null \
+          | /usr/bin/plutil -extract pkg-version raw -o - - 2>/dev/null || true)
+        if [[ "$karabinerVersion" != ${lib.escapeShellArg karabinerInstaller.version} \
+            || ! -d /Applications/Karabiner-Elements.app ]]; then
+          run /usr/bin/sudo /usr/sbin/installer \
+            -pkg ${lib.escapeShellArg "${karabinerInstaller}/share/karabiner-elements/Karabiner-Elements.pkg"} -target /
+        fi
+      '');
     # 1Password requires /Applications/1Password.app (nixpkgs#254944).
     # Follow nix-darwin's dedicated copier without retaining Nix store timestamps
     # (nix-darwin#1842). Remove this when copyApps supports per-app destinations.

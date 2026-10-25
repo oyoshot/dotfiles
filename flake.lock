@@ -88,6 +88,18 @@
         "type": "github"
       }
     },
+    "google-drive-installer": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-7ybp3tobVLTW++lJwujzMgNtrI4bCL9YSCCodTHhQNQ=",
+        "type": "file",
+        "url": "https://dl.google.com/drive-file-stream/5-percent/GoogleDrive.dmg"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://dl.google.com/drive-file-stream/5-percent/GoogleDrive.dmg"
+      }
+    },
     "herdr-agent-title-src": {
       "flake": false,
       "locked": {
@@ -202,17 +214,31 @@
         "autosuggestions": "autosuggestions",
         "brew-api": "brew-api",
         "brew-nix": "brew-nix",
+        "google-drive-installer": "google-drive-installer",
         "herdr-agent-title-src": "herdr-agent-title-src",
         "home-manager": "home-manager",
         "ni-zsh": "ni-zsh",
         "nixpkgs": "nixpkgs",
         "prh-rules": "prh-rules",
+        "steam-installer": "steam-installer",
         "syntax-highlighting": "syntax-highlighting",
         "tpm": "tpm",
         "zacrs-src": "zacrs-src",
         "zsh-completions": "zsh-completions",
         "zsh-defer": "zsh-defer",
         "zsh-history": "zsh-history"
+      }
+    },
+    "steam-installer": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-EUUAvmqQy17nDZhsyYFr+fJoFjK2nvTk5iicNprX6V4=",
+        "type": "file",
+        "url": "https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg"
       }
     },
     "syntax-highlighting": {

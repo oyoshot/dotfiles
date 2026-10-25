@@ -72,10 +72,6 @@ in
       source = ./config/herdr;
       recursive = true;
     };
-    "homebrew" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      source = ./config/homebrew;
-      recursive = true;
-    };
     "keras" = {
       source = ./config/keras;
       recursive = true;

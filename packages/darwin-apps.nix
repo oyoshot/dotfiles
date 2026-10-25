@@ -3,16 +3,26 @@
 let
   casks = inputs.brew-nix.packages.${pkgs.stdenv.hostPlatform.system};
   # brew-nix treats a PKG artifact's DMG as a xar archive. Unpack the outer
-  # image first; remove this override when nested DMG/PKG inputs are supported.
+  # image first; remove when nested DMG/PKG inputs are supported upstream.
+  unpackDmgPkg = unpackPkg: ''
+    if ! undmg "$src"; then
+      # Google Drive uses APFS features unsupported by 7zz. As in nixpkgs'
+      # lmstudio-bionic, use the host disk-image reader for these images.
+      (
+        mountpoint=$(mktemp -d)
+        trap '/usr/bin/hdiutil detach "$mountpoint" -force; rmdir "$mountpoint"' EXIT
+        /usr/bin/hdiutil attach -readonly -nobrowse -mountpoint "$mountpoint" "$src"
+        cp "$mountpoint"/*.pkg .
+      )
+    fi
+    packages=( ./*.pkg )
+    test "''${#packages[@]}" -eq 1
+    test -f "''${packages[0]}"
+    src="$PWD/''${packages[0]}"
+    ${unpackPkg}
+  '';
   acrobatReader = casks.adobe-acrobat-reader.overrideAttrs (old: {
-    unpackPhase = ''
-      undmg "$src"
-      packages=( ./*.pkg )
-      test "''${#packages[@]}" -eq 1
-      test -f "''${packages[0]}"
-      src="$PWD/''${packages[0]}"
-      ${old.unpackPhase}
-    '';
+    unpackPhase = unpackDmgPkg old.unpackPhase;
     # Reader's postinstall normally expands these archives and restores the
     # executable bits from setX.txt. Do that in the build, without its root-only
     # ownership changes or the separate Adobe updater installation.
@@ -64,6 +74,10 @@ in
   # Keep the vendor bundle until wrapped firefox-bin preserves that identity.
   "Firefox.app" = pkgs.firefox-bin-unwrapped;
   "Google Chrome.app" = pkgs.google-chrome;
+  "Google Drive.app" = casks.google-drive.overrideAttrs (old: {
+    src = inputs.google-drive-installer;
+    unpackPhase = unpackDmgPkg old.unpackPhase;
+  });
   # The installer also contains Microsoft AutoUpdate; deploy only Teams.
   "Microsoft Teams.app" = pkgs.linkFarm "microsoft-teams-app" [
     {
@@ -77,6 +91,9 @@ in
   "OneDrive.app" = casks.onedrive;
   "Podman Desktop.app" = casks.podman-desktop;
   "Slack.app" = casks.slack;
+  "Steam.app" = casks.steam.overrideAttrs {
+    src = inputs.steam-installer;
+  };
   "Visual Studio Code.app" = casks.visual-studio-code;
   "WezTerm.app" = pkgs.wezterm;
   "zoom.us.app" = pkgs.zoom-us;
