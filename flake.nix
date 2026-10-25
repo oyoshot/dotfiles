@@ -126,7 +126,13 @@
         pkgs.marksman
         pkgs.moreutils
         pkgs.ncurses
-        pkgs.neovim
+        # Initialize sqlite.lua's library path before lazy.nvim loads plugins.
+        (pkgs.neovim.override {
+          wrapperArgs = [
+            "--add-flags"
+            "--cmd ${pkgs.lib.escapeShellArg "lua vim.g.sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}'"}"
+          ];
+        })
         pkgs.ni
         pkgs.pass
         pkgs.podman-compose
