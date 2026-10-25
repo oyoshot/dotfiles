@@ -163,6 +163,11 @@ in
       ".local/bin/gcc-${lib.versions.major pkgs.gcc.version}".source = "${pkgs.gcc}/bin/gcc";
       ".local/bin/g++-${lib.versions.major pkgs.gcc.version}".source = "${pkgs.gcc}/bin/g++";
       ".local/bin/gfortran-${lib.versions.major pkgs.gfortran.version}".source = "${pkgs.gfortran}/bin/gfortran";
+      # Keep the vendor CLI tied to the copied app, including after updates.
+      ".local/bin/code".source = config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/Visual Studio Code.app/Contents/Resources/app/bin/code";
+      ".local/bin/code-tunnel".source = config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/Visual Studio Code.app/Contents/Resources/app/bin/code-tunnel";
     };
     programs.direnv = {
       enable = true;

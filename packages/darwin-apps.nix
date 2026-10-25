@@ -18,6 +18,8 @@ in
         };
       };
   "ChatGPT.app" = casks.chatgpt;
+  "Discord.app" = casks.discord;
+  "Figma.app" = casks.figma;
   # macOS 27 restricts profile data to Mozilla-signed apps (nixpkgs#535123).
   # Keep the vendor bundle until wrapped firefox-bin preserves that identity.
   "Firefox.app" = pkgs.firefox-bin-unwrapped;
@@ -26,6 +28,8 @@ in
   "Notion.app" = casks.notion;
   "Obsidian.app" = casks.obsidian;
   "Podman Desktop.app" = casks.podman-desktop;
+  "Slack.app" = casks.slack;
+  "Visual Studio Code.app" = casks.visual-studio-code;
   "WezTerm.app" = pkgs.wezterm;
   # Cask metadata is pinned independently through the brew-api input.
   "Notion Calendar.app" = casks.notion-calendar;
