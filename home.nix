@@ -1,13 +1,12 @@
 { config, lib, pkgs, inputs, ... }:
 let
   podman = pkgs.podman;
-  linuxTools = import ./packages/linux-tools.nix { inherit pkgs; };
   darwinApps = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
     (import ./packages/darwin-apps.nix { inherit pkgs inputs; });
   karabinerInstaller = pkgs.callPackage ./packages/karabiner-elements-installer.nix {
     inherit (inputs.brew-nix.packages.${pkgs.stdenv.hostPlatform.system}.karabiner-elements) src version;
   };
-  obsidian = if config.dotfiles.wsl then linuxTools.obsidian.overrideAttrs (old: {
+  obsidian = if config.dotfiles.wsl then pkgs.obsidian.overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
       # Same WSL driver and input-module requirements as Chrome/Chromium.
       # Remove the library path when the host driver no longer requires it.
@@ -16,7 +15,7 @@ let
         --set GTK_IM_MODULE_FILE ${config.home.profileDirectory}/etc/gtk-3.0/immodules.cache \
         --prefix GTK_PATH : ${config.i18n.inputMethod.package}/lib/gtk-4.0
     '';
-  }) else linuxTools.obsidian;
+  }) else pkgs.obsidian;
   alacritty = if config.dotfiles.wsl then pkgs.symlinkJoin {
     name = "alacritty-wsl";
     paths = [ pkgs.alacritty ];
@@ -74,10 +73,10 @@ in
       alacritty
       googleChrome
       obsidian
-      linuxTools.yq
-      linuxTools.rsync
-      linuxTools.pandoc
-      linuxTools.xwininfo
+      pkgs.yq
+      pkgs.rsync
+      pkgs.pandoc
+      pkgs.xwininfo
       pkgs.ghostty
       # Cargo's global linker settings also work outside nix develop.
       # Rust versions remain mise-owned; project libraries belong in dev shells.
