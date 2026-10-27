@@ -76,8 +76,6 @@ up() {
 
   case "$OSTYPE" in
     darwin*)
-      brew upgrade || return
-      brew upgrade --cask --greedy || return
       mas upgrade || return
       ;;
     linux*)
