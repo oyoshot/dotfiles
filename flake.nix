@@ -11,12 +11,8 @@
     inputs.nixpkgs.follows = "nixpkgs";
     inputs.brew-api.follows = "brew-api";
   };
-  # These casks have no upstream hash. Let the standard file fetcher pin their
-  # installers in flake.lock and refresh them with nix flake update.
-  inputs.google-drive-installer = {
-    url = "file+https://dl.google.com/drive-file-stream/5-percent/GoogleDrive.dmg";
-    flake = false;
-  };
+  # This cask has no upstream hash. Let the standard file fetcher pin its
+  # installer in flake.lock and refresh it with nix flake update.
   inputs.steam-installer = {
     url = "file+https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg";
     flake = false;

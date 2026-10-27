@@ -88,18 +88,6 @@
         "type": "github"
       }
     },
-    "google-drive-installer": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-7ybp3tobVLTW++lJwujzMgNtrI4bCL9YSCCodTHhQNQ=",
-        "type": "file",
-        "url": "https://dl.google.com/drive-file-stream/5-percent/GoogleDrive.dmg"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://dl.google.com/drive-file-stream/5-percent/GoogleDrive.dmg"
-      }
-    },
     "herdr-agent-title-src": {
       "flake": false,
       "locked": {
@@ -214,7 +202,6 @@
         "autosuggestions": "autosuggestions",
         "brew-api": "brew-api",
         "brew-nix": "brew-nix",
-        "google-drive-installer": "google-drive-installer",
         "herdr-agent-title-src": "herdr-agent-title-src",
         "home-manager": "home-manager",
         "ni-zsh": "ni-zsh",
