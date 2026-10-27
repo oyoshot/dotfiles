@@ -54,19 +54,7 @@ in
     }
   ];
   "Alacritty.app" = pkgs.alacritty;
-  # Avoid downgrading the existing installation during migration.
-  # Remove this override once pinned nixpkgs supplies 8.12.42 or later.
-  "1Password.app" =
-    if pkgs.lib.versionAtLeast pkgs._1password-gui.version "8.12.42" then
-      pkgs._1password-gui
-    else
-      pkgs._1password-gui.overrideAttrs {
-        version = "8.12.42";
-        src = pkgs.fetchurl {
-          url = "https://downloads.1password.com/mac/1Password-8.12.42-aarch64.zip";
-          hash = "sha256-TN+8YPp8tdQyGBd/uIt89AnH9Y9LMJLyzajwNMXuz5o=";
-        };
-      };
+  "1Password.app" = pkgs._1password-gui;
   "ChatGPT.app" = casks.chatgpt;
   "Discord.app" = casks.discord;
   "Figma.app" = casks.figma;
