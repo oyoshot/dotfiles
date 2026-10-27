@@ -71,6 +71,7 @@ return {
 
 		lint.linters_by_ft = {
 			dockerfile = { "hadolint" },
+			nix = { "statix", "deadnix" },
 			terraform = { "tflint" },
 			yaml = { "yamllint" },
 			zsh = { "zsh" },
