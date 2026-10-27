@@ -5,7 +5,7 @@
       username = "@USERNAME@";
       homeDirectory = "@HOME@";
       system = "@SYSTEM@";
-      wsl = @WSL@;
+      wsl = builtins.fromJSON "@WSL@";
     };
   };
 }

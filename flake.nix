@@ -253,25 +253,13 @@
     in
     {
       lib.mkHome = mkHome;
-      formatter = forAllSystems (
-        pkgs:
-        pkgs.nixfmt-tree.override {
-          # om init (called by scripts/init-home.sh) replaces @WSL@ with true/false.
-          settings.formatter.nixfmt.excludes = [ "templates/init/flake.nix" ];
-        }
-      );
+      formatter = forAllSystems (pkgs: pkgs.nixfmt-tree);
       checks = forAllSystems (
         pkgs:
         let
           src = pkgs.lib.fileset.toSource {
             root = ./.;
-            fileset = pkgs.lib.fileset.unions [
-              ./statix.toml
-              (pkgs.lib.fileset.difference (pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.)
-                # This is valid Nix only after om init substitutes @WSL@.
-                ./templates/init/flake.nix
-              )
-            ];
+            fileset = pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.;
           };
         in
         {
