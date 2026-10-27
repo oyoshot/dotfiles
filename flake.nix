@@ -256,41 +256,43 @@
       formatter = forAllSystems (
         pkgs:
         pkgs.nixfmt-tree.override {
-          # @WSL@ is replaced by scripts/init-home.sh before this becomes valid Nix.
+          # om init (called by scripts/init-home.sh) replaces @WSL@ with true/false.
           settings.formatter.nixfmt.excludes = [ "templates/init/flake.nix" ];
         }
       );
-      checks = forAllSystems (pkgs: {
-        nix-quality =
-          pkgs.runCommand "nix-quality"
-            {
-              nativeBuildInputs = [
-                self.formatter.${pkgs.stdenv.hostPlatform.system}
-                pkgs.statix
-                pkgs.deadnix
-              ];
-              src = pkgs.lib.fileset.toSource {
-                root = ./.;
-                fileset = pkgs.lib.fileset.unions [
-                  ./statix.toml
-                  (pkgs.lib.fileset.difference (pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.)
-                    # This template contains @WSL@ until scripts/init-home.sh renders it.
-                    ./templates/init/flake.nix
-                  )
+      checks = forAllSystems (
+        pkgs:
+        let
+          src = pkgs.lib.fileset.toSource {
+            root = ./.;
+            fileset = pkgs.lib.fileset.unions [
+              ./statix.toml
+              (pkgs.lib.fileset.difference (pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.)
+                # This is valid Nix only after om init substitutes @WSL@.
+                ./templates/init/flake.nix
+              )
+            ];
+          };
+        in
+        {
+          formatting = self.formatter.${pkgs.stdenv.hostPlatform.system}.check src;
+          lint =
+            pkgs.runCommand "nix-lint"
+              {
+                inherit src;
+                nativeBuildInputs = [
+                  pkgs.statix
+                  pkgs.deadnix
                 ];
-              };
-            }
-            ''
-              cp -R "$src" source
-              chmod -R u+w source
-              cd source
-              export HOME="$TMPDIR"
-              treefmt --ci --tree-root . --walk filesystem
-              statix check .
-              deadnix --fail .
-              touch "$out"
-            '';
-      });
+              }
+              ''
+                cd "$src"
+                statix check .
+                deadnix --fail .
+                touch "$out"
+              '';
+        }
+      );
       homeModules.default = { pkgs, ... }: {
         imports = [ ./home.nix ];
         _module.args.inputs = inputs;

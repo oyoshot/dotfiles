@@ -1,2 +1,2 @@
-# @WSL@ is replaced by scripts/init-home.sh before this becomes valid Nix.
+# om init (called by scripts/init-home.sh) replaces @WSL@ with true/false.
 ignore = ["templates/init/flake.nix"]
