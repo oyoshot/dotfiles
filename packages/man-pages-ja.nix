@@ -1,4 +1,9 @@
-{ lib, stdenvNoCC, fetchurl, perl }:
+{
+  lib,
+  stdenvNoCC,
+  fetchurl,
+  perl,
+}:
 
 # Not packaged in the pinned nixpkgs. Replace with pkgs.man-pages-ja when available.
 stdenvNoCC.mkDerivation (finalAttrs: {

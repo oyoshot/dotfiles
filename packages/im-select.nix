@@ -1,4 +1,8 @@
-{ lib, stdenv, fetchFromGitHub }:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+}:
 
 # Not packaged in nixpkgs. Replace with pkgs.im-select when available.
 stdenv.mkDerivation {

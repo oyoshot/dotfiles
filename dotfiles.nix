@@ -1,13 +1,24 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   ghosttyConfig = pkgs.writeText "ghostty-config" (
-    builtins.readFile ./config/ghostty/config + "\n" + (
-      if isDarwin then ''
-        command = shell:/bin/sh -c "/bin/wait4path /nix/store && exec /bin/zsh -lc 'unset HERDR_ENV; exec herdr'"
-      '' else ''
-        command = zsh -lc "unset HERDR_ENV; exec herdr"
-      ''
+    builtins.readFile ./config/ghostty/config
+    + "\n"
+    + (
+      if isDarwin then
+        ''
+          command = shell:/bin/sh -c "/bin/wait4path /nix/store && exec /bin/zsh -lc 'unset HERDR_ENV; exec herdr'"
+        ''
+      else
+        ''
+          command = zsh -lc "unset HERDR_ENV; exec herdr"
+        ''
     )
   );
 in
@@ -15,8 +26,8 @@ in
   # Restored macOS apps can start before the encrypted Nix volume is mounted.
   # Keep Ghostty's startup config readable then; its command waits before zsh.
   # Remove this copy when startup config can safely depend on the Nix store.
-  home.activation.ghosttyConfig = lib.mkIf isDarwin
-    (lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+  home.activation.ghosttyConfig = lib.mkIf isDarwin (
+    lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       copyGhosttyConfig() (
         set -e
         target=${lib.escapeShellArg "${config.xdg.configHome}/ghostty/config"}
@@ -32,7 +43,8 @@ in
       )
       run copyGhosttyConfig
       unset -f copyGhosttyConfig
-    '');
+    ''
+  );
 
   xdg.configFile = {
     # Follow the active generation without requiring a new login shell.
@@ -140,26 +152,36 @@ in
     };
     # Nix gnupg looks for pinentry in its own output, which ships none.
     "gnupg/gpg-agent.conf".text =
-      if pkgs.stdenv.hostPlatform.isDarwin
-      then "pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac\n"
-      else "pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses\n";
-    "textlint/textlintrc".text = builtins.replaceStrings
-      [ "@homeDirectory@" ] [ config.home.homeDirectory ]
-      (builtins.readFile ./config/textlint/textlintrc.tmpl);
+      if pkgs.stdenv.hostPlatform.isDarwin then
+        "pinentry-program ${pkgs.pinentry_mac}/bin/pinentry-mac\n"
+      else
+        "pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses\n";
+    "textlint/textlintrc".text =
+      builtins.replaceStrings [ "@homeDirectory@" ] [ config.home.homeDirectory ]
+        (builtins.readFile ./config/textlint/textlintrc.tmpl);
   };
 
   home.file = {
     ".zshenv".source = ./config/zsh/.zshenv;
     ".textlintrc".source = config.xdg.configFile."textlint/textlintrc".source;
-    ".local/bin/acm" = { source = ./local/bin/acm; };
+    ".local/bin/acm" = {
+      source = ./local/bin/acm;
+    };
     ".local/bin/ghostty" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
       executable = true;
-      text = builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ]
-        [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ] (builtins.readFile ./local/bin/ghostty);
+      text =
+        builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ] [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ]
+          (builtins.readFile ./local/bin/ghostty);
     };
-    ".local/bin/pbcopy" = { source = ./local/bin/pbcopy; };
-    ".local/bin/pbpaste" = { source = ./local/bin/pbpaste; };
-    ".local/share/cargo/config.toml" = { source = ./local/share/cargo/config.toml; };
+    ".local/bin/pbcopy" = {
+      source = ./local/bin/pbcopy;
+    };
+    ".local/bin/pbpaste" = {
+      source = ./local/bin/pbpaste;
+    };
+    ".local/share/cargo/config.toml" = {
+      source = ./local/share/cargo/config.toml;
+    };
     ".local/bin/explorer.exe" = lib.mkIf config.dotfiles.wsl {
       source = config.lib.file.mkOutOfStoreSymlink "/mnt/c/Windows/explorer.exe";
     };
@@ -168,10 +190,14 @@ in
     };
     ".local/share/applications/com.mitchellh.ghostty.desktop" = lib.mkIf config.dotfiles.wsl {
       # WSLg receives a copy during activation; keep its paths stable across updates.
-      text = builtins.replaceStrings
-        [ "@homeDirectory@" "@ghosttyIcon@" ]
-        [ config.home.homeDirectory "${config.home.profileDirectory}/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" ]
-        (builtins.readFile ./local/share/applications/com.mitchellh.ghostty.desktop.tmpl);
+      text =
+        builtins.replaceStrings
+          [ "@homeDirectory@" "@ghosttyIcon@" ]
+          [
+            config.home.homeDirectory
+            "${config.home.profileDirectory}/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png"
+          ]
+          (builtins.readFile ./local/share/applications/com.mitchellh.ghostty.desktop.tmpl);
     };
     "Library/Preferences/atcoder-cli" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       source = ./config/atcoder-cli-nodejs;
