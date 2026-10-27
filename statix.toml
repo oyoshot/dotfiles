@@ -1,0 +1,2 @@
+# @WSL@ is replaced by scripts/init-home.sh before this becomes valid Nix.
+ignore = ["templates/init/flake.nix"]

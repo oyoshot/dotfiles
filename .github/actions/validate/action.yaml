@@ -16,6 +16,13 @@ runs:
         for configuration in ci-linux ci-wsl ci-darwin; do
           nix eval --raw ".#homeConfigurations.${configuration}.activationPackage.drvPath" >/dev/null
         done
+    - name: Check Nix formatting and lint
+      shell: bash
+      run: |
+        set -euo pipefail
+        export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
+        export NIX_CONFIG='experimental-features = nix-command flakes'
+        nix flake check --no-update-lock-file
     - name: Build init entrypoint
       shell: bash
       run: |

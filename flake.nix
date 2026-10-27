@@ -1,176 +1,296 @@
 {
   description = "Pinned CLI tools for these dotfiles";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.brew-api = {
-    url = "github:BatteredBunny/brew-api";
-    flake = false;
-  };
-  inputs.brew-nix = {
-    url = "github:BatteredBunny/brew-nix";
-    inputs.nixpkgs.follows = "nixpkgs";
-    inputs.brew-api.follows = "brew-api";
-  };
-  # This cask has no upstream hash. Let the standard file fetcher pin its
-  # installer in flake.lock and refresh it with nix flake update.
-  inputs.steam-installer = {
-    url = "file+https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg";
-    flake = false;
-  };
-  inputs.home-manager = {
-    url = "github:nix-community/home-manager/master";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
-  inputs.zacrs-src = {
-    url = "git+https://github.com/oyoshot/zsh-autocomplete-rs-proto.git";
-    flake = false;
-  };
-  inputs.herdr-agent-title-src = {
-    url = "github:oyoshot/herdr-plugin-agent-title/f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03";
-    flake = false;
-  };
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    brew-api = {
+      url = "github:BatteredBunny/brew-api";
+      flake = false;
+    };
+    brew-nix = {
+      url = "github:BatteredBunny/brew-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.brew-api.follows = "brew-api";
+    };
+    # This cask has no upstream hash. Let the standard file fetcher pin its
+    # installer in flake.lock and refresh it with nix flake update.
+    steam-installer = {
+      url = "file+https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg";
+      flake = false;
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    zacrs-src = {
+      url = "git+https://github.com/oyoshot/zsh-autocomplete-rs-proto.git";
+      flake = false;
+    };
+    herdr-agent-title-src = {
+      url = "github:oyoshot/herdr-plugin-agent-title/f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03";
+      flake = false;
+    };
 
-  inputs.tpm = { url = "github:tmux-plugins/tpm"; flake = false; };
-  inputs.zsh-defer = { url = "github:romkatv/zsh-defer"; flake = false; };
-  inputs.zsh-completions = { url = "github:zsh-users/zsh-completions"; flake = false; };
-  inputs.anyframe = { url = "github:mollifier/anyframe"; flake = false; };
-  inputs.autosuggestions = { url = "github:zsh-users/zsh-autosuggestions"; flake = false; };
-  inputs.syntax-highlighting = { url = "github:zdharma-continuum/fast-syntax-highlighting"; flake = false; };
-  inputs.zsh-history = { url = "github:zsh-users/zsh-history-substring-search"; flake = false; };
-  inputs.ni-zsh = { url = "github:azu/ni.zsh"; flake = false; };
-  inputs.prh-rules = { url = "github:prh/rules"; flake = false; };
-  inputs.alacritty-theme = { url = "github:alacritty/alacritty-theme"; flake = false; };
+    tpm = {
+      url = "github:tmux-plugins/tpm";
+      flake = false;
+    };
+    zsh-defer = {
+      url = "github:romkatv/zsh-defer";
+      flake = false;
+    };
+    zsh-completions = {
+      url = "github:zsh-users/zsh-completions";
+      flake = false;
+    };
+    anyframe = {
+      url = "github:mollifier/anyframe";
+      flake = false;
+    };
+    autosuggestions = {
+      url = "github:zsh-users/zsh-autosuggestions";
+      flake = false;
+    };
+    syntax-highlighting = {
+      url = "github:zdharma-continuum/fast-syntax-highlighting";
+      flake = false;
+    };
+    zsh-history = {
+      url = "github:zsh-users/zsh-history-substring-search";
+      flake = false;
+    };
+    ni-zsh = {
+      url = "github:azu/ni.zsh";
+      flake = false;
+    };
+    prh-rules = {
+      url = "github:prh/rules";
+      flake = false;
+    };
+    alacritty-theme = {
+      url = "github:alacritty/alacritty-theme";
+      flake = false;
+    };
 
+  };
   outputs =
-    inputs@{ self, nixpkgs, home-manager, zacrs-src, ... }:
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      zacrs-src,
+      ...
+    }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-darwin"
       ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system:
-        f (import nixpkgs {
-          inherit system;
-          config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" "chatgpt" "firefox-bin" "firefox-bin-unwrapped" "google-chrome" "obsidian" "notion-app" "notion-calendar" "1password" "1password-cli" "zoom" ];
-        }));
-      mkHome = { system, username, homeDirectory, wsl ? false, modules ? [ ] }:
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs systems (
+          system:
+          f (
+            import nixpkgs {
+              inherit system;
+              config.allowUnfreePredicate =
+                pkg:
+                builtins.elem (nixpkgs.lib.getName pkg) [
+                  "claude-code"
+                  "chatgpt"
+                  "firefox-bin"
+                  "firefox-bin-unwrapped"
+                  "google-chrome"
+                  "obsidian"
+                  "notion-app"
+                  "notion-calendar"
+                  "1password"
+                  "1password-cli"
+                  "zoom"
+                ];
+            }
+          )
+        );
+      mkHome =
+        {
+          system,
+          username,
+          homeDirectory,
+          wsl ? false,
+          modules ? [ ],
+        }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = (forAllSystems (pkgs: pkgs)).${system};
-          modules = [ self.homeModules.default {
-            home.username = username;
-            home.homeDirectory = homeDirectory;
-            dotfiles.wsl = wsl;
-          } ] ++ modules;
+          modules = [
+            self.homeModules.default
+            {
+              home.username = username;
+              home.homeDirectory = homeDirectory;
+              dotfiles.wsl = wsl;
+            }
+          ]
+          ++ modules;
         };
       # Runtime/toolchain exceptions are documented in config/mise/config.toml.
-      zacrsPackage = pkgs: pkgs.rustPlatform.buildRustPackage {
-        pname = "zsh-autocomplete-rs";
-        version = "0.1.0-${builtins.substring 0 7 zacrs-src.rev}";
-        src = zacrs-src;
-        cargoLock.lockFile = zacrs-src + "/Cargo.lock";
-        cargoBuildFlags = [ "--package" "zsh-autocomplete-rs" ];
-        # Several upstream tests require a real terminal and resize events.
-        doCheck = false;
-        nativeInstallCheckInputs = [ pkgs.zsh ];
-        doInstallCheck = true;
-        installCheckPhase = ''
-          runHook preInstallCheck
-          "$out/bin/zsh-autocomplete-rs" init zsh > init.zsh
-          zsh -n init.zsh
-          runHook postInstallCheck
-        '';
-        meta = {
-          description = "Zsh autocomplete with a Rust popup renderer";
-          homepage = "https://github.com/oyoshot/zsh-autocomplete-rs-proto";
-          mainProgram = "zsh-autocomplete-rs";
-          platforms = systems;
+      zacrsPackage =
+        pkgs:
+        pkgs.rustPlatform.buildRustPackage {
+          pname = "zsh-autocomplete-rs";
+          version = "0.1.0-${builtins.substring 0 7 zacrs-src.rev}";
+          src = zacrs-src;
+          cargoLock.lockFile = zacrs-src + "/Cargo.lock";
+          cargoBuildFlags = [
+            "--package"
+            "zsh-autocomplete-rs"
+          ];
+          # Several upstream tests require a real terminal and resize events.
+          doCheck = false;
+          nativeInstallCheckInputs = [ pkgs.zsh ];
+          doInstallCheck = true;
+          installCheckPhase = ''
+            runHook preInstallCheck
+            "$out/bin/zsh-autocomplete-rs" init zsh > init.zsh
+            zsh -n init.zsh
+            runHook postInstallCheck
+          '';
+          meta = {
+            description = "Zsh autocomplete with a Rust popup renderer";
+            homepage = "https://github.com/oyoshot/zsh-autocomplete-rs-proto";
+            mainProgram = "zsh-autocomplete-rs";
+            platforms = systems;
+          };
         };
-      };
       # On Darwin, keep the default compiler/linker with the host SDK.
       # home.nix exposes Darwin's Nix GCC only through versioned commands.
-      cliPackages = pkgs: builtins.attrValues (import ./packages/user-tools.nix pkgs) ++ [
-        (zacrsPackage pkgs)
-        (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
-        pkgs.autoconf
-        pkgs.automake
-        pkgs.aws-vault
-        pkgs.awscli2
-        pkgs.bat
-        pkgs.bind
-        pkgs.claude-code
-        pkgs.cloudflared
-        pkgs.codex
-        pkgs.coreutils
-        pkgs.delta
-        pkgs.diffutils
-        pkgs.difftastic
-        pkgs.eva
-        pkgs.eza
-        pkgs.fcp
-        pkgs.fd
-        pkgs.findutils
-        pkgs.fish
-        pkgs.fzf
-        pkgs.gawk
-        pkgs.getopt
-        pkgs.gh
-        pkgs.ghq
-        pkgs.git
-        pkgs.git-wt
-        pkgs.gnugrep
-        pkgs.gnumake
-        pkgs.gnupg
-        pkgs.gnutar
-        pkgs.graphviz
-        pkgs.gwq
-        pkgs.gzip
-        pkgs.herdr
-        pkgs.htop
-        pkgs.hyperfine
-        pkgs.jq
-        pkgs.marp-cli
-        pkgs.marksman
-        pkgs.moreutils
-        pkgs.ncurses
-        # Initialize sqlite.lua's library path before lazy.nvim loads plugins.
-        (pkgs.neovim.override {
-          wrapperArgs = [
-            "--add-flags"
-            "--cmd ${pkgs.lib.escapeShellArg "lua vim.g.sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}'"}"
-          ];
-        })
-        pkgs.ni
-        pkgs.pass
-        pkgs.podman-compose
-        pkgs.poetry
-        pkgs.rclone
-        pkgs.ripgrep
-        pkgs.skopeo
-        pkgs.ssm-session-manager-plugin
-        pkgs.starship
-        pkgs.time
-        pkgs.tmux
-        pkgs.trash-cli
-        pkgs.unzip
-        pkgs.usage
-        pkgs.uv
-        pkgs.vim-startuptime
-        pkgs.wget
-        pkgs.whois
-        pkgs.yazi
-        pkgs.zoxide
-        pkgs.zsh
-      ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-        pkgs.gnused
-      ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-        # macOS scripts expect BSD sed; preserve Homebrew's gsed spelling.
-        (pkgs.gnused.overrideAttrs { configureFlags = [ "--program-prefix=g" ]; })
-        pkgs.pinentry_mac
-        pkgs.podman
-      ];
+      cliPackages =
+        pkgs:
+        builtins.attrValues (import ./packages/user-tools.nix pkgs)
+        ++ [
+          (zacrsPackage pkgs)
+          (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
+          pkgs.autoconf
+          pkgs.automake
+          pkgs.aws-vault
+          pkgs.awscli2
+          pkgs.bat
+          pkgs.bind
+          pkgs.claude-code
+          pkgs.cloudflared
+          pkgs.codex
+          pkgs.coreutils
+          pkgs.delta
+          pkgs.deadnix
+          pkgs.diffutils
+          pkgs.difftastic
+          pkgs.eva
+          pkgs.eza
+          pkgs.fcp
+          pkgs.fd
+          pkgs.findutils
+          pkgs.fish
+          pkgs.fzf
+          pkgs.gawk
+          pkgs.getopt
+          pkgs.gh
+          pkgs.ghq
+          pkgs.git
+          pkgs.git-wt
+          pkgs.gnugrep
+          pkgs.gnumake
+          pkgs.gnupg
+          pkgs.gnutar
+          pkgs.graphviz
+          pkgs.gwq
+          pkgs.gzip
+          pkgs.herdr
+          pkgs.htop
+          pkgs.hyperfine
+          pkgs.jq
+          pkgs.marp-cli
+          pkgs.marksman
+          pkgs.moreutils
+          pkgs.ncurses
+          # Initialize sqlite.lua's library path before lazy.nvim loads plugins.
+          (pkgs.neovim.override {
+            wrapperArgs = [
+              "--add-flags"
+              "--cmd ${pkgs.lib.escapeShellArg "lua vim.g.sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}'"}"
+            ];
+          })
+          pkgs.ni
+          pkgs.nixfmt
+          pkgs.pass
+          pkgs.podman-compose
+          pkgs.poetry
+          pkgs.rclone
+          pkgs.ripgrep
+          pkgs.skopeo
+          pkgs.ssm-session-manager-plugin
+          pkgs.starship
+          pkgs.statix
+          pkgs.time
+          pkgs.tmux
+          pkgs.trash-cli
+          pkgs.unzip
+          pkgs.usage
+          pkgs.uv
+          pkgs.vim-startuptime
+          pkgs.wget
+          pkgs.whois
+          pkgs.yazi
+          pkgs.zoxide
+          pkgs.zsh
+        ]
+        ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+          pkgs.gnused
+        ]
+        ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+          # macOS scripts expect BSD sed; preserve Homebrew's gsed spelling.
+          (pkgs.gnused.overrideAttrs { configureFlags = [ "--program-prefix=g" ]; })
+          pkgs.pinentry_mac
+          pkgs.podman
+        ];
     in
     {
       lib.mkHome = mkHome;
+      formatter = forAllSystems (
+        pkgs:
+        pkgs.nixfmt-tree.override {
+          # @WSL@ is replaced by scripts/init-home.sh before this becomes valid Nix.
+          settings.formatter.nixfmt.excludes = [ "templates/init/flake.nix" ];
+        }
+      );
+      checks = forAllSystems (pkgs: {
+        nix-quality =
+          pkgs.runCommand "nix-quality"
+            {
+              nativeBuildInputs = [
+                self.formatter.${pkgs.stdenv.hostPlatform.system}
+                pkgs.statix
+                pkgs.deadnix
+              ];
+              src = pkgs.lib.fileset.toSource {
+                root = ./.;
+                fileset = pkgs.lib.fileset.unions [
+                  ./statix.toml
+                  (pkgs.lib.fileset.difference (pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.)
+                    # This template contains @WSL@ until scripts/init-home.sh renders it.
+                    ./templates/init/flake.nix
+                  )
+                ];
+              };
+            }
+            ''
+              cp -R "$src" source
+              chmod -R u+w source
+              cd source
+              export HOME="$TMPDIR"
+              treefmt --ci --tree-root . --walk filesystem
+              statix check .
+              deadnix --fail .
+              touch "$out"
+            '';
+      });
       homeModules.default = { pkgs, ... }: {
         imports = [ ./home.nix ];
         _module.args.inputs = inputs;
@@ -183,11 +303,31 @@
       om.templates.home = {
         template = self.templates.init;
         params = [
-          { name = "username"; description = "username"; placeholder = "@USERNAME@"; }
-          { name = "home"; description = "home"; placeholder = "@HOME@"; }
-          { name = "system"; description = "system"; placeholder = "@SYSTEM@"; }
-          { name = "wsl"; description = "wsl"; placeholder = "@WSL@"; }
-          { name = "dotfiles"; description = "dotfiles flake URL"; placeholder = "@DOTFILES@"; }
+          {
+            name = "username";
+            description = "username";
+            placeholder = "@USERNAME@";
+          }
+          {
+            name = "home";
+            description = "home";
+            placeholder = "@HOME@";
+          }
+          {
+            name = "system";
+            description = "system";
+            placeholder = "@SYSTEM@";
+          }
+          {
+            name = "wsl";
+            description = "wsl";
+            placeholder = "@WSL@";
+          }
+          {
+            name = "dotfiles";
+            description = "dotfiles flake URL";
+            placeholder = "@DOTFILES@";
+          }
         ];
       };
       apps = forAllSystems (pkgs: {
@@ -201,7 +341,12 @@
         init = pkgs.writeShellApplication {
           name = "dotfiles-init";
           runtimeInputs = [
-            pkgs.coreutils pkgs.git pkgs.jq pkgs.nix pkgs.omnix pkgs.zsh
+            pkgs.coreutils
+            pkgs.git
+            pkgs.jq
+            pkgs.nix
+            pkgs.omnix
+            pkgs.zsh
             home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
           ];
           runtimeEnv = {
@@ -210,7 +355,7 @@
           };
           text = builtins.readFile ./scripts/init-home.sh;
         };
-        podman = pkgs.podman;
+        inherit (pkgs) podman;
         home-manager = home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager;
         zsh-autocomplete-rs = zacrsPackage pkgs;
         herdr-plugin-agent-title = pkgs.callPackage ./packages/herdr-agent-title.nix {
@@ -227,23 +372,33 @@
         };
       });
 
-      devShells = forAllSystems (pkgs: {
-        default = (pkgs.mkShell.override {
-          stdenv = if pkgs.stdenv.hostPlatform.isLinux then pkgs.clangStdenv else pkgs.stdenvNoCC;
-        }) {
-          name = "dotfiles-cli";
-          packages = cliPackages pkgs;
-          inputsFrom = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-            self.devShells.${pkgs.stdenv.hostPlatform.system}.native
-          ];
-        };
-      } // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-        native = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
-          name = "dotfiles-native";
-          nativeBuildInputs = [ pkgs.mold pkgs.pkg-config pkgs.mise ];
-          buildInputs = [ pkgs.openssl ];
-        };
-      });
+      devShells = forAllSystems (
+        pkgs:
+        {
+          default =
+            (pkgs.mkShell.override {
+              stdenv = if pkgs.stdenv.hostPlatform.isLinux then pkgs.clangStdenv else pkgs.stdenvNoCC;
+            })
+              {
+                name = "dotfiles-cli";
+                packages = cliPackages pkgs;
+                inputsFrom = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+                  self.devShells.${pkgs.stdenv.hostPlatform.system}.native
+                ];
+              };
+        }
+        // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          native = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
+            name = "dotfiles-native";
+            nativeBuildInputs = [
+              pkgs.mold
+              pkgs.pkg-config
+              pkgs.mise
+            ];
+            buildInputs = [ pkgs.openssl ];
+          };
+        }
+      );
 
       homeConfigurations = {
         ci-linux = mkHome {
