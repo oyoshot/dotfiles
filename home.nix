@@ -174,7 +174,6 @@ in
         pkgs.noto-fonts-color-emoji
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-        (pkgs.callPackage ./packages/im-select.nix { })
         karabinerInstaller
         pkgs.pandoc
         pkgs.openssl
