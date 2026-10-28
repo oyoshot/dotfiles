@@ -1,33 +1,42 @@
 {
   lib,
   stdenvNoCC,
-  fetchurl,
   perl,
+  src,
 }:
 
 # Not packaged in the pinned nixpkgs. Replace with pkgs.man-pages-ja when available.
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = "man-pages-ja";
-  version = "20260915";
-  src = fetchurl {
-    url = "https://github.com/linux-jm/manual/releases/download/v${finalAttrs.version}/man-pages-ja-${finalAttrs.version}.tar.gz";
-    hash = "sha256-MwMUJuHkF52cQzTHIKHl22xL+JQ/J7h0pSRx9LZROFc=";
-  };
+  version = "unstable-${src.shortRev}";
+  inherit src;
   nativeBuildInputs = [ perl ];
-  dontBuild = true;
-  configurePhase = ''
-    runHook preConfigure
-    # Use upstream's default package priorities and conflict resolution without
-    # interactive prompts. man-db supplies its own translated manuals.
-    sed -i -E 's/^(man|man-db)([[:space:]]+)Y/\1\2N/' script/pkgs.list
-    substituteInPlace script/configure.perl \
-      --replace-fail '/usr/share/man/$LANG' "$out/share/man/ja" \
-      --replace-fail '<STDIN>' '"\n"' \
-      --replace-fail 'until ($ans =~' 'until (1 || $ans =~'
-    perl script/configure.perl
-    # Store files belong to the Nix builder; upstream defaults to root ownership.
-    sed -i -E 's/chown [^;]+//; s/install -o [^ ]+ -g [^ ]+ /install /' installman.sh
-    runHook postConfigure
+  dontConfigure = true;
+  buildPhase = ''
+    runHook preBuild
+    perl bin/mkdist.perl . released
+    runHook postBuild
+  '';
+  installPhase = ''
+    runHook preInstall
+    # Preserve upstream's package order and implicit inclusion of unlisted
+    # packages. man-db already provides its own translated pages.
+    while read -r package; do
+      for page in released/manual/"$package"/man*/*; do
+        [[ -f "$page" ]] || continue
+        target="$out/share/man/ja/''${page#released/manual/$package/}"
+        [[ -e "$target" ]] || install -Dm644 "$page" "$target"
+      done
+    done < <(awk '
+      FNR == NR {
+        enabled[$1] = $2
+        if ($1 !~ /^#/ && $2 == "Y" && $1 != "man" && $1 != "man-db") order[++count] = $1
+        next
+      }
+      { sub(/^.*\//, ""); if (!($0 in enabled)) print }
+      END { for (i = 1; i <= count; i++) print order[i] }
+    ' dist/script/pkgs.list <(printf '%s\n' released/manual/*))
+    runHook postInstall
   '';
   meta = {
     description = "Japanese translations of Linux manual pages";
@@ -36,4 +45,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     license = lib.licenses.free;
     platforms = lib.platforms.linux;
   };
-})
+}

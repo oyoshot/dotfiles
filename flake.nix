@@ -30,6 +30,10 @@
       url = "github:oyoshot/herdr-plugin-agent-title/f60fe0a2b8a7d5d9147dd4ff211de06c48f03a03";
       flake = false;
     };
+    man-pages-ja-src = {
+      url = "github:linux-jm/manual";
+      flake = false;
+    };
 
     tpm = {
       url = "github:tmux-plugins/tpm";

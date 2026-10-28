@@ -167,7 +167,7 @@ in
         '')
         pkgs.man-pages
         pkgs.man-pages-posix
-        (pkgs.callPackage ./packages/man-pages-ja.nix { })
+        (pkgs.callPackage ./packages/man-pages-ja.nix { src = inputs.man-pages-ja-src; })
         pkgs.noto-fonts
         pkgs.noto-fonts-cjk-sans
         pkgs.noto-fonts-cjk-serif

@@ -126,6 +126,22 @@
         "type": "github"
       }
     },
+    "man-pages-ja-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793135910,
+        "narHash": "sha256-+S4lnSNqft9gj1xFP/lXCq44BaJ5JkB6ejGVXJ1v1tI=",
+        "owner": "linux-jm",
+        "repo": "manual",
+        "rev": "c1989996f2118affbc31fe52fe8ff7ead963f0ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "linux-jm",
+        "repo": "manual",
+        "type": "github"
+      }
+    },
     "ni-zsh": {
       "flake": false,
       "locked": {
@@ -204,6 +220,7 @@
         "brew-nix": "brew-nix",
         "herdr-agent-title-src": "herdr-agent-title-src",
         "home-manager": "home-manager",
+        "man-pages-ja-src": "man-pages-ja-src",
         "ni-zsh": "ni-zsh",
         "nixpkgs": "nixpkgs",
         "prh-rules": "prh-rules",
