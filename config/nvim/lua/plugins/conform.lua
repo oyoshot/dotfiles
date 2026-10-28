@@ -62,6 +62,7 @@ return {
 			typescriptreact = deno_or_prettier,
 			yaml = prettier_chain(),
 			lua = { "stylua" },
+			nix = { "nixfmt" },
 			sh = { "shfmt" },
 			bash = { "shfmt" },
 			zsh = { "shfmt" },
