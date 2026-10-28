@@ -218,6 +218,7 @@
             ];
           })
           pkgs.ni
+          pkgs.nixd
           pkgs.nixfmt
           pkgs.pass
           pkgs.podman-compose

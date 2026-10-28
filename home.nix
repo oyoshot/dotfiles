@@ -343,6 +343,8 @@ in
         };
     nix = {
       package = pkgs.nix;
+      # nixd uses <nixpkgs> for package and library completion.
+      nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
       settings.use-xdg-base-directories = true;
       settings.experimental-features = [
         "nix-command"
