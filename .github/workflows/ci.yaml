@@ -106,7 +106,7 @@ jobs:
       group: ci-provision-arch-${{ github.event.pull_request.number }}
       cancel-in-progress: true
     container:
-      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
+      image: archlinux:latest
       volumes:
         - /mnt/pac-pkg:/var/cache/pacman/pkg
         - /mnt/yay-pkg:/home/builder/.cache/yay
@@ -162,7 +162,7 @@ jobs:
       group: ci-warm-arch-${{ github.ref_name }}
       cancel-in-progress: true
     container:
-      image: archlinux@sha256:644b416048d39616bbaca93ce768ba492655c83fba80ceca65a4f59dcabdcac0
+      image: archlinux:latest
       volumes:
         - /mnt/pac-pkg:/var/cache/pacman/pkg
         - /mnt/yay-pkg:/home/builder/.cache/yay

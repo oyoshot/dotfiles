@@ -3,7 +3,7 @@ description: Evaluate all pinned Home Manager configurations
 runs:
   using: composite
   steps:
-    - name: Install pinned Nix
+    - name: Install latest Nix
       shell: bash
       run: sh .github/scripts/install-nix.sh
     - name: Check Nix sources and evaluate Home Manager configurations

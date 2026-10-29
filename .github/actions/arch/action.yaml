@@ -82,7 +82,7 @@ runs:
           /home/builder/.cache \
           /home/builder/.local
 
-    - name: Install pinned Nix (builder)
+    - name: Install latest Nix (builder)
       shell: bash
       run: sudo -Hu builder sh "${GITHUB_WORKSPACE}/.github/scripts/install-nix.sh"
 
