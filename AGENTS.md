@@ -29,7 +29,7 @@
 
 パッケージの管理先は設定本体を確認する。方針を別の docs に重複して管理しない。
 
-- 共通 CLI：`flake.nix`、`packages/user-tools.nix`
+- 共通 CLI：`flake.nix`
 - OS 別パッケージ・Home Manager 設定：`home.nix`、`services.nix`
 - macOS GUI：`packages/darwin-apps.nix`
 - mise のツール：`config/mise/config.toml`（マシン固有は `~/.config/mise/config.local.toml`）

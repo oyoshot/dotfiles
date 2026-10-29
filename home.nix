@@ -128,6 +128,7 @@ in
         # LuaRocks and its interpreter must agree on the Lua ABI.
         pkgs.lua5_4
         pkgs.lua54Packages.luarocks
+        pkgs.pandoc
         pkgs.nerd-fonts.jetbrains-mono
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
@@ -136,7 +137,6 @@ in
         obsidian
         pkgs.yq
         pkgs.rsync
-        pkgs.pandoc
         pkgs.xwininfo
         pkgs.ghostty
         # Cargo's global linker settings also work outside nix develop.
@@ -175,7 +175,6 @@ in
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         karabinerInstaller
-        pkgs.pandoc
         pkgs.openssl
         pkgs.pkgconf
         pkgs.docker-client

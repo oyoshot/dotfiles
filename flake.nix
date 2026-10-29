@@ -168,20 +168,34 @@
       # home.nix exposes Darwin's Nix GCC only through versioned commands.
       cliPackages =
         pkgs:
-        builtins.attrValues (import ./packages/user-tools.nix pkgs)
-        ++ [
+        [
           (zacrsPackage pkgs)
           (pkgs.callPackage ./packages/herdr-agent-title.nix { src = inputs.herdr-agent-title-src; })
+          pkgs.ansible
+          pkgs.astro-language-server
           pkgs.autoconf
           pkgs.automake
           pkgs.aws-vault
           pkgs.awscli2
+          pkgs.bash-language-server
           pkgs.bat
           pkgs.bind
+          pkgs.cargo-audit
+          pkgs.cargo-chef
+          pkgs.cargo-crev
+          pkgs.cargo-deny
+          pkgs.cargo-features-manager
+          pkgs.cargo-generate
+          pkgs.cargo-machete
+          pkgs.cargo-make
+          pkgs.cargo-nextest
+          pkgs.cargo-sort
+          pkgs.cargo-update
           pkgs.claude-code
           pkgs.cloudflared
           pkgs.codex
           pkgs.coreutils
+          pkgs.cspell
           pkgs.delta
           pkgs.deadnix
           pkgs.diffutils
@@ -210,6 +224,10 @@
           pkgs.htop
           pkgs.hyperfine
           pkgs.jq
+          pkgs.kubectl
+          pkgs.kubernetes-helm
+          pkgs.lua-language-server
+          pkgs.markdown-oxide
           pkgs.marp-cli
           pkgs.marksman
           pkgs.moreutils
@@ -224,22 +242,41 @@
           pkgs.ni
           pkgs.nixd
           pkgs.nixfmt
+          pkgs.odo
+          pkgs.openshift
+          pkgs.opentofu
           pkgs.pass
           pkgs.podman-compose
           pkgs.poetry
+          pkgs.prettier
+          pkgs.prettierd
+          pkgs.pulumi
+          pkgs.pyright
           pkgs.rclone
           pkgs.ripgrep
+          pkgs.ruff
+          pkgs.shellcheck
+          pkgs.shfmt
           pkgs.skopeo
           pkgs.ssm-session-manager-plugin
           pkgs.starship
           pkgs.statix
+          pkgs.stylua
+          pkgs.tektoncd-cli
+          pkgs.terraform-ls
+          pkgs.tflint
+          pkgs.tfsec
           pkgs.time
           pkgs.tmux
           pkgs.trash-cli
+          pkgs.tree-sitter
+          pkgs.typos
+          pkgs.typos-lsp
           pkgs.unzip
           pkgs.usage
           pkgs.uv
           pkgs.vim-startuptime
+          pkgs.vtsls
           pkgs.wget
           pkgs.whois
           pkgs.yazi
