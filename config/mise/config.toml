@@ -1,0 +1,55 @@
+# Global mise configuration, read by Home Manager to generate ~/.config/mise/config.toml.
+# Add host-specific tools with
+#   mise use --path ~/.config/mise/config.local.toml <tool>
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["terraform", "node", "python", "ruby", "rust"]
+
+[settings.npm]
+bun = true
+
+[tools]
+# ghc = "latest"
+bun = "latest"
+deno = "latest"
+elixir = "latest"
+erlang = "latest"
+go = "latest"
+gradle = "latest"
+java = "latest"
+julia = "latest"
+kotlin = "latest"
+node = "22"
+pnpm = "latest"
+python = "3.13"
+ruby = "latest"
+rust = { version = "latest", components = "rust-analyzer,llvm-tools,rust-src" }
+scala = "latest"
+terraform = ["1.0.11", "1.5.7", "latest"]
+# Package installers and compilers follow the selected language runtime.
+zig = "latest"
+
+# gopls must track the Go toolchain; see nixpkgs gopls/package.nix.
+"go:golang.org/x/tools/gopls" = "latest"
+
+# Tools coupled to the selected Rust toolchain or native build environment.
+"cargo:cargo-compete" = "latest"
+"cargo:cargo-expand" = "latest"
+"cargo:flamegraph" = "latest"
+"cargo:cargo-lambda" = "latest"
+"cargo:cargo-llvm-cov" = "latest"
+"cargo:cargo-udeps" = "latest"
+
+# No matching package in the pinned nixpkgs; keep the upstream installers.
+"go:github.com/mattn/memo" = "latest"
+
+# Loaded as a Node plugin, rather than a standalone executable.
+"npm:@astrojs/ts-plugin" = "latest"
+# These standalone tools have no matching package in the pinned nixpkgs.
+"npm:atcoder-cli" = "latest"
+"npm:mcp-hub" = "latest"
+"npm:md-to-pdf" = "latest"
+"npm:prh" = "latest"
+# textlint はルールを本体と同じ node_modules から解決するため、bun_args で同居させる
+"npm:textlint" = { version = "latest", bun_args = "textlint-rule-preset-ja-technical-writing textlint-rule-preset-ja-spacing textlint-rule-preset-jtf-style textlint-rule-prh textlint-rule-terminology @textlint/textlint-plugin-markdown" }

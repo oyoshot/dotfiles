@@ -1,0 +1,14 @@
+# Neovim's LSP log is append-only with no size limit (including 0.12.5).
+# Remove this external rotation and its scheduled jobs once the deployed Neovim
+# provides bounded LSP logging: https://github.com/neovim/neovim/issues/40459
+"@stateHome@/nvim/lsp.log" {
+    size 16M
+    rotate 7
+    compress
+    copytruncate
+    missingok
+    notifempty
+    dateext
+    # Preserve each OS's archive names so existing logs count toward rotate 7.
+    dateformat @dateSeparator@%Y%m%d-%H%M%S
+}
