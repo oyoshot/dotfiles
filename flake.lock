@@ -51,11 +51,11 @@
     "brew-api": {
       "flake": false,
       "locked": {
-        "lastModified": 1793352943,
-        "narHash": "sha256-j9IfNwq9q8E4TcjV1l/NArPPe76ouvnbNETFdNgulPs=",
+        "lastModified": 1793377931,
+        "narHash": "sha256-cz53mqHe3oQxAtaMajdq6IyuzgKpcojxdsVRh48vqlw=",
         "owner": "BatteredBunny",
         "repo": "brew-api",
-        "rev": "96e9fb4a9b89dfee45b26ec9ca1dbdc9faa790a2",
+        "rev": "ff7937b2b34499be475f1f4bb5038513d92b8d99",
         "type": "github"
       },
       "original": {
@@ -128,11 +128,11 @@
     "man-pages-ja-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1793208398,
-        "narHash": "sha256-80aBELWI7bh0W+xrqUjNJv7K4sJcAg9d8m2goXs2Szw=",
+        "lastModified": 1793386544,
+        "narHash": "sha256-cQE+h3z723lHM/twRLwuYDBkuRIMjN/7vnhyULkVNcc=",
         "owner": "linux-jm",
         "repo": "manual",
-        "rev": "8ac08519b339705056b773765a891eea7f80cd94",
+        "rev": "29c5dd8b76c574df2469c6e475fcbe89e5dbd61e",
         "type": "github"
       },
       "original": {
@@ -223,6 +223,7 @@
         "ni-zsh": "ni-zsh",
         "nixpkgs": "nixpkgs",
         "prh-rules": "prh-rules",
+        "scoop-main": "scoop-main",
         "steam-installer": "steam-installer",
         "syntax-highlighting": "syntax-highlighting",
         "tpm": "tpm",
@@ -230,6 +231,22 @@
         "zsh-completions": "zsh-completions",
         "zsh-defer": "zsh-defer",
         "zsh-history": "zsh-history"
+      }
+    },
+    "scoop-main": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793377538,
+        "narHash": "sha256-TozLjwuPeiJfvaHB/Xc2/nDZy51SCaLRqMNSg5st0oY=",
+        "owner": "ScoopInstaller",
+        "repo": "Main",
+        "rev": "951ac88ae0dde60ed0c7bd6e9e69f9571c2b94f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ScoopInstaller",
+        "repo": "Main",
+        "type": "github"
       }
     },
     "steam-installer": {

@@ -18,6 +18,11 @@
       url = "file+https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg";
       flake = false;
     };
+    # Reuse maintained release URLs and checksums; Scoop itself is not installed.
+    scoop-main = {
+      url = "github:ScoopInstaller/Main";
+      flake = false;
+    };
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";

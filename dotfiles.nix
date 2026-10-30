@@ -173,11 +173,23 @@ in
         builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ] [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ]
           (builtins.readFile ./local/bin/ghostty);
     };
-    ".local/bin/pbcopy" = {
-      source = ./local/bin/pbcopy;
+    ".local/bin/pbcopy" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      source =
+        if config.dotfiles.wsl then
+          pkgs.writeShellScript "pbcopy" ''
+            exec ${config.home.file.".local/bin/win32yank.exe".source} -i --crlf
+          ''
+        else
+          ./local/bin/pbcopy;
     };
-    ".local/bin/pbpaste" = {
-      source = ./local/bin/pbpaste;
+    ".local/bin/pbpaste" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      source =
+        if config.dotfiles.wsl then
+          pkgs.writeShellScript "pbpaste" ''
+            exec ${config.home.file.".local/bin/win32yank.exe".source} -o --lf
+          ''
+        else
+          ./local/bin/pbpaste;
     };
     ".local/share/cargo/config.toml" = {
       source = ./local/share/cargo/config.toml;

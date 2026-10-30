@@ -44,14 +44,18 @@
     };
   };
   home.file.".local/bin/win32yank.exe" = lib.mkIf config.dotfiles.wsl {
-    source = pkgs.runCommand "win32yank.exe" { nativeBuildInputs = [ pkgs.unzip ]; } ''
-      unzip -p ${
-        pkgs.fetchurl {
-          url = "https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip";
-          hash = "sha256-JHyaBblDh6iEtJ09sT+AaxZ338OAIPlV9xm+aQImDNY=";
-        }
-      } win32yank.exe > "$out"
-      chmod +x "$out"
-    '';
+    source =
+      let
+        manifest = builtins.fromJSON (builtins.readFile "${inputs.scoop-main}/bucket/win32yank.json");
+        release = manifest.architecture."64bit";
+        src = pkgs.fetchurl {
+          inherit (release) url;
+          sha256 = release.hash;
+        };
+      in
+      pkgs.runCommand "win32yank-${manifest.version}.exe" { nativeBuildInputs = [ pkgs.unzip ]; } ''
+        unzip -p ${src} win32yank.exe > "$out"
+        chmod +x "$out"
+      '';
   };
 }
