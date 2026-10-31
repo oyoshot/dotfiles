@@ -6,7 +6,7 @@ case "${1-}" in
   --help|-h) echo "$usage"; exit 0 ;;
 esac
 # --local reads committed changes from a clone; otherwise follow the published branch.
-dotfiles=github:oyoshot/dotfiles/experiment/nix-cli
+dotfiles=github:oyoshot/dotfiles/main
 if [ "${1-}" = --local ]; then
   [ "$#" -ge 2 ] || { echo "$usage" >&2; exit 2; }
   if [ ! -f "$2/flake.nix" ] || ! git -C "$2" rev-parse --git-dir >/dev/null 2>&1; then
