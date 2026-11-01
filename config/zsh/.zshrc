@@ -1,0 +1,241 @@
+# history
+export HISTFILE="$XDG_STATE_HOME/zsh_history"
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt extended_history # HISTFILE にコマンドの開始時刻と実行時間を一緒に保存する
+setopt hist_ignore_all_dups # 同じコマンドをヒストリに残さない
+setopt hist_ignore_space # スペースから始まるコマンド行はヒストリに残さない
+setopt hist_reduce_blanks # ヒストリに保存するときに余分なスペースを削除する
+setopt hist_save_no_dups # 履歴ファイルへ書き出すときに重複コマンドを保存しない
+setopt inc_append_history # 実行直後に即ファイルへ追記
+setopt share_history # 同時に起動したzshの間でヒストリを共有する
+
+# options
+setopt print_eight_bit # 日本語ファイル名を表示可能にする
+setopt no_beep # beep を無効にする
+setopt no_flow_control # フローコントロールを無効にする
+setopt ignore_eof # Ctrl+Dでzshを終了しない
+setopt interactive_comments # '#' 以降をコメントとして扱う
+setopt auto_cd # ディレクトリ名だけでcdする
+setopt auto_pushd # cd したら自動的にpushdする
+setopt pushd_ignore_dups # 重複したディレクトリを追加しない
+setopt extended_glob # 高機能なワイルドカード展開を使用する
+
+# Home/End differ between terminals and multiplexers. Prefer terminfo while
+# retaining the common variants so both tmux and herdr work consistently.
+zmodload zsh/terminfo 2>/dev/null
+for key in "${terminfo[khome]}" $'\eOH' $'\e[H' $'\e[1~'; do
+  [[ -n $key ]] && bindkey "$key" beginning-of-line
+done
+for key in "${terminfo[kend]}" $'\eOF' $'\e[F' $'\e[4~'; do
+  [[ -n $key ]] && bindkey "$key" end-of-line
+done
+unset key
+
+bindkey '^[[2~' overwrite-mode # INS
+# bindkey '^[[2~' bracketed-paste  # シンプルにクリップボード貼り付けにしてしまうzsh 5.9 以降
+bindkey '^[[3~' delete-char # DEL
+bindkey '^[[5~' history-beginning-search-backward # PageUp
+bindkey '^[[6~' history-beginning-search-forward # PageDown
+
+bindkey '^[[1;5A' up-line-or-history # Ctrl+Up
+bindkey '^[[1;5B' down-line-or-history # Ctrl+Down
+bindkey '^[[1;5C' forward-word # Ctrl+Right
+bindkey '^[[1;5D' backward-word # Ctrl+Left
+
+# fpath
+fpath=(
+  $ZDOTDIR/fpath(N-/)
+  $ZDOTDIR/plugins/zsh-completions/src(N-/)
+  $ZDOTDIR/plugins/anyframe(N-/)
+  $ZDOTDIR/zfunc(N-/)
+  $XDG_STATE_HOME/nix/profile/share/zsh/site-functions(N-/)
+  ~/.asdf/completions(N-/)
+  $GHRED_DATA_HOME/completions(N-/)
+  $XDG_DATA_HOME/zsh/completions(N-/)
+  $fpath
+)
+
+# Update each tool through its package manager; stop on the first failure.
+up() {
+  # Read the configured input, not the previous lock's location.
+  local home_flake=${NH_HOME_FLAKE:a} dotfiles
+  dotfiles=$(nix eval --raw --file "$home_flake/flake.nix" inputs.dotfiles.url) || return
+  # Resolve local references relative to their configuration, not the caller.
+  case "$dotfiles" in
+    path:/*|git+file:/*) ;;
+    path:*) dotfiles="path:$home_flake/${dotfiles#path:}" ;;
+    git+file:*) dotfiles="git+file:$home_flake/${dotfiles#git+file:}" ;;
+  esac
+  if [[ $dotfiles == path:* || $dotfiles == git+file:* ]]; then
+    nix flake update --flake "$dotfiles" || return
+    nh home switch "$home_flake" -c home -b before-home-manager --override-input dotfiles "$dotfiles" || return
+  else
+    nh home switch "$home_flake" --update-input dotfiles -c home -b before-home-manager || return
+  fi
+
+  case "$OSTYPE" in
+    darwin*)
+      brew upgrade || return
+      brew upgrade --cask --greedy || return
+      mas upgrade || return
+      ;;
+    linux*)
+      yay --noconfirm || return
+      ;;
+    *)
+      print -u2 -- "up: unsupported OS: $OSTYPE"
+      return 1
+      ;;
+  esac
+
+  mise cache clear || return
+  if [[ "$OSTYPE" == linux* ]]; then
+    sh "$XDG_CONFIG_HOME/dotfiles/source/scripts/with-runtime-build.sh" mise up || return
+  else
+    mise up || return
+  fi
+  nvim --headless '+Lazy! update' +qa
+}
+
+# defer loader
+source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
+
+# load configs
+for f ($ZDOTDIR/sync/*(N-.)) source $f
+for f ($ZDOTDIR/defer/*(N-.)) zsh-defer source $f
+
+# plugins
+
+zsh-defer -c '
+    source "$ZDOTDIR/plugins/syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+    source "$ZDOTDIR/plugins/autosuggestions/zsh-autosuggestions.zsh"
+'
+
+zsh-defer source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+zsh-defer source $ZDOTDIR/fpath/aws_zsh_completer.sh
+zsh-defer source $ZDOTDIR/defer.zsh
+zsh-defer '[[ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]] && source "$XDG_CONFIG_HOME/op/plugins.sh"'
+
+# Avoid building the full $commands hash just to locate startup dependencies.
+_zsh_find_command() {
+  local dir candidate
+  REPLY=
+  for dir in "$path[@]"; do
+    candidate=${dir:+$dir/}$1
+    [[ -x $candidate && ! -d $candidate ]] || continue
+    REPLY=${candidate:a}
+    return 0
+  done
+  return 1
+}
+
+# 遅延ロードしない方が安全
+# Starship
+if _zsh_find_command starship; then
+  typeset _starship_bin=$REPLY
+  typeset _starship_config=${STARSHIP_CONFIG:-$XDG_CONFIG_HOME/starship.toml}
+  typeset _starship_init=$XDG_CACHE_HOME/zsh/starship-init.zsh
+  typeset _starship_init_tmp="$_starship_init.tmp.$$"
+  typeset -A _starship_stat
+  zmodload zsh/stat
+  zstat -H _starship_stat -- "$_starship_bin"
+  typeset _starship_marker="# starship-bin: $_starship_bin:$_starship_stat[device]:$_starship_stat[inode]:$_starship_stat[size]:$_starship_stat[mtime]"
+  typeset _starship_cached_marker=
+  typeset -i _starship_cache_matches=0
+  typeset -i _starship_initialized=0
+
+  if [[ -r $_starship_init ]]; then
+    IFS= read -r _starship_cached_marker < "$_starship_init"
+    [[ $_starship_cached_marker == $_starship_marker ]] && _starship_cache_matches=1
+  fi
+
+  if (( ! _starship_cache_matches )) ||
+      [[ $_starship_bin -nt $_starship_init || $_starship_config -nt $_starship_init ]]; then
+    zmodload zsh/files
+
+    typeset _starship_source
+    if _starship_source="$("$_starship_bin" init zsh)"; then
+      # Starship computes PROMPT2 eagerly; defer it until a continuation prompt is used.
+      _starship_source="${_starship_source%$'\n'PROMPT2=*}"$'\n'"PROMPT2='\$(\"$_starship_bin\" prompt --continuation)'"
+      if mkdir -p "${_starship_init:h}" 2>/dev/null &&
+          print -r -- "$_starship_marker"$'\n'"$_starship_source" >| "$_starship_init_tmp" 2>/dev/null &&
+          mv -f "$_starship_init_tmp" "$_starship_init" 2>/dev/null; then
+        _starship_cache_matches=1
+      else
+        rm -f "$_starship_init_tmp" 2>/dev/null
+      fi
+      # Another shell may replace the shared cache before it can be sourced.
+      eval "$_starship_source"
+      _starship_initialized=1
+    fi
+    unset _starship_source
+  fi
+
+  (( _starship_initialized || ! _starship_cache_matches )) || source "$_starship_init"
+  unset _starship_bin _starship_config _starship_init _starship_init_tmp _starship_marker
+  unset _starship_stat _starship_cached_marker _starship_cache_matches _starship_initialized
+fi
+
+# WSL: .zshenv が退避した Windows PATH を戻す。rehash に ~90ms かかるので
+# 必要になった時だけ払う。戻すのはこのシェルのみ。
+if (( $#_ZSH_WIN_PATH )); then
+  winpath() {
+    (( $#_ZSH_WIN_PATH )) || return 0
+    path+=( $_ZSH_WIN_PATH )
+    _ZSH_WIN_PATH=()
+    rehash
+  }
+
+  # 見つからないコマンドは Windows 側かもしれないので PATH を戻して引き直す。
+  # handler は外部コマンド用に fork された subshell で動くため、戻した PATH は
+  # この 1 回で消える (zsh の仕様)。何度も呼ぶなら winpath で永続的に戻す。
+  command_not_found_handler() {
+    if (( $#_ZSH_WIN_PATH )); then
+      winpath
+      if (( $+commands[$1] )); then
+        "$@"
+        return $?
+      fi
+    fi
+    print -u2 "zsh: command not found: $1"
+    return 127
+  }
+fi
+
+# Discover binaries without subprocesses; activate when the prompt is idle or
+# immediately before its first command. Non-prompt shells do not run these hooks.
+typeset -g _DOTFILES_MISE_BIN= _DOTFILES_DIRENV_BIN=
+_zsh_find_command mise && _DOTFILES_MISE_BIN=$REPLY
+_zsh_find_command direnv && _DOTFILES_DIRENV_BIN=$REPLY
+unfunction _zsh_find_command
+
+autoload -Uz add-zsh-hook
+_dotfiles_init_tool_hooks() {
+  add-zsh-hook -d preexec _dotfiles_init_tool_hooks
+  # The deferred invocation may follow the preexec invocation.
+  [[ -n $_DOTFILES_MISE_BIN$_DOTFILES_DIRENV_BIN ]] || return 0
+  local mise_bin=$_DOTFILES_MISE_BIN direnv_bin=$_DOTFILES_DIRENV_BIN
+  _DOTFILES_MISE_BIN= _DOTFILES_DIRENV_BIN=
+  # mise chains to the WSL command-not-found handler defined above.
+  if [[ -n $mise_bin ]]; then
+    eval "$("$mise_bin" activate zsh)"
+    functions[_dotfiles_mise_command]=$functions[mise]
+    mise() {
+      (( $+functions[__load_github_token_once] )) && __load_github_token_once
+      _dotfiles_mise_command "$@"
+    }
+  fi
+  if [[ -n $direnv_bin ]]; then
+    eval "$("$direnv_bin" hook zsh)"
+    # hook zsh registers callbacks; apply .envrc before the first command too.
+    _direnv_hook
+  fi
+}
+add-zsh-hook preexec _dotfiles_init_tool_hooks
+zsh-defer _dotfiles_init_tool_hooks
+
+# load override
+for cand in "$ZDOTDIR/zshrc.local" "$XDG_CONFIG_HOME/zsh/zshrc.local" "$HOME/zshrc.local"; do
+  [[ -r $cand ]] && source "$cand" && break
+done
