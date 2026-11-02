@@ -228,6 +228,7 @@
           pkgs.herdr
           pkgs.htop
           pkgs.hyperfine
+          pkgs.jira-cli-go
           pkgs.jq
           pkgs.kubectl
           pkgs.kubernetes-helm
