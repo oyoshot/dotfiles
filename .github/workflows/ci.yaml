@@ -21,7 +21,7 @@ jobs:
       group: ci-validate-mac-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: ./.github/actions/validate
 
   validate-arch:
@@ -35,7 +35,7 @@ jobs:
       group: ci-validate-arch-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: ./.github/actions/validate
 
   provisioning-changes:
@@ -47,7 +47,7 @@ jobs:
     outputs:
       run: ${{ steps.changes.outputs.run }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
       - id: changes
@@ -84,7 +84,7 @@ jobs:
     env:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -118,7 +118,7 @@ jobs:
       - name: Free disk space on host toolcache
         shell: bash
         run: rm -rf /__t/*
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -141,7 +141,7 @@ jobs:
     env:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -174,7 +174,7 @@ jobs:
       - name: Free disk space on host toolcache
         shell: bash
         run: rm -rf /__t/*
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
