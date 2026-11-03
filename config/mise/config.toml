@@ -32,6 +32,8 @@ zig = "latest"
 
 # gopls must track the Go toolchain; see nixpkgs gopls/package.nix.
 "go:golang.org/x/tools/gopls" = "latest"
+# zls only supports the Zig release with the same minor version.
+zls = "latest"
 
 # Tools coupled to the selected Rust toolchain or native build environment.
 "cargo:cargo-compete" = "latest"

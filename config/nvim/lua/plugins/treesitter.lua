@@ -42,6 +42,7 @@ return {
 			"yaml",
 			"toml",
 			"ron",
+			"zig",
 		},
 	},
 	config = function(_, opts)
