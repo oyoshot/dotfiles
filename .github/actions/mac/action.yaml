@@ -32,7 +32,7 @@ runs:
         echo "key=$key" >>"$GITHUB_OUTPUT"
 
     - id: mise-cache-restore
-      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         # Invalidate on the evaluated build environment, rather than unrelated Nix edits.
         key: macos-mise-v8-${{ runner.arch }}-${{ steps.mise-environment.outputs.key }}-${{ hashFiles(inputs.mise-config-path, 'scripts/install-runtimes.zsh', 'scripts/with-runtime-build.sh') }}-${{ inputs.cache-epoch }}
@@ -57,7 +57,7 @@ runs:
         export XDG_STATE_HOME="$HOME/.local/state"
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
         nix \
-          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager \
+          --extra-experimental-features 'nix-command flakes' run .#home-manager -- -b before-home-manager --print-build-logs \
           switch --flake .#ci-darwin
 
     - name: Provision host tools
@@ -89,7 +89,7 @@ runs:
         set -euo pipefail
         export XDG_STATE_HOME="$HOME/.local/state"
         export PATH="/nix/var/nix/profiles/default/bin:$PATH"
-        nix run --no-update-lock-file .#home-manager -- -b before-home-manager switch --flake .#ci-darwin
+        nix run --no-update-lock-file .#home-manager -- -b before-home-manager --print-build-logs switch --flake .#ci-darwin
 
     - name: Verify macOS development tools
       shell: bash
@@ -111,8 +111,8 @@ runs:
         docker compose version
 
     - name: Save mise cache
-      if: success()
-      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      if: success() && steps.mise-cache-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         key: macos-mise-v8-${{ runner.arch }}-${{ steps.mise-environment.outputs.key }}-${{ hashFiles(inputs.mise-config-path, 'scripts/install-runtimes.zsh', 'scripts/with-runtime-build.sh') }}-${{ inputs.cache-epoch }}
         path: |

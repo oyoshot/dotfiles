@@ -21,7 +21,7 @@ jobs:
       group: ci-validate-mac-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: ./.github/actions/validate
 
   validate-arch:
@@ -35,27 +35,27 @@ jobs:
       group: ci-validate-arch-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: ./.github/actions/validate
 
   provisioning-changes:
     name: detect provisioning changes
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
       run: ${{ steps.changes.outputs.run }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
       - id: changes
         name: Detect platform provisioning changes
         shell: bash
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           git diff --no-renames --name-only "${BASE_SHA}...${HEAD_SHA}" >/tmp/changed-files
@@ -79,12 +79,12 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-provision-mac-${{ github.event.pull_request.number }}
+      group: ci-provision-mac-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     env:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -103,7 +103,7 @@ jobs:
     permissions:
       contents: read
     concurrency:
-      group: ci-provision-arch-${{ github.event.pull_request.number }}
+      group: ci-provision-arch-${{ github.event.pull_request.number || github.ref_name }}
       cancel-in-progress: true
     container:
       image: archlinux:latest
@@ -118,7 +118,7 @@ jobs:
       - name: Free disk space on host toolcache
         shell: bash
         run: rm -rf /__t/*
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -141,7 +141,7 @@ jobs:
     env:
       HOMEBREW_NO_INSTALL_CLEANUP: 1
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
@@ -174,7 +174,7 @@ jobs:
       - name: Free disk space on host toolcache
         shell: bash
         run: rm -rf /__t/*
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - id: cache-epoch
         name: Resolve cache epoch
         shell: bash
