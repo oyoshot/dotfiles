@@ -7,7 +7,8 @@ runs:
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: /tmp/dotfiles-nix-cache
-        key: nix-custom-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.lock', 'flake.nix', 'packages/**') }}
+        # Include the script so changes to the cached package set get a new entry.
+        key: nix-custom-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.lock', 'flake.nix', 'packages/**', '.github/scripts/cache-nix.sh') }}
         restore-keys: |
           nix-custom-v1-${{ runner.os }}-${{ runner.arch }}-
     - name: Import cache and build custom packages
