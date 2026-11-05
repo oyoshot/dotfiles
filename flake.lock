@@ -51,11 +51,11 @@
     "brew-api": {
       "flake": false,
       "locked": {
-        "lastModified": 1793848259,
-        "narHash": "sha256-+sZL8kcoAH339cA2TrUVEA6zDrd7X9wS6l6o+lWs0Ek=",
+        "lastModified": 1793879369,
+        "narHash": "sha256-T7OHUjDOETLKyKWW8me3xIewwzClpmKb4+nYH5uUdH8=",
         "owner": "BatteredBunny",
         "repo": "brew-api",
-        "rev": "a86ee1165301f9db14fb3d1e91309f27ad7457e3",
+        "rev": "79ac52293f3684defcb20eda06659f5c580f4379",
         "type": "github"
       },
       "original": {
@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1793839322,
-        "narHash": "sha256-RCNJf7Ci/tqfDTJGJeF9QsTIwC7jI/itDWr9N5XYA5I=",
+        "lastModified": 1793882110,
+        "narHash": "sha256-wtMcBXQPZ+NR02ILUEVIa9WfdMwiLbm0junGPMGP/4M=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "a9bc8a98572ed8e8cb246852704732b218bd957c",
+        "rev": "405159c50c39acd3c5dc45c4da2dc86d62612503",
         "type": "github"
       },
       "original": {
@@ -296,11 +296,11 @@
     "zacrs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1792732418,
-        "narHash": "sha256-qiKzf5C73Hp+mLUeXT02oNuhaAW6uUpjviNIRxAPwn4=",
+        "lastModified": 1793884582,
+        "narHash": "sha256-c08LkPY21z9aU/s2yzwFSt5qqHft/ZtDYBIgllOSLZk=",
         "ref": "refs/heads/main",
-        "rev": "e707469f704dcf38c55a4beb8016c63230d0a47c",
-        "revCount": 132,
+        "rev": "abb5d7b6873944ac820ef2c7340a726c02ce72bb",
+        "revCount": 133,
         "type": "git",
         "url": "https://github.com/oyoshot/zsh-autocomplete-rs-proto.git"
       },
