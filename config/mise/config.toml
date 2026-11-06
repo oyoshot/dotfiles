@@ -9,6 +9,11 @@ idiomatic_version_file_enable_tools = ["terraform", "node", "python", "ruby", "r
 [settings.npm]
 bun = true
 
+[settings.python]
+# Put the uv project's existing .venv on PATH, so editors launched from the shell
+# (ruff and pyright LSP) use the project-pinned tools. Never creates a venv.
+uv_venv_auto = "source"
+
 [tools]
 # ghc = "latest"
 bun = "latest"
