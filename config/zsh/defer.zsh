@@ -306,5 +306,6 @@ bindkey -M viins 'jj' edit-command-line
 
 # zacrs
 if (( $+commands[zsh-autocomplete-rs] )); then
+    ZACRS_ABBR_EXPAND_ON_ENTER=1
     source <(zsh-autocomplete-rs init zsh)
 fi
