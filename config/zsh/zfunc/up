@@ -1,0 +1,39 @@
+# Update each tool through its package manager; stop on the first failure.
+# Read the configured input, not the previous lock's location.
+local home_flake=${NH_HOME_FLAKE:a} dotfiles
+dotfiles=$(nix eval --raw --file "$home_flake/flake.nix" inputs.dotfiles.url) || return
+# Resolve local references relative to their configuration, not the caller.
+case "$dotfiles" in
+  path:/*|git+file:/*) ;;
+  path:*) dotfiles="path:$home_flake/${dotfiles#path:}" ;;
+  git+file:*) dotfiles="git+file:$home_flake/${dotfiles#git+file:}" ;;
+esac
+if [[ $dotfiles == path:* || $dotfiles == git+file:* ]]; then
+  nix flake update --flake "$dotfiles" || return
+  nh home switch "$home_flake" -c home -b before-home-manager --override-input dotfiles "$dotfiles" || return
+else
+  nh home switch "$home_flake" --update-input dotfiles -c home -b before-home-manager || return
+fi
+
+case "$OSTYPE" in
+  darwin*)
+    brew upgrade || return
+    brew upgrade --cask --greedy || return
+    mas upgrade || return
+    ;;
+  linux*)
+    yay --noconfirm || return
+    ;;
+  *)
+    print -u2 -- "up: unsupported OS: $OSTYPE"
+    return 1
+    ;;
+esac
+
+mise cache clear || return
+if [[ "$OSTYPE" == linux* ]]; then
+  sh "$XDG_CONFIG_HOME/dotfiles/source/scripts/with-runtime-build.sh" mise up || return
+else
+  mise up || return
+fi
+nvim --headless '+Lazy! update' +qa

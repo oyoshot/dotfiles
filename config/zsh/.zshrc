@@ -56,6 +56,10 @@ fpath=(
   $fpath
 )
 
+# Register now so it works before zsh-defer runs and in `zsh -ic`; the body
+# is read on first use.
+autoload -Uz up
+
 # defer loader
 source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
 
