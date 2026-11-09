@@ -79,8 +79,7 @@ lt = 'eza --icons --group-directories-first --tree'
 lla = 'eza --icons --group-directories-first -la --header --git --group'
 b = 'bat --theme ansi'
 cat = 'bat --theme ansi'
-hal = 'nh home switch --update-input dotfiles -c home -b before-home-manager'
-ham = 'nh home switch --update-input dotfiles -c home -b before-home-manager'
+hs = 'nh home switch -c home -b before-home-manager --override-input dotfiles "$(nix eval --raw --file "$NH_HOME_FLAKE/flake.nix" inputs.dotfiles.url)"'
 
 [[abbreviation]]
 trigger = "gcm"
