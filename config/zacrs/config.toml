@@ -6,6 +6,9 @@ description = "dark-grey"
 filter = "green"
 candidate = "white"
 
+[completion]
+expand_abbreviation_on_enter = true
+
 [abbreviations]
 g = 'git'
 gcd = 'cd $(git rev-parse --show-toplevel)'
