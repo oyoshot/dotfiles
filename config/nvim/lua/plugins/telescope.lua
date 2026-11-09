@@ -35,15 +35,38 @@ return {
 		config = function()
 			local telescope = require("telescope")
 			local actions = require("telescope.actions")
+			-- Search dotfiles such as .zshrc, but not .git: a directory in a
+			-- normal clone and a file in a linked worktree.
+			local exclude_git = { "--glob=!**/.git/*", "--glob=!**/.git" }
+			local vimgrep_arguments = vim.list_extend(
+				vim.deepcopy(require("telescope.config").values.vimgrep_arguments),
+				exclude_git
+			)
 			telescope.setup({
 				defaults = {
 					path_display = { "truncate" },
+					vimgrep_arguments = vimgrep_arguments,
 					mappings = {
 						i = {
 							["<C-u>"] = false,
 							["<C-d>"] = false,
 							["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 						},
+					},
+				},
+				-- `hidden` lets a single call opt out, e.g. `:Telescope find_files hidden=false`.
+				pickers = {
+					find_files = {
+						hidden = true,
+						find_command = vim.list_extend({ "rg", "--files", "--color", "never" }, exclude_git),
+					},
+					live_grep = { hidden = true },
+					grep_string = { hidden = true },
+				},
+				extensions = {
+					-- live_grep_args has no `hidden` option; type `--no-hidden` in the prompt to opt out.
+					live_grep_args = {
+						vimgrep_arguments = vim.list_extend(vim.deepcopy(vimgrep_arguments), { "--hidden" }),
 					},
 				},
 			})
