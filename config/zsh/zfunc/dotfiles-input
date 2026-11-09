@@ -1,0 +1,25 @@
+# Print the home flake's dotfiles input URL, with local references resolved
+# relative to the home flake rather than the caller.
+#
+# Nix builds a local Git clone from tracked files only, and drops untracked
+# ones from directory copies without an error (NixOS/nix#16012). Refuse until
+# each untracked, unignored file is added or ignored, so a switch never deploys
+# a partial tree. Remove this check once Nix reports these files itself.
+local home_flake=${NH_HOME_FLAKE:a} url repo untracked
+url=$(nix eval --raw --file "$home_flake/flake.nix" inputs.dotfiles.url) || return
+case "$url" in
+  path:/*|git+file:/*) ;;
+  path:*) url="path:$home_flake/${url#path:}" ;;
+  git+file:*) url="git+file:$home_flake/${url#git+file:}" ;;
+esac
+if [[ $url == git+file:* ]]; then
+  repo=${${url#git+file:}%%\?*}
+  repo=${repo#//}
+  untracked=$(git -C "$repo" ls-files --others --exclude-standard) || return
+  if [[ -n $untracked ]]; then
+    print -u2 -r -- "dotfiles-input: Nix would skip these untracked files in $repo; git add or ignore them:"
+    print -u2 -rl -- "  "${^${(f)untracked}}
+    return 1
+  fi
+fi
+print -r -- "$url"

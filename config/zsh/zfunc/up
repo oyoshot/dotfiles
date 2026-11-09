@@ -1,13 +1,7 @@
 # Update each tool through its package manager; stop on the first failure.
 # Read the configured input, not the previous lock's location.
 local home_flake=${NH_HOME_FLAKE:a} dotfiles
-dotfiles=$(nix eval --raw --file "$home_flake/flake.nix" inputs.dotfiles.url) || return
-# Resolve local references relative to their configuration, not the caller.
-case "$dotfiles" in
-  path:/*|git+file:/*) ;;
-  path:*) dotfiles="path:$home_flake/${dotfiles#path:}" ;;
-  git+file:*) dotfiles="git+file:$home_flake/${dotfiles#git+file:}" ;;
-esac
+dotfiles=$(dotfiles-input) || return
 if [[ $dotfiles == path:* || $dotfiles == git+file:* ]]; then
   nix flake update --flake "$dotfiles" || return
   nh home switch "$home_flake" -c home -b before-home-manager --override-input dotfiles "$dotfiles" || return
