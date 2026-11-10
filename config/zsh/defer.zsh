@@ -305,6 +305,6 @@ bindkey -M vicmd 'jj' edit-command-line
 bindkey -M viins 'jj' edit-command-line
 
 # zacrs
-if (( $+commands[zsh-autocomplete-rs] )); then
+if command -v zsh-autocomplete-rs >/dev/null 2>&1; then
     source <(zsh-autocomplete-rs init zsh)
 fi
