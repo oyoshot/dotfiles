@@ -218,6 +218,7 @@
           pkgs.ghq
           pkgs.git
           pkgs.git-wt
+          pkgs.glab
           pkgs.gnugrep
           pkgs.gnumake
           pkgs.gnupg
