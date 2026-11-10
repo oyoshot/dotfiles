@@ -47,9 +47,7 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 export GPG_TTY=$TTY
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
-#export TF_DATA_DIR="$XDG_DATA_HOME/terraform/$(pwd)"
-#export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
-#export TF_LOG_PATH="$XDG_DATA_HOME/terraform/terraform.log"
+export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
 
 __load_github_token_once() {
     if [[ -n "${MISE_GITHUB_TOKEN:-}" ]]; then
