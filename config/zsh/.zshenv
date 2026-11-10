@@ -138,6 +138,9 @@ export NPM_DATA_DIR="$XDG_DATA_HOME/npm"
 export NPM_CACHE_DIR="$XDG_CACHE_HOME/npm"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 
+# Terraform
+export TF_PLUGIN_CACHE_DIR="$XDG_CACHE_HOME/terraform"
+
 # $+commands は PATH 全走査を起こす。非対話シェルは上の WSL ブロックで PATH を
 # 維持しているため走査が重い。実ファイルを直接見て EDITOR を決める。
 typeset -gx EDITOR=vi
