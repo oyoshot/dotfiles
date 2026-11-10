@@ -122,6 +122,10 @@ export CODEX_HOME="$XDG_CONFIG_HOME/codex"
 # Docker
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 
+# Go (GOCACHE and GOENV already follow XDG; only GOPATH defaults to $HOME/go)
+export GOPATH="$XDG_DATA_HOME/go"
+export GOMODCACHE="$XDG_CACHE_HOME/go/mod"
+
 # Helm
 export HELM_CACHE_HOME="$XDG_CACHE_HOME/helm"
 export HELM_CONFIG_HOME="$XDG_CONFIG_HOME/helm"
