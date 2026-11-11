@@ -205,8 +205,16 @@ in
           config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/Visual Studio Code.app/Contents/Resources/app/bin/code-tunnel";
       };
       activation = {
+        # Retire the daemon only when the installed zacrs binary changes.
         zacrsDaemon = lib.hm.dag.entryAfter [ "installPackages" ] ''
-          run ${config.home.path}/bin/zsh-autocomplete-rs daemon stop
+          zacrsOldBinary=
+          if [[ -n "''${oldGenPath-}" && -e "$oldGenPath/home-path/bin/zsh-autocomplete-rs" ]]; then
+            zacrsOldBinary=$(${pkgs.coreutils}/bin/readlink -f "$oldGenPath/home-path/bin/zsh-autocomplete-rs")
+          fi
+          zacrsNewBinary=$(${pkgs.coreutils}/bin/readlink -f "$newGenPath/home-path/bin/zsh-autocomplete-rs")
+          if [[ "$zacrsOldBinary" != "$zacrsNewBinary" ]]; then
+            run "$zacrsNewBinary" daemon stop
+          fi
         '';
         # The new nix.conf is linked after package installation on the first switch.
         nixXdg = lib.hm.dag.entryBetween [ "installPackages" "linkGeneration" ] [ "writeBoundary" ] ''

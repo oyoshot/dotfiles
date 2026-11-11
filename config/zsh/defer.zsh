@@ -301,6 +301,6 @@ bindkey -M vicmd 'jj' edit-command-line
 bindkey -M viins 'jj' edit-command-line
 
 # zacrs
-if [[ -r "$XDG_STATE_HOME/nix/profile/share/zacrs/init.zsh" ]]; then
-    source "$XDG_STATE_HOME/nix/profile/share/zacrs/init.zsh"
+if command -v zsh-autocomplete-rs >/dev/null 2>&1; then
+    source <(zsh-autocomplete-rs init zsh)
 fi
