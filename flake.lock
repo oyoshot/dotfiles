@@ -128,11 +128,11 @@
     "man-pages-ja-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1794333171,
-        "narHash": "sha256-p7Yj4ofC/qEDfzH3PCxfY5A2b99Bh6kf1kcIgOfjCRE=",
+        "lastModified": 1794380494,
+        "narHash": "sha256-baklvi+Q/G07qLFLZz00Cym9OV6b4oMS5dUA86grPHE=",
         "owner": "linux-jm",
         "repo": "manual",
-        "rev": "a8969aae05cbbb877b190a2a1fb115da25df7eb6",
+        "rev": "a91ea736286c275a3817072ae245ea6c79a186ab",
         "type": "github"
       },
       "original": {
@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1794371066,
-        "narHash": "sha256-a2hvp99UaG/gxykaUW1na3DGMs7oPv55wt7P0g3tARo=",
+        "lastModified": 1794385546,
+        "narHash": "sha256-gWSng1eZ2TQH2A3T/cfLgKIKqaqMCPilq9yo3M0q3hk=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "1a8b66f77248e30cc8c4144564db77836128dd03",
+        "rev": "05463b47b902c8811a0560517bc7be8c68aa68f0",
         "type": "github"
       },
       "original": {
