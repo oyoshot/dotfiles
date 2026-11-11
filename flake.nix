@@ -154,12 +154,17 @@
           ];
           # Several upstream tests require a real terminal and resize events.
           doCheck = false;
-          nativeInstallCheckInputs = [ pkgs.zsh ];
+          nativeBuildInputs = [ pkgs.zsh ];
+          postInstall = ''
+            mkdir -p "$out/share/zacrs"
+            "$out/bin/zsh-autocomplete-rs" init zsh > "$out/share/zacrs/init.zsh"
+            zsh -dfc 'zcompile -U "$1"' _ "$out/share/zacrs/init.zsh"
+          '';
           doInstallCheck = true;
           installCheckPhase = ''
             runHook preInstallCheck
-            "$out/bin/zsh-autocomplete-rs" init zsh > init.zsh
-            zsh -n init.zsh
+            zsh -n "$out/share/zacrs/init.zsh"
+            zsh -dfc 'zcompile -t "$1"' _ "$out/share/zacrs/init.zsh.zwc"
             runHook postInstallCheck
           '';
           meta = {
@@ -406,6 +411,7 @@
             "/bin"
             "/share/man"
             "/share/zsh/site-functions"
+            "/share/zacrs"
           ];
         };
       });

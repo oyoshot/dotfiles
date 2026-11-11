@@ -205,6 +205,9 @@ in
           config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/Visual Studio Code.app/Contents/Resources/app/bin/code-tunnel";
       };
       activation = {
+        zacrsDaemon = lib.hm.dag.entryAfter [ "installPackages" ] ''
+          run ${config.home.path}/bin/zsh-autocomplete-rs daemon stop
+        '';
         # The new nix.conf is linked after package installation on the first switch.
         nixXdg = lib.hm.dag.entryBetween [ "installPackages" "linkGeneration" ] [ "writeBoundary" ] ''
           export XDG_STATE_HOME=${lib.escapeShellArg config.xdg.stateHome}
