@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1794444218,
-        "narHash": "sha256-VlBgGLOiW7BAW+FVCf7dOtUkIX/dcl6fV12jWsSftPs=",
+        "lastModified": 1794471934,
+        "narHash": "sha256-fwVSUGSwjwB6vR7gYXupGkpiHqcVIcr5JPcYfG7zjVg=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "f80628c8243706c94374505258a46359a8e67b6f",
+        "rev": "2808c965480382d811f1f2953308a359b442b53f",
         "type": "github"
       },
       "original": {
