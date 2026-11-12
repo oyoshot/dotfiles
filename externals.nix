@@ -5,8 +5,15 @@
   inputs,
   ...
 }:
+let
+  zacrs = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zsh-autocomplete-rs;
+in
 {
   xdg.configFile = {
+    "zsh/plugins/zacrs" = {
+      source = "${zacrs}/share/zsh-autocomplete-rs";
+      recursive = true;
+    };
     "tmux/plugins/tpm" = {
       source = inputs.tpm;
       recursive = true;

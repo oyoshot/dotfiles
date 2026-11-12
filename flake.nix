@@ -141,34 +141,7 @@
           ++ modules;
         };
       # Runtime/toolchain exceptions are documented in config/mise/config.toml.
-      zacrsPackage =
-        pkgs:
-        pkgs.rustPlatform.buildRustPackage {
-          pname = "zsh-autocomplete-rs";
-          version = "0.1.0-${builtins.substring 0 7 zacrs-src.rev}";
-          src = zacrs-src;
-          cargoLock.lockFile = zacrs-src + "/Cargo.lock";
-          cargoBuildFlags = [
-            "--package"
-            "zsh-autocomplete-rs"
-          ];
-          # Several upstream tests require a real terminal and resize events.
-          doCheck = false;
-          nativeInstallCheckInputs = [ pkgs.zsh ];
-          doInstallCheck = true;
-          installCheckPhase = ''
-            runHook preInstallCheck
-            "$out/bin/zsh-autocomplete-rs" init zsh > init.zsh
-            zsh -n init.zsh
-            runHook postInstallCheck
-          '';
-          meta = {
-            description = "Zsh autocomplete with a Rust popup renderer";
-            homepage = "https://github.com/oyoshot/zsh-autocomplete-rs-proto";
-            mainProgram = "zsh-autocomplete-rs";
-            platforms = systems;
-          };
-        };
+      zacrsPackage = pkgs: pkgs.callPackage (zacrs-src + "/package.nix") { };
       # On Darwin, keep the default compiler/linker with the host SDK.
       # home.nix exposes Darwin's Nix GCC only through versioned commands.
       cliPackages =
@@ -268,7 +241,9 @@
           pkgs.starship
           pkgs.statix
           pkgs.stylua
-          pkgs.tektoncd-cli
+          # Go 1.27 changes compressed bundle digests; keep upstream tests enabled.
+          # Remove when https://github.com/tektoncd/cli/issues/3266 is fixed.
+          (pkgs.tektoncd-cli.override { buildGoModule = pkgs.buildGo126Module; })
           pkgs.terraform-ls
           pkgs.tflint
           pkgs.tfsec
