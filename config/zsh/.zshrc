@@ -182,11 +182,6 @@ _dotfiles_init_tool_hooks() {
   # mise chains to the WSL command-not-found handler defined above.
   if [[ -n $mise_bin ]]; then
     eval "$("$mise_bin" activate zsh)"
-    functions[_dotfiles_mise_command]=$functions[mise]
-    mise() {
-      (( $+functions[__load_github_token_once] )) && __load_github_token_once
-      _dotfiles_mise_command "$@"
-    }
   fi
   if [[ -n $direnv_bin ]]; then
     eval "$("$direnv_bin" hook zsh)"

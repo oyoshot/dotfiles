@@ -91,6 +91,12 @@ in
         enable = true;
         package = chromium;
       };
+      gh = {
+        enable = true;
+        # Only config.yml is generated; gh keeps writing tokens to hosts.yml.
+        # Access tokens expire after 8 hours and gh refreshes them itself.
+        settings.expiring_credentials = "enabled";
+      };
       mise = {
         enable = true;
         # The repository-managed .zshrc loads the standard shell hooks.

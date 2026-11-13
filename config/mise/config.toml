@@ -6,6 +6,10 @@
 experimental = true
 idiomatic_version_file_enable_tools = ["terraform", "node", "python", "ruby", "rust"]
 
+[settings.github]
+# mise cannot read gh's expiring tokens from hosts.yml; ask gh, which refreshes them.
+credential_command = 'gh auth token --hostname "$MISE_CREDENTIAL_HOST"'
+
 [settings.npm]
 bun = true
 

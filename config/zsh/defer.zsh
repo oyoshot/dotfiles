@@ -47,23 +47,6 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 export GPG_TTY=$TTY
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 
-__load_github_token_once() {
-    if [[ -n "${MISE_GITHUB_TOKEN:-}" ]]; then
-        return 0
-    fi
-    if [[ -n "${GITHUB_TOKEN:-}" ]]; then
-        export MISE_GITHUB_TOKEN="$GITHUB_TOKEN"
-        return 0
-    fi
-    (($+commands[gh])) || return 0
-
-    local token
-    token="$(command gh auth token 2>/dev/null)" || return 0
-    [[ -n "$token" ]] || return 0
-
-    export MISE_GITHUB_TOKEN="$token"
-}
-
 function git-by-tmux-fzf() {
     local root r
     root=$(ghq root) || return $?
