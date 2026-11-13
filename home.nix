@@ -87,6 +87,18 @@ in
       home-manager.enable = true;
       man.generateCaches = pkgs.stdenv.hostPlatform.isLinux;
       nh.enable = true;
+      ghostty.package = lib.mkIf config.dotfiles.wsl (
+        pkgs.ghostty.overrideAttrs (old: {
+          # WSL's AMD driver dlopens libssl.so.3 (nix-community/NixOS-WSL#623).
+          # libadwaita 1.10 no longer loads it through AppStream. Declare the
+          # dependency on Ghostty without exporting a library path to its children.
+          # Remove when the host driver no longer requires OpenSSL.
+          postInstall = (old.postInstall or "") + ''
+            ${lib.getExe pkgs.patchelf} --add-needed \
+              ${lib.getLib pkgs.openssl}/lib/libssl.so.3 "$out/bin/ghostty"
+          '';
+        })
+      );
       chromium = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         enable = true;
         package = chromium;
@@ -144,7 +156,7 @@ in
         pkgs.yq
         pkgs.rsync
         pkgs.xwininfo
-        pkgs.ghostty
+        config.programs.ghostty.package
         # Cargo's global linker settings also work outside nix develop.
         # Rust versions remain mise-owned; project libraries belong in dev shells.
         pkgs.clang

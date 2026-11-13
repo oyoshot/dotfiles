@@ -170,7 +170,9 @@ in
     ".local/bin/ghostty" = lib.mkIf (pkgs.stdenv.hostPlatform.isLinux && config.dotfiles.wsl) {
       executable = true;
       text =
-        builtins.replaceStrings [ "@ghostty@" "@fcitxGtk@" ] [ "${pkgs.ghostty}" "${pkgs.fcitx5-gtk}" ]
+        builtins.replaceStrings
+          [ "@ghostty@" "@fcitxGtk@" ]
+          [ "${config.programs.ghostty.package}" "${pkgs.fcitx5-gtk}" ]
           (builtins.readFile ./local/bin/ghostty);
     };
     ".local/bin/pbcopy" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
