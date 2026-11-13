@@ -241,9 +241,6 @@
           pkgs.starship
           pkgs.statix
           pkgs.stylua
-          # Go 1.27 changes compressed bundle digests; keep upstream tests enabled.
-          # Remove when https://github.com/tektoncd/cli/issues/3266 is fixed.
-          (pkgs.tektoncd-cli.override { buildGoModule = pkgs.buildGo126Module; })
           pkgs.terraform-ls
           pkgs.tflint
           pkgs.tfsec
