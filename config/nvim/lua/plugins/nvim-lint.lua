@@ -71,7 +71,11 @@ return {
 
 		lint.linters_by_ft = {
 			dockerfile = { "hadolint" },
+			-- textlint only has the text and markdown plugins; any other extension
+			-- fails with "Not found available plugin" and yields no diagnostics.
+			markdown = { "textlint" },
 			nix = { "statix", "deadnix" },
+			text = { "textlint" },
 			terraform = { "tflint" },
 			yaml = { "yamllint" },
 			zsh = { "zsh" },
@@ -89,7 +93,6 @@ return {
 
 				lint.try_lint()
 				lint.try_lint("cspell")
-				lint.try_lint("textlint")
 			end,
 		})
 	end,
