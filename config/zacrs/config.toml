@@ -8,6 +8,7 @@ candidate = "white"
 
 [completion]
 expand_abbreviation_on_enter = true
+expand_abbreviation_on_space = true
 
 [abbreviations]
 g = 'git'
