@@ -45,7 +45,13 @@ require("lazy").setup({
 	},
 	--install = { colorscheme = { "tokyonight", "habamax" } },
 	checker = {
-		enabled = true, -- check for plugin updates periodically
+		-- Disabled: on every TUI startup the checker spawns `git log` (or `git fetch`)
+		-- for every plugin, and with libuv 1.53 each spawn by bare name blocks Nvim
+		-- for 5-9 ms on our long PATH (libuv/libuv#3520, fix proposed in #5390).
+		-- That stalls typing for 0.5-1.5 s after opening a file. Results were only
+		-- visible in :Lazy anyway (notify = false); use `C`/`U` there instead.
+		-- Reconsider once a libuv release with a PATH lookup fix reaches nixpkgs.
+		enabled = false,
 		notify = false, -- notify on update
 	}, -- automatically check for plugin updates
 	performance = {
