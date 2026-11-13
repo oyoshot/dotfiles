@@ -34,7 +34,20 @@ return {
 		"ravitemer/codecompanion-history.nvim",
 		"nvim-telescope/telescope.nvim",
 	},
-	event = { "CursorHold", "CursorHoldI" },
+	-- Load on use only. On CursorHold it pulled in mcphub, telescope and noice
+	-- (and started mcp-hub) at the first idle moment, which stalled typing for
+	-- 130-800 ms right after Esc when a file was edited straight away.
+	cmd = {
+		"CodeCompanion",
+		"CodeCompanionActions",
+		"CodeCompanionCLI",
+		"CodeCompanionChat",
+		"CodeCompanionCmd",
+		"CodeCompanionCodeReview",
+		"CodeCompanionHistory",
+		"CodeCompanionSummaries",
+		"MCPHub",
+	},
 	keys = {
 		{ "<leader>ao", ":CodeCompanionChat openai<CR>", desc = "Chat with OpenAI" },
 		{ "<leader>ac", ":CodeCompanionChat copilot<CR>", desc = "Chat with Copilot" },

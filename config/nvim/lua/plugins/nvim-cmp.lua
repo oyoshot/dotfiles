@@ -1,6 +1,7 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	-- CursorHold preloads cmp while idle so the first InsertEnter stays fast.
+	event = { "InsertEnter", "CursorHold" },
 	config = function()
 		local border = function(hl)
 			return {
