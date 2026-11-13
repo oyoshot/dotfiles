@@ -1,7 +1,10 @@
 return {
 	"hrsh7th/nvim-cmp",
-	-- CursorHold preloads cmp while idle so the first InsertEnter stays fast.
-	event = { "InsertEnter", "CursorHold" },
+	-- VeryLazy preloads cmp right after the first redraw, before a human can
+	-- press the first key. CursorHold was too late: terminal responses reset
+	-- its timer, so it fired ~300 ms after UIEnter and the first InsertEnter
+	-- still paid ~70-110 ms for loading cmp, LuaSnip and copilot.
+	event = { "InsertEnter", "VeryLazy" },
 	config = function()
 		local border = function(hl)
 			return {
