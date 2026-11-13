@@ -211,6 +211,20 @@ in
           config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${config.targets.darwin.copyApps.directory}/Visual Studio Code.app/Contents/Resources/app/bin/code-tunnel";
       };
       activation = {
+        # Codex and Herdr also write this file; merge only the managed preference.
+        codexScroll = lib.hm.dag.entryAfter [ "herdrIntegrations" ] (
+          lib.hm.generators.mkImpureConfigMerger {
+            inherit pkgs;
+            format = "toml";
+            empty = "{}";
+            jqOperation = "$dynamic * $static";
+            path = "${config.xdg.configHome}/codex/config.toml";
+            staticSettings = (pkgs.formats.toml { }).generate "codex-scroll.toml" {
+              tui.mouse_scroll_speed = 5;
+            };
+            mode = "600";
+          }
+        );
         # Retire the daemon only when the installed zacrs binary changes.
         zacrsDaemon = lib.hm.dag.entryAfter [ "installPackages" ] ''
           zacrsOldBinary=
