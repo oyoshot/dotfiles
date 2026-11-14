@@ -296,11 +296,11 @@
     "zacrs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1794629966,
-        "narHash": "sha256-0blm/bH/42P6PCC4C+1uLcYL3dpRLwJkJHV/Bo64qpY=",
+        "lastModified": 1794631945,
+        "narHash": "sha256-hQO7i6sCvYIvk2lBjbEvcifJ9E29g6tZUgtW1yh3rMo=",
         "ref": "refs/heads/main",
-        "rev": "db4f7a464d763f9a659d6319cbf409a20d7a7485",
-        "revCount": 153,
+        "rev": "90d291d586533a3e6deb95964fee83b45d14e8bf",
+        "revCount": 154,
         "type": "git",
         "url": "https://github.com/oyoshot/zsh-autocomplete-rs-proto.git"
       },
