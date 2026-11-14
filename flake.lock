@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1794616795,
-        "narHash": "sha256-7y+4q7OnI298rVNbVTkOaTYZGQVdZ+C2W0De+bbrRoI=",
+        "lastModified": 1794630265,
+        "narHash": "sha256-LIHhc8UiE4wIsILwe/AzxyS7ZZInQeWIwC2PN0FA8BU=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "ece553ee103aeb0614d9d5376efcb95e81a72294",
+        "rev": "b7f2c7b33471fcaf59a9a422a237634c7edc1207",
         "type": "github"
       },
       "original": {
@@ -296,11 +296,11 @@
     "zacrs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1794540379,
-        "narHash": "sha256-etHyIucQDazPU2vufD+QINV3P2w4qBE3rKmZvBSN0v8=",
+        "lastModified": 1794629966,
+        "narHash": "sha256-0blm/bH/42P6PCC4C+1uLcYL3dpRLwJkJHV/Bo64qpY=",
         "ref": "refs/heads/main",
-        "rev": "8db8fa755be2dde2fc6d8d500115d5601ae5a271",
-        "revCount": 150,
+        "rev": "db4f7a464d763f9a659d6319cbf409a20d7a7485",
+        "revCount": 153,
         "type": "git",
         "url": "https://github.com/oyoshot/zsh-autocomplete-rs-proto.git"
       },
