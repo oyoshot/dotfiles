@@ -51,11 +51,11 @@
     "brew-api": {
       "flake": false,
       "locked": {
-        "lastModified": 1795050125,
-        "narHash": "sha256-H/6QVov9D5KIbbX+ValZC1AxYYQ4ZrJQJPMkvnf8RZw=",
+        "lastModified": 1795304944,
+        "narHash": "sha256-Le1ZtzrCfZMWWfl/o6jzejGYPezkZdrzvhwv4Lfm+V8=",
         "owner": "BatteredBunny",
         "repo": "brew-api",
-        "rev": "b188ae5e69e7c1bc6982582809e94f794eadc0ea",
+        "rev": "05f06c37ee033671a7fb4afd7a287bd67e26a177",
         "type": "github"
       },
       "original": {
@@ -111,11 +111,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794963576,
-        "narHash": "sha256-+CPrP74GDJ63f7bgEFC9Av4hbxc7K9WUNv1ZVRifRe8=",
+        "lastModified": 1795268568,
+        "narHash": "sha256-1RJm4DEu7YHJv94sjSY7sjqT+kHx/AUwmtUN4dtFBUo=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "2b13c9cb3aa20653e6f8ee0b7f8331a53ea9b0a9",
+        "rev": "6857c7f7c338ad181729c52071386b0d3afa24bc",
         "type": "github"
       },
       "original": {
@@ -180,11 +180,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1794840529,
-        "narHash": "sha256-ySrWnmZB5UsZTYGHHnBjllT05O5iFjElCRS+mabtfP0=",
+        "lastModified": 1795249095,
+        "narHash": "sha256-8JDgyVvWUZg5m9hNlL8Ge9aT647ng3Ukc8NPMiKNTPQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e21fec321d73511849707a7585e4ea155ee4bf40",
+        "rev": "93a9ed0a866099a230ed5146a5bb7d16fd5c9b14",
         "type": "github"
       },
       "original": {
@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1795048982,
-        "narHash": "sha256-O6qx4MZr+rTYDeeD/gcEnSueWbN+XKkSc2F1PD88SxQ=",
+        "lastModified": 1795308290,
+        "narHash": "sha256-qfwo0x0/IK43BWZkMEOKj6Zza4tvJqaeiwjhpi9a25g=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "eb95833f57d006d68fa676b168661e50910946b2",
+        "rev": "a670e3d1fb5c861c5ea887cdaebfe7bc21ae2b5a",
         "type": "github"
       },
       "original": {
@@ -296,11 +296,11 @@
     "zacrs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1794744899,
-        "narHash": "sha256-tPDkSDUrwUIhWqpr+sO+wHN1JKroezyPyYjSjU1S/tY=",
+        "lastModified": 1795152025,
+        "narHash": "sha256-M+t2eSGtwGJgU7J4Ap7gdnbSQ9aBLNEAvh9UtrMATfE=",
         "ref": "refs/heads/main",
-        "rev": "699afc9bc1e867981d64cd4a174276e56485cc2a",
-        "revCount": 157,
+        "rev": "3ea0889ecee82b10c0cdfcc59b013ab405d74051",
+        "revCount": 158,
         "type": "git",
         "url": "https://github.com/oyoshot/zsh-autocomplete-rs-proto.git"
       },
