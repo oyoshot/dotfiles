@@ -51,6 +51,7 @@ zls = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-llvm-cov" = "latest"
 "cargo:cargo-udeps" = "latest"
+"cargo:kani-verifier" = { version = "latest", postinstall = "cargo-kani setup" }
 
 # No matching package in the pinned nixpkgs; keep the upstream installers.
 "go:github.com/mattn/memo" = "latest"
