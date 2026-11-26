@@ -51,11 +51,11 @@
     "brew-api": {
       "flake": false,
       "locked": {
-        "lastModified": 1795665510,
-        "narHash": "sha256-WzDIjURIFMKl40gxG1bEZm9cHslo0niEiEmE0o+5nXM=",
+        "lastModified": 1795700009,
+        "narHash": "sha256-s8UrYy+MzLpQRKJ4MWBvtP3A+P8w2irb+0vSaAszZTI=",
         "owner": "BatteredBunny",
         "repo": "brew-api",
-        "rev": "6e6f6d13cc33ca191e77470e60911cf49a41725e",
+        "rev": "dfcc9b95d6d33e0dc6d734ffd9661d1d543f9a25",
         "type": "github"
       },
       "original": {
@@ -111,11 +111,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795686323,
-        "narHash": "sha256-4iRcuQObXq+6JrmHkCUjevZ4L0Wy97MkUE8BeOaCgRs=",
+        "lastModified": 1795706770,
+        "narHash": "sha256-C1x4TKbpiWX5lRsTQFwok5te55luUM76u1d8CjplXgI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "567216631dfccee23b32288de037b1339918144c",
+        "rev": "5ef710576b9282ff6ae21b86b9316df393592cce",
         "type": "github"
       },
       "original": {
@@ -236,11 +236,11 @@
     "scoop-main": {
       "flake": false,
       "locked": {
-        "lastModified": 1795690110,
-        "narHash": "sha256-GaA9msEzS42+DyBUSKztC93ZXIEFVJvd7dQG03ftWmM=",
+        "lastModified": 1795696244,
+        "narHash": "sha256-n4Gsq+unck6vJC6HOqvLmC47/ll3M0IewSh6Znj708E=",
         "owner": "ScoopInstaller",
         "repo": "Main",
-        "rev": "dfad0004387e10bd7bc7db06d479537179bd1aaa",
+        "rev": "e112c70fb8c7d57d7f6ce20b9711adbc392baf0c",
         "type": "github"
       },
       "original": {
