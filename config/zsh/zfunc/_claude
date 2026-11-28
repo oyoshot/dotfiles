@@ -2,4 +2,14 @@
 
 # Claude Code does not provide a shell-completion generator. Let zsh derive
 # options from `claude --help` so CLI upgrades do not require updating this file.
-_gnu_generic
+#
+# _arguments treats every hyphen-led word in the help as an option, including
+# wrapped description lines such as `--system-prompt[-file],`, which yield
+# invalid specs. Keep only option rows (two-space indent) before parsing.
+(( $+functions[_claude_option_help] )) ||
+_claude_option_help() {
+  command claude "$@" 2>&1 | command grep -Ev '^ {3,}-'
+}
+
+local -a words=(_claude_option_help "${(@)words[2,-1]}")
+_arguments '*:arg: _default' --
